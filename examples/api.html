@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../logo.svg" type="image/svg+xml">
+  <title>YourJS Page - JavaScript API</title>
+  <script src="../dist/yourjs-page.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 1100px; padding: 16px; }
+    #playground { height: 500px; margin: 12px 0; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    #output { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>JavaScript API</h1>
+  <p>This page is made with <code>YourJSPage.create()</code> and controlled with the buttons below it.</p>
+
+  <div id="playground"></div>
+
+  <div class="buttons">
+    <button id="get-code">getCode()</button>
+    <button id="set-code">setCode({js}) (and run)</button>
+    <button id="set-code-no-run">setCode({css}, {run: false})</button>
+    <button id="run">run()</button>
+    <button id="destroy">destroy()</button>
+  </div>
+  <pre id="output"></pre>
+
+  <script>
+    const page = YourJSPage.create({
+      target: '#playground',
+      title: 'Made with the API',
+      layout: 'left',
+      showConsole: true,
+      html: '<canvas id="canvas" width="300" height="150"></canvas>',
+      css: 'canvas { border: 1px solid #ccc; }',
+      js: [
+        "const ctx = document.getElementById('canvas').getContext('2d');",
+        "ctx.fillStyle = 'tomato';",
+        "ctx.fillRect(20, 20, 120, 80);",
+        "console.log('Drew a rectangle');",
+      ].join('\n'),
+    });
+
+    const output = document.getElementById('output');
+    document.getElementById('get-code').onclick = () => output.textContent = JSON.stringify(page.getCode(), null, 2);
+    document.getElementById('set-code').onclick = () => page.setCode({
+      js: "const ctx = document.getElementById('canvas').getContext('2d');\nctx.beginPath();\nctx.arc(150, 75, 50, 0, 2 * Math.PI);\nctx.fillStyle = 'steelblue';\nctx.fill();\nconsole.log('Drew a circle');",
+    });
+    document.getElementById('set-code-no-run').onclick = () => page.setCode({css: 'canvas { border: 4px dashed rebeccapurple; }'}, {run: false});
+    document.getElementById('run').onclick = () => page.run();
+    document.getElementById('destroy').onclick = () => page.destroy();
+  </script>
+</body>
+</html>

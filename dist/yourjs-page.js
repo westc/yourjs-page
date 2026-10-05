@@ -1,0 +1,712 @@
+/*! yourjs-page v0.0.0 | (c) 2026-present Chris West | MIT License | https://github.com/westc/yourjs-page */
+(() => {
+  /**
+   * The viewer IFRAME's CSS code.
+   * @type {string}
+   */
+  const VIEWER_CSS = ":root{color-scheme:light;--font:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--code-font:ui-monospace,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;--bg:#fff;--text:#1f1f1f;--muted-text:#5f6368;--toolbar-bg:#f3f3f3;--toolbar-border:#d6d6d6;--toolbar-text:#333;--panel-header-bg:#f8f8f8;--button-hover:rgb(0 0 0 / 0.08);--accent:#1a73e8;--accent-hover:#1765cc;--accent-text:#fff;--divider-bg:#e6e6e6;--divider-hover-bg:#c8c8c8;--menu-bg:#fff;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.18);--row-border:#f0f0f0;--string:#c41a16;--number:#1a1aa6;--keyword:#881391;--null:#80868b;--warn-bg:#fffbe5;--warn-border:#fff5c2;--warn-text:#5c3c00;--error-bg:#fff0f0;--error-border:#ffd6d6;--error-text:#dc362e;--info-text:#1a73e8}:root[data-theme=dark]{color-scheme:dark;--bg:#242424;--text:#e3e3e3;--muted-text:#9aa0a6;--toolbar-bg:#2b2b2b;--toolbar-border:#474747;--toolbar-text:#e3e3e3;--panel-header-bg:#2f2f2f;--button-hover:rgb(255 255 255 / 0.1);--accent:#8ab4f8;--accent-hover:#aecbfa;--accent-text:#202124;--divider-bg:#3a3a3a;--divider-hover-bg:#5a5a5a;--menu-bg:#2d2e30;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.5);--row-border:#3a3a3a;--string:#f28b54;--number:#9980ff;--keyword:#5db0d7;--null:#8e8e8e;--warn-bg:#332b00;--warn-border:#665500;--warn-text:#ffd17a;--error-bg:#290000;--error-border:#5c0000;--error-text:#ff8080;--info-text:#8ab4f8}body,html{height:100%;margin:0;overflow:hidden}body{background-color:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}[hidden]{display:none!important}button{color:inherit;font:inherit}.svg-defs{height:0;position:absolute;width:0}svg{fill:none;flex-shrink:0;height:18px;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2;width:18px}.spacer{flex-grow:1}.logo{align-items:center;color:var(--toolbar-text);display:inline-flex;font-weight:700;gap:5px;letter-spacing:-.01em;line-height:1}.logo-mark{height:22px;stroke:none;width:22px}.logo-text{font-size:14px;white-space:nowrap}.logo-your{font-weight:400;opacity:.8}.logo-large{gap:12px}.logo-large>.logo-mark{filter:drop-shadow(0 6px 12px rgb(0 0 0 / .18));height:56px;width:56px}.logo-large>.logo-text{font-size:36px}.logo-link{align-items:center;border-radius:4px;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;margin-right:4px;width:30px}.logo-link:hover{background-color:var(--button-hover)}#splash{align-items:center;background-color:var(--bg);display:flex;inset:0;justify-content:center;position:fixed;transition:opacity .35s ease,visibility .35s;z-index:1000}#splash.hidden{opacity:0;pointer-events:none;visibility:hidden}.splash-content{align-items:center;animation:splash-in .4s ease-out both;display:flex;flex-direction:column;gap:24px;padding:16px}.splash-progress{background-color:var(--toolbar-border);border-radius:3px;height:3px;overflow:hidden;width:140px}.splash-progress>div{animation:splash-progress 1.1s ease-in-out infinite;background-color:var(--accent);border-radius:inherit;height:100%;width:40%}@keyframes splash-in{from{opacity:0;transform:translateY(6px)}}@keyframes splash-progress{from{transform:translateX(-100%)}to{transform:translateX(250%)}}.splash-message{color:var(--muted-text);font-size:13px;max-width:280px;text-align:center}.splash-slow{animation:show-after-delay 0s 10s both}@keyframes show-after-delay{from{visibility:hidden}to{visibility:visible}}#splash.failed .splash-progress,#splash.failed .splash-slow,.splash-error{display:none}#splash.failed .splash-error{color:var(--error-text);display:block}#app{display:flex;flex-direction:column;inset:0;position:fixed}#toolbar{align-items:center;background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);color:var(--toolbar-text);display:flex;flex-shrink:0;gap:2px;height:40px;padding:0 6px}.icon-button{align-items:center;background:0 0;border:0;border-radius:4px;cursor:pointer;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;padding:0;position:relative;width:30px}.icon-button:hover,.icon-button[aria-expanded=true],.icon-button[aria-pressed=true]{background-color:var(--button-hover)}.icon-button[aria-pressed=true]{color:var(--accent)}#tabs button:focus-visible,.icon-button:focus-visible,.menu>:focus-visible,.panel-title:focus-visible,.run-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.run-button{align-items:center;background-color:var(--accent);border:0;border-radius:4px;color:var(--accent-text);cursor:pointer;display:inline-flex;flex-shrink:0;font-weight:600;gap:4px;height:30px;padding:0 12px 0 8px;position:relative}.run-button:hover{background-color:var(--accent-hover)}.run-button.is-stale::after{background-color:#f9ab00;border:2px solid var(--toolbar-bg);border-radius:50%;content:'';height:8px;position:absolute;right:-4px;top:-4px;width:8px}.title{font-weight:600;margin-left:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{background-color:var(--muted-text);border-radius:8px;color:var(--bg);font-size:10px;font-weight:700;line-height:14px;min-width:14px;padding:0 3px;position:absolute;right:-2px;top:-1px;box-sizing:border-box}.badge.has-errors{background-color:var(--error-text)}#tabs{background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);display:none;flex-shrink:0;overflow-x:auto}.layout-tabs #tabs{display:flex}#tabs button{background:0 0;border:0;border-bottom:2px solid transparent;color:var(--muted-text);cursor:pointer;flex:1 1 0;font-weight:600;padding:7px 12px 5px}#tabs button:hover{color:var(--toolbar-text)}#tabs button[aria-selected=true]{border-bottom-color:var(--accent);color:var(--toolbar-text)}#main{display:flex;flex-grow:1;min-height:0}.layout-tabs #main,.layout-top #main{flex-direction:column}.layout-left #main{flex-direction:row}.layout-right #main{flex-direction:row-reverse}#console,#editors,#output,#result,.panel{display:flex;flex:1 1 0;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.layout-top #editors{flex-direction:row}#result iframe{background-color:#fff;border:0;display:block;flex-grow:1;width:100%}.panel-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px}.panel-header .icon-button{color:var(--muted-text);height:26px;width:26px}.panel-header .icon-button:hover{color:var(--toolbar-text)}.panel-header svg{height:16px;width:16px}.panel-title{align-items:center;background:0 0;border:0;border-radius:4px;color:var(--toolbar-text);cursor:pointer;display:flex;flex-grow:1;font-size:12px;font-weight:700;gap:2px;height:26px;letter-spacing:.04em;min-width:0;padding:0 4px}.panel-title svg{color:var(--muted-text);transform:rotate(90deg);transition:transform .15s}.panel.is-collapsed .panel-title svg{transform:none}.editor{flex-grow:1;min-height:0}.panel.is-collapsed{flex:0 0 auto!important}.panel.is-collapsed .editor,.panel.is-collapsed .format-button{display:none}.layout-top .panel.is-collapsed .panel-header{border-bottom:0;flex-direction:column;height:100%;padding:2px 0}.layout-top .panel.is-collapsed .panel-title{flex-direction:column;flex-grow:0;height:auto;padding:4px 0;width:26px}.layout-top .panel.is-collapsed .panel-title span{writing-mode:vertical-lr}.divider{background-color:var(--divider-bg);cursor:row-resize;flex:0 0 4px;position:relative;touch-action:none}.divider.is-dragging,.divider:hover{background-color:var(--divider-hover-bg)}.divider::before{content:'';inset:-4px 0;position:absolute;z-index:2}.layout-left #main-divider,.layout-right #main-divider,.layout-top #editors>.divider{cursor:col-resize}.layout-left #main-divider::before,.layout-right #main-divider::before,.layout-top #editors>.divider::before{inset:0 -4px}.divider:has(+ .is-collapsed),.is-collapsed+.divider{cursor:default}.divider:has(+ .is-collapsed):hover,.is-collapsed+.divider:hover{background-color:var(--divider-bg)}.is-dragging-divider iframe{pointer-events:none}.is-dragging-divider,.is-dragging-divider *{-webkit-user-select:none;user-select:none}.layout-tabs #editors>.divider,.layout-tabs #main-divider,.layout-tabs .panel-title svg{display:none}.layout-tabs .panel-title{cursor:default}.layout-tabs #editors,.layout-tabs #output,.layout-tabs .panel{flex:1 1 0!important}.layout-tabs .panel:not(.is-active-tab),.layout-tabs:not([data-tab=result]) #output,.layout-tabs[data-tab=result] #editors{display:none}.layout-tabs .panel.is-collapsed .editor,.layout-tabs .panel.is-collapsed .format-button{display:block}.layout-tabs .panel.is-collapsed .format-button{display:inline-flex}.has-no-editors :is(#editors,#main-divider,#tabs){display:none!important}.has-no-editors #output{display:flex!important;flex:1 1 0!important}#app:not(.is-console-shown) #console,#app:not(.is-console-shown) #console-divider{display:none}#console{background-color:var(--bg);flex-grow:0.8}.console-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px 0 8px}.console-header .icon-button{color:var(--muted-text);height:26px;width:26px}.console-header svg{height:16px;width:16px}.console-title{font-size:12px;font-weight:700;letter-spacing:.04em}#console-entries{flex-grow:1;font-family:var(--code-font);font-size:12px;line-height:16px;min-height:0;overflow:auto}.entry{border-bottom:1px solid var(--row-border);display:flex;gap:8px;padding:3px 8px 3px 20px;position:relative}.entry-text{flex-grow:1;min-width:0;white-space:pre-wrap;word-break:break-word}.entry.level-warn{background-color:var(--warn-bg);border-bottom-color:var(--warn-border);color:var(--warn-text)}.entry.level-error{background-color:var(--error-bg);border-bottom-color:var(--error-border);color:var(--error-text)}.entry.level-info{color:var(--info-text)}.entry.level-debug{color:var(--muted-text)}.entry.level-command::before,.entry.level-result::before{color:var(--muted-text);left:6px;position:absolute}.entry.level-command::before{content:'\\203A'}.entry.level-result::before{content:'\\2190'}.entry .kind-bigint,.entry .kind-boolean,.entry .kind-number{color:var(--number)}.entry .kind-null,.entry .kind-undefined{color:var(--null)}.entry .kind-symbol,.entry.level-result .kind-string{color:var(--string)}.entry .kind-function{color:var(--keyword)}.entry{flex-wrap:wrap}.entry-trees{flex-basis:100%}.entry-trees:empty{display:none}.expander{border-radius:2px;cursor:pointer}.expander::before{color:var(--muted-text);content:'\\25B8';display:inline-block;font-size:10px;margin-right:3px;transition:transform .1s;width:8px}.expander[aria-expanded=true]::before{transform:rotate(90deg)}.expander:hover{background-color:var(--button-hover)}.expander:focus-visible{outline:1px solid var(--accent)}.tree{color:var(--text);padding-left:12px}.tree-children{padding-left:12px}.tree-row{white-space:pre-wrap;word-break:break-word}.tree-key{color:var(--keyword)}.entry .kind-getter,.entry .kind-index{color:var(--muted-text)}.entry .tree .kind-string{color:var(--string)}.console-table-wrapper{margin:2px 0;max-height:320px;overflow:auto}.console-table{border-collapse:collapse;font-size:12px}.console-table td,.console-table th{border:1px solid var(--toolbar-border);max-width:300px;overflow:hidden;padding:2px 8px;text-align:left;text-overflow:ellipsis;white-space:nowrap}.console-table th{background-color:var(--panel-header-bg);font-weight:600;position:sticky;top:0}.console-table .kind-string{color:var(--string)}.entry-location{background:0 0;border:0;color:var(--muted-text);cursor:pointer;flex-shrink:0;font-family:var(--code-font);font-size:11px;padding:0;text-decoration:underline}.entry-location:hover{color:inherit}.console-input{align-items:flex-start;border-top:1px solid var(--toolbar-border);display:flex;flex-shrink:0;padding:3px 8px 3px 4px}.console-input svg{color:var(--accent);height:14px;margin-top:2px;width:14px}#console-input{background:0 0;border:0;color:inherit;flex-grow:1;font-family:var(--code-font);font-size:12px;line-height:18px;margin-left:2px;max-height:120px;outline:0;padding:0;resize:none}.menu{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:6px;box-shadow:var(--menu-shadow);display:flex;flex-direction:column;max-width:calc(100vw - 16px);min-width:200px;padding:4px;position:fixed;z-index:10}.menu>a,.menu>button{background:0 0;border:0;border-radius:4px;color:var(--text);cursor:pointer;padding:6px 10px 6px 28px;position:relative;text-align:left;text-decoration:none}.menu>a:hover,.menu>button:hover{background-color:var(--button-hover)}.menu [aria-checked=true]::before{color:var(--accent);content:'\\2713';left:10px;position:absolute}.menu>a{color:var(--muted-text);font-size:12px}.menu-separator{border-top:1px solid var(--toolbar-border);margin:4px 0}.menu-info{color:var(--muted-text);font-size:12px;padding:2px 10px 2px 28px}.shortcut{display:flex;gap:16px;justify-content:space-between;padding:2px 0}kbd{font-family:var(--code-font);font-size:11px}dialog{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:8px;box-shadow:var(--menu-shadow);box-sizing:border-box;color:var(--text);flex-direction:column;max-height:calc(100% - 16px);max-width:calc(100% - 16px);padding:0;width:560px}dialog[open]{display:flex}dialog::backdrop{background-color:rgb(0 0 0 / .3)}.dialog-footer,.dialog-header{align-items:center;display:flex;flex-shrink:0;gap:8px;padding:8px 8px 8px 16px}.dialog-header{border-bottom:1px solid var(--toolbar-border)}.dialog-header h2{flex-grow:1;font-size:15px;margin:0}.dialog-footer{border-top:1px solid var(--toolbar-border);justify-content:flex-end}.dialog-body{min-height:0;overflow:auto;padding:12px 16px}.dialog-body h3{font-size:12px;letter-spacing:.04em;margin:16px 0 6px;text-transform:uppercase}.dialog-note{color:var(--muted-text);font-size:12px;margin:16px 0 0}.text-button{background:0 0;border:1px solid var(--toolbar-border);border-radius:4px;cursor:pointer;flex-shrink:0;height:30px;padding:0 12px}.text-button:hover{background-color:var(--button-hover)}.text-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}dialog input{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;box-sizing:border-box;color:inherit;font:inherit;height:32px;min-width:0;padding:0 8px}dialog input:focus{border-color:var(--accent);outline:1px solid var(--accent)}#library-search-input{width:100%}.library-status{color:var(--muted-text);font-size:12px;padding:6px 2px 0}.library-status:empty{display:none}.library-results{display:flex;flex-direction:column;margin-top:6px;max-height:260px;overflow:auto}.library-result{border-bottom:1px solid var(--row-border);padding:6px 2px}.library-result-main{align-items:flex-start;display:flex;gap:8px}.library-result-text{flex-grow:1;min-width:0}.library-name{font-weight:600}.library-version{color:var(--muted-text);font-size:12px;margin-left:6px}.library-description{color:var(--muted-text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-result .text-button{font-size:12px;height:26px;padding:0 8px}.library-files{margin:6px 0 0;padding-left:12px}.library-files select{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;color:inherit;font:inherit;font-size:12px;height:26px;margin-bottom:4px}.library-file-list{display:flex;flex-direction:column;max-height:160px;overflow:auto}.library-file-list button{background:0 0;border:0;border-radius:4px;cursor:pointer;font-family:var(--code-font);font-size:12px;padding:3px 6px;text-align:left}.library-file-list button:hover{background-color:var(--button-hover)}.library-url{display:flex;gap:6px;margin-top:12px}.library-url input{flex-grow:1}.library-list{border:1px solid var(--row-border);border-radius:4px;list-style:none;margin:0;padding:0}.library-list:empty::before{color:var(--muted-text);content:attr(data-empty);display:block;font-size:12px;padding:6px 8px}.library-list li{align-items:center;border-bottom:1px solid var(--row-border);display:flex;gap:2px;padding:2px 2px 2px 8px}.library-list li:last-child{border-bottom:0}.library-url-text{flex-grow:1;font-family:var(--code-font);font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-list .icon-button{color:var(--muted-text);height:26px;width:26px}.library-list .icon-button:disabled{cursor:default;opacity:.35}.library-list svg{height:16px;width:16px}dialog.is-read-only :is(.library-search,.library-url,.library-list .icon-button,#libraries-run-button){display:none}.load-error-dialog{width:480px}.load-error-body{display:flex;gap:14px;padding:20px 20px 8px}.load-error-icon{align-items:center;background-color:var(--error-bg);border-radius:50%;color:var(--error-text);display:flex;flex-shrink:0;height:40px;justify-content:center;width:40px}.load-error-icon svg{height:22px;width:22px}.load-error-text{min-width:0}.load-error-text h2{font-size:15px;margin:2px 0 6px}.load-error-text p{color:var(--muted-text);line-height:1.45;margin:0 0 12px}.load-error-list{display:flex;flex-direction:column;gap:6px;list-style:none;margin:0;padding:0}.load-error-list li{align-items:baseline;background-color:var(--panel-header-bg);border:1px solid var(--row-border);border-radius:6px;display:flex;gap:8px;padding:8px 10px}.load-error-language{border:1px solid var(--toolbar-border);border-radius:4px;flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:.04em;padding:1px 6px}.load-error-message{font-size:12px;line-height:1.45;min-width:0;overflow-wrap:anywhere}.load-error-dialog .dialog-footer{border-top:0;padding:12px 16px 16px}.load-error-dialog .run-button{padding:0 18px}#result{position:relative}.safe-mode-notice{align-items:center;background-color:var(--bg);display:flex;inset:0;justify-content:center;overflow:auto;padding:16px;position:absolute}.safe-mode-card{align-items:center;display:flex;flex-direction:column;gap:10px;max-width:360px;text-align:center}.safe-mode-card h2{font-size:15px;margin:4px 0 0}.safe-mode-card p{color:var(--muted-text);line-height:1.45;margin:0 0 6px}";
+  /**
+   * The viewer IFRAME's HTML code (what goes in its body).
+   * @type {string}
+   */
+  const VIEWER_HTML = "<svg class=\"svg-defs\" aria-hidden=\"true\"><defs><symbol id=\"icon-run\" viewBox=\"0 0 24 24\"><path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-format\" viewBox=\"0 0 24 24\"><path d=\"M4 6h16M8 10h12M8 14h12M4 18h16\"/></symbol><symbol id=\"icon-chevron\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-console\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M7 9l3 3-3 3M13 15h4\"/></symbol><symbol id=\"icon-layout\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 11h18M9 4v7M15 4v7\"/></symbol><symbol id=\"icon-open\" viewBox=\"0 0 24 24\"><path d=\"M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5\"/></symbol><symbol id=\"icon-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5\"/></symbol><symbol id=\"icon-exit-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5\"/></symbol><symbol id=\"icon-more\" viewBox=\"0 0 24 24\"><circle cx=\"5\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"19\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-clear\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M6.5 17.5l11-11\"/></symbol><symbol id=\"icon-close\" viewBox=\"0 0 24 24\"><path d=\"M6 6l12 12M18 6L6 18\"/></symbol><symbol id=\"icon-prompt\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-libraries\" viewBox=\"0 0 24 24\"><path d=\"M12 3l8 4.5v9L12 21l-8-4.5v-9z\"/><path d=\"M4 7.5l8 4.5 8-4.5M12 12v9\"/></symbol><symbol id=\"icon-up\" viewBox=\"0 0 24 24\"><path d=\"M6 15l6-6 6 6\"/></symbol><symbol id=\"icon-down\" viewBox=\"0 0 24 24\"><path d=\"M6 9l6 6 6-6\"/></symbol><symbol id=\"icon-plus\" viewBox=\"0 0 24 24\"><path d=\"M12 5v14M5 12h14\"/></symbol><symbol id=\"icon-alert\" viewBox=\"0 0 24 24\"><path d=\"M10.3 4.1L2.6 17.5A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3L13.7 4.1a2 2 0 0 0-3.4 0z\"/><path d=\"M12 9.5v4M12 17h.01\"/></symbol><symbol id=\"logo-mark\" viewBox=\"0 0 32 32\"><path d=\"M6 1.5h14.5L29 10v18.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-25a2 2 0 0 1 2-2z\" fill=\"#22a35a\" stroke=\"none\"/><path d=\"M20.5 1.5V8a2 2 0 0 0 2 2H29z\" fill=\"#167a41\" stroke=\"none\"/><rect x=\"8\" y=\"7\" width=\"9\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><rect x=\"8\" y=\"12\" width=\"6\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><text x=\"25.5\" y=\"27\" text-anchor=\"end\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"11.5\" font-weight=\"800\" letter-spacing=\"-0.3\" fill=\"#fff\" stroke=\"none\">JS</text></symbol></defs></svg><div id=\"splash\" aria-label=\"Loading\"><div class=\"splash-content\"><span class=\"logo logo-large\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg><span class=\"logo-text\"><span class=\"logo-your\">Your</span>JS Page</span></span><div class=\"splash-progress\"><div></div></div><div class=\"splash-message splash-slow\">Still loading&hellip;</div><div class=\"splash-message splash-error\">YourJS Page couldn&rsquo;t load its code editor. Please check your connection and reload the page.</div></div></div><div id=\"app\" hidden><header id=\"toolbar\"><a id=\"logo-link\" class=\"logo-link\" target=\"_blank\" rel=\"noopener\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg></a><button id=\"run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button><div id=\"title\" class=\"title\"></div><div class=\"spacer\"></div><button id=\"console-button\" class=\"icon-button\" type=\"button\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-console\"/></svg> <span id=\"console-badge\" class=\"badge\" hidden></span></button> <button id=\"libraries-button\" class=\"icon-button\" type=\"button\" title=\"Libraries\" aria-haspopup=\"dialog\"><svg aria-hidden=\"true\"><use href=\"#icon-libraries\"/></svg> <span id=\"libraries-badge\" class=\"badge\" hidden></span></button> <button id=\"layout-button\" class=\"icon-button\" type=\"button\" title=\"Change view\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-layout\"/></svg></button> <button id=\"open-button\" class=\"icon-button\" type=\"button\" title=\"Open the result in a new tab\"><svg aria-hidden=\"true\"><use href=\"#icon-open\"/></svg></button> <button id=\"fullscreen-button\" class=\"icon-button\" type=\"button\" title=\"Full screen\"><svg aria-hidden=\"true\"><use href=\"#icon-fullscreen\"/></svg></button> <button id=\"more-button\" class=\"icon-button\" type=\"button\" title=\"More\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more\"/></svg></button></header><nav id=\"tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" data-tab=\"html\">HTML</button> <button type=\"button\" role=\"tab\" data-tab=\"css\">CSS</button> <button type=\"button\" role=\"tab\" data-tab=\"js\">JS</button> <button type=\"button\" role=\"tab\" data-tab=\"result\">Result</button></nav><main id=\"main\"><section id=\"editors\"><div class=\"panel\" data-lang=\"html\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>HTML</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"css\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>CSS</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"js\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>JS</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div></section><div id=\"main-divider\" class=\"divider\" role=\"separator\"></div><section id=\"output\"><div id=\"result\"><div id=\"safe-mode-notice\" class=\"safe-mode-notice\" hidden><div class=\"safe-mode-card\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><h2>The code wasn&rsquo;t run</h2><p>The last time this page was opened its code didn&rsquo;t finish running (it may have frozen the page), so it wasn&rsquo;t run again.</p><button id=\"safe-mode-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run anyway</span></button></div></div></div><div id=\"console-divider\" class=\"divider\" role=\"separator\"></div><div id=\"console\"><div class=\"console-header\"><span class=\"console-title\">Console</span><div class=\"spacer\"></div><button id=\"clear-console-button\" class=\"icon-button\" type=\"button\" title=\"Clear the console\"><svg aria-hidden=\"true\"><use href=\"#icon-clear\"/></svg></button> <button id=\"close-console-button\" class=\"icon-button\" type=\"button\" title=\"Close the console\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div id=\"console-entries\" role=\"log\"></div><div class=\"console-input\"><svg aria-hidden=\"true\"><use href=\"#icon-prompt\"/></svg> <textarea id=\"console-input\" rows=\"1\" spellcheck=\"false\" autocomplete=\"off\" aria-label=\"Run JavaScript in the result\" placeholder=\"Run JavaScript in the result\"></textarea></div></div></section></main><div id=\"layout-menu\" class=\"menu\" role=\"menu\" hidden><button type=\"button\" role=\"menuitemradio\" data-layout=\"top\">Editors on top</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"left\">Editors on the left</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"right\">Editors on the right</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"tabs\">Tabs</button></div><div id=\"more-menu\" class=\"menu\" role=\"menu\" hidden><button id=\"download-html-button\" type=\"button\" role=\"menuitem\">Download as an HTML file</button> <button id=\"download-zip-button\" type=\"button\" role=\"menuitem\">Download as a ZIP file</button> <button id=\"open-file-button\" type=\"button\" role=\"menuitem\">Open a file&hellip;</button><div class=\"menu-separator\" role=\"separator\"></div><button id=\"reset-button\" type=\"button\" role=\"menuitem\">Reset the code</button><div class=\"menu-separator\" role=\"separator\"></div><div class=\"menu-info\"><div class=\"shortcut\"><span>Run</span><kbd id=\"run-shortcut\"></kbd></div><div class=\"shortcut\"><span>Format</span><kbd>Shift+Alt+F</kbd></div></div><div class=\"menu-separator\" role=\"separator\"></div><a id=\"about-link\" role=\"menuitem\" target=\"_blank\" rel=\"noopener\"></a></div><input id=\"file-input\" type=\"file\" accept=\".html,.htm,.zip,text/html,application/zip\" tabindex=\"-1\" aria-hidden=\"true\" hidden><dialog id=\"load-error-dialog\" class=\"load-error-dialog\" aria-labelledby=\"load-error-title\" aria-describedby=\"load-error-description\"><div class=\"dialog-body load-error-body\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><div class=\"load-error-text\"><h2 id=\"load-error-title\">Some of the code couldn&rsquo;t be loaded</h2><p id=\"load-error-description\">The editors for this code explain what went wrong. The rest of the code was loaded and run.</p><ul id=\"load-error-list\" class=\"load-error-list\"></ul></div></div><div class=\"dialog-footer\"><button class=\"run-button dialog-close\" type=\"button\">OK</button></div></dialog><dialog id=\"libraries-dialog\" aria-labelledby=\"libraries-title\"><div class=\"dialog-header\"><h2 id=\"libraries-title\">Libraries</h2><button class=\"icon-button dialog-close\" type=\"button\" title=\"Close\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div class=\"dialog-body\"><div id=\"library-search\" class=\"library-search\"><input id=\"library-search-input\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Search cdnjs (eg. jquery, bootstrap, animate.css)\" aria-label=\"Search cdnjs\"><div id=\"library-search-status\" class=\"library-status\" role=\"status\"></div><div id=\"library-results\" class=\"library-results\"></div></div><form id=\"library-url-form\" class=\"library-url\"><input id=\"library-url-input\" type=\"text\" inputmode=\"url\" autocomplete=\"off\" spellcheck=\"false\" required placeholder=\"Or add the URL of a library\" aria-label=\"The URL of a library\"> <button type=\"submit\" class=\"text-button\" data-type=\"css\">Add CSS</button> <button type=\"submit\" class=\"text-button\" data-type=\"js\">Add JS</button></form><h3>CSS</h3><ol id=\"css-libraries\" class=\"library-list\" data-empty=\"No CSS libraries\"></ol><h3>JavaScript</h3><ol id=\"js-libraries\" class=\"library-list\" data-empty=\"No JavaScript libraries\"></ol><p class=\"dialog-note\">Libraries are added to the result in this order (before your code) the next time the code runs.</p></div><div class=\"dialog-footer\"><button id=\"libraries-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button> <button class=\"text-button dialog-close\" type=\"button\">Done</button></div></dialog></div>";
+  /**
+   * Information about this package (eg. its version).
+   * @type {{name: string, version: string, homepage: string, repoUrl: string, bugsUrl: string}}
+   */
+  const PACKAGE_INFO = {"name":"yourjs-page","version":"0.0.0","homepage":"https://westc.github.io/yourjs-page/","repoUrl":"https://github.com/westc/yourjs-page","bugsUrl":"https://github.com/westc/yourjs-page/issues"};
+
+  /**
+   * The code that runs in the viewer IFRAME.  It is turned into a string so
+   * it can't use anything defined outside of it.
+   */
+  function viewerScript() {
+    const LANGUAGE_KEYS=["html","css","js"],LANGUAGE_NAMES={html:"HTML",css:"CSS",js:"JavaScript"},ACE_MODES={html:"ace/mode/html",css:"ace/mode/css",js:"ace/mode/javascript"},LAYOUTS=["top","left","right","tabs"],TABS=[...LANGUAGE_KEYS,"result"],CONSOLE_LEVELS=["log","info","debug","warn","error","result","command"],NARROW_WIDTH=600,MIN_PANE_SIZE=30,SAFE_MODE_DELAY=1e3,MAX_DATA_URL_LENGTH=19e5,MAX_CONSOLE_ENTRIES=1e3,IS_MAC=/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent),RUN_SHORTCUT=IS_MAC?"Cmd+Enter":"Ctrl+Enter",FORMAT_SHORTCUT="Shift+Alt+F",RESULT_SANDBOX="allow-scripts allow-modals allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock allow-downloads allow-presentation",RESULT_ALLOW="fullscreen; clipboard-read; clipboard-write",CDNJS_API_URL="https://api.cdnjs.com/libraries",CDNJS_FILES_URL="https://cdnjs.cloudflare.com/ajax/libs/",SEARCH_DELAY=250,MAX_OPEN_FILE_SIZE=20971520,$=(e,t=document)=>t.querySelector(e),$$=(e,t=document)=>Array.from(t.querySelectorAll(e)),escapeHtml=e=>e.replace(/[&<>"]/g,e=>`&#${e.charCodeAt(0)};`),escapeStyle=e=>e.replace(/<\/(?=style)/gi,"<\\/"),escapeScript=e=>e.replace(/<\/(?=script)/gi,"<\\/");function createElement(e,t,n){const s=Object.assign(document.createElement(e),t);return n&&s.append(...n),s}async function fetchJson(e,t){const n=await fetch(e,{signal:t});if(!n.ok)throw new Error(`${e} responded with ${n.status}.`);return n.json()}function loadScript(e){return new Promise((t,n)=>{const s=document.createElement("script");s.src=e,s.onload=()=>t(),s.onerror=()=>n(new Error(`Could not load ${e}`)),document.head.append(s)})}const LOOP_TYPES=["ForStatement","ForInStatement","ForOfStatement","WhileStatement","DoWhileStatement"];function protectLoops(e){let t;try{t=acorn.parse(e,{ecmaVersion:"latest",sourceType:"script",locations:!0,allowHashBang:!0})}catch(t){return e}const n=[];!function e(t,s){if(!t||"string"!=typeof t.type)return;const r=LOOP_TYPES.includes(t.type);if(r){const e=`if (__yourjsPageLoopGuard(${t.loc.start.line})) break;`,{body:r}=t;"BlockStatement"===r.type?n.push({position:r.start+1,text:e,depth:s}):n.push({position:r.start,text:`{${e}`,depth:s},{position:r.end,text:"}",depth:s})}for(const n of Object.values(t))Array.isArray(n)?n.forEach(t=>e(t,s+r)):n&&"object"==typeof n&&e(n,s+r)}(t,0),n.sort((e,t)=>t.position-e.position||t.depth-e.depth);let s=e;for(const{position:e,text:t}of n)s=s.slice(0,e)+t+s.slice(e);return s}function hashText(e){let t=5381;for(let n=0;n<e.length;n++)t=(Math.imul(t,33)^e.charCodeAt(n))>>>0;return t.toString(36)}function download(e,t){const n=URL.createObjectURL(e),s=createElement("a",{href:n,download:t});document.body.append(s),s.click(),s.remove(),setTimeout(()=>URL.revokeObjectURL(n),6e4)}const CRC_TABLE=Array.from({length:256},(e,t)=>{for(let e=0;e<8;e++)t=1&t?3988292384^t>>>1:t>>>1;return t>>>0});function crc32(e){let t=-1;for(const n of e)t=CRC_TABLE[255&(t^n)]^t>>>8;return(-1^t)>>>0}function createZip(e){const t=new TextEncoder,n=new Date,s=n.getHours()<<11|n.getMinutes()<<5|n.getSeconds()>>1,r=n.getFullYear()-1980<<9|n.getMonth()+1<<5|n.getDate(),o=[],a=[];let i=0;for(const{name:n,text:l}of e){const e=t.encode(n),c=t.encode(l),d=crc32(c),u=new DataView(new ArrayBuffer(30));u.setUint32(0,67324752,!0),u.setUint16(4,20,!0),u.setUint16(6,2048,!0),u.setUint16(10,s,!0),u.setUint16(12,r,!0),u.setUint32(14,d,!0),u.setUint32(18,c.length,!0),u.setUint32(22,c.length,!0),u.setUint16(26,e.length,!0),o.push(u,e,c);const m=new DataView(new ArrayBuffer(46));m.setUint32(0,33639248,!0),m.setUint16(4,20,!0),m.setUint16(6,20,!0),m.setUint16(8,2048,!0),m.setUint16(12,s,!0),m.setUint16(14,r,!0),m.setUint32(16,d,!0),m.setUint32(20,c.length,!0),m.setUint32(24,c.length,!0),m.setUint16(28,e.length,!0),m.setUint32(42,i,!0),a.push(m,e),i+=30+e.length+c.length}const l=a.reduce((e,t)=>e+t.byteLength,0),c=new DataView(new ArrayBuffer(22));return c.setUint32(0,101010256,!0),c.setUint16(8,e.length,!0),c.setUint16(10,e.length,!0),c.setUint32(12,l,!0),c.setUint32(16,i,!0),new Blob([...o,...a,c],{type:"application/zip"})}const MAX_ZIP_FILE_SIZE=20971520;function readZip(e){const t=new DataView(e);let n=-1;for(let s=e.byteLength-22;s>=Math.max(0,e.byteLength-22-65535);s--)if(101010256===t.getUint32(s,!0)){n=s;break}if(n<0)throw new Error("This is not a ZIP file.");const s=new TextDecoder,r=new Map;let o=t.getUint32(n+16,!0);for(let a=t.getUint16(n+10,!0);a--;){if(33639248!==t.getUint32(o,!0))throw new Error("The ZIP file is damaged.");const n=t.getUint16(o+10,!0),a=t.getUint32(o+20,!0),i=t.getUint16(o+28,!0),l=t.getUint32(o+42,!0),c=s.decode(new Uint8Array(e,o+46,i));o+=46+i+t.getUint16(o+30,!0)+t.getUint16(o+32,!0),c.endsWith("/")||/(^|\/)__MACOSX\//.test(c)||0!==n&&8!==n||r.set(c,async()=>{const s=l+30+t.getUint16(l+26,!0)+t.getUint16(l+28,!0),r=new Uint8Array(e,s,a);if(0===n)return r;const o=[];let i=0;const d=new Blob([r]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();for(let e;!(e=await d.read()).done;){if(i+=e.value.length,i>20971520)throw d.cancel(),new Error(`${c} is too big.`);o.push(e.value)}return new Uint8Array(await new Blob(o).arrayBuffer())})}return r}const DEFAULT_VIEWPORT="width=device-width, initial-scale=1";function serializeDocument(e){return Array.from(e.childNodes,e=>e.nodeType===Node.DOCUMENT_TYPE_NODE?(new XMLSerializer).serializeToString(e):e.nodeType===Node.COMMENT_NODE?`\x3c!--${e.data}--\x3e`:e.outerHTML).join("\n")}function isJavaScript(e){const t=(e.getAttribute("type")??"").trim().toLowerCase();return!t||/^(module|(text|application)\/(java|ecma)script)$/.test(t)}function parseHtmlDocument(e,t,n){const s=(new DOMParser).parseFromString(e,"text/html"),{documentElement:r,head:o,body:a}=s,i={html:"",css:"",js:"",cssUrls:[],jsUrls:[],integrities:new Map},l=e=>e.replace(/^\r?\n/,"").replace(/\r?\n[ \t]*$/,""),c=e=>e.matches('link[rel~="stylesheet" i][href]'),d=e=>e.matches("script[src]")&&isJavaScript(e);function u(e){const t=e.nextSibling;t?.nodeType!==Node.TEXT_NODE||t.data.trim()||t.remove(),e.remove()}function m(e,n){const s=e.getAttribute("link"===e.localName?"href":"src");if(null!=t(s))return!1;n.push(s);const r=e.getAttribute("integrity");return r&&i.integrities.set(s,r),u(e),!0}for(const e of Array.from(o.children)){if(e.matches("meta, title, base"))continue;const t=c(e)?i.cssUrls:d(e)?i.jsUrls:null;if(!t||!m(e,t))break}const p=Array.from(o.children).reverse().find(e=>"style"===e.localName||c(e)&&null!=t(e.getAttribute("href")));p&&(i.css="style"===p.localName?l(p.textContent):t(p.getAttribute("href")),u(p));const h=a.lastElementChild;if("script"===h?.localName&&isJavaScript(h)){const e=h.hasAttribute("src")?t(h.getAttribute("src")):l(h.textContent);if(null!=e){i.js=e,u(h);const t=[];for(;a.lastElementChild&&d(a.lastElementChild)&&m(a.lastElementChild,t););i.jsUrls.push(...t.reverse())}}const f=Array.from(o.childNodes).every(e=>e.nodeType===Node.TEXT_NODE?!e.data.trim():e.matches?.(`meta[charset="utf-8" i], meta[name="viewport" i][content="${DEFAULT_VIEWPORT}"]`)||"title"===e.localName&&e.textContent===n)&&Array.from(r.attributes).every(({name:e,value:t})=>"lang"===e&&"en"===t)&&!a.attributes.length;return i.html=f?a.innerHTML.replace(/^\r?\n/,"").trimEnd():serializeDocument(s).trimEnd(),i}window.yourjsPageViewer={init(e,t){const{options:n,loadErrors:s,runtimeCode:r,formatterUrls:o,parserUrl:a,pageUrl:i,packageInfo:l}=e,c=$("#app"),d=$("#splash");if(!window.ace){d.classList.add("failed");let t={...e.code};return{getCode:()=>({...t}),setCode(e){t={...e}},run(){},destroy(){}}}const u={...e.code},m=JSON.stringify(u),p={css:[...e.code.cssUrls],js:[...e.code.jsUrls]},h=new Map,f=$("#run-button"),g=$("#console-button"),y=$("#console-badge"),E=$("#console-entries"),b=$("#console-input"),v=$("#fullscreen-button");let w="top",L=!LAYOUTS.includes(n.layout);const A=LANGUAGE_KEYS.filter(e=>!n.editors||n.editors.includes(e));let S=TABS.includes(n.tab)&&("result"===n.tab||A.includes(n.tab))?n.tab:"result",C=!1,U=0,x=0,N=!1,T="",_="",k=null;const j=matchMedia("(prefers-color-scheme: dark)"),O=()=>n.theme??(j.matches?"dark":"light"),M=()=>"ace/theme/cloud_editor"+("dark"===O()?"_dark":"");n.theme||j.addEventListener("change",function(){document.documentElement.dataset.theme=O();for(const e of LANGUAGE_KEYS)R[e]?.setTheme(M())});const R={};for(const t of LANGUAGE_KEYS){const s=$(`.panel[data-lang="${t}"]`),r=ace.edit($(".editor",s),{mode:ACE_MODES[t],theme:M(),fontSize:13,tabSize:2,useSoftTabs:!0,showPrintMargin:!1,wrap:n.wordWrap,readOnly:n.readOnly});r.setKeyboardHandler("ace/keyboard/vscode"),r.setValue(e.code[t],-1),r.session.getUndoManager().reset(),n.readOnly&&(r.setHighlightActiveLine(!1),r.session.setUseWorker(!1)),"js"!==t&&r.session.setUseWorker(!1),r.on("change",B),new ResizeObserver(()=>r.resize()).observe(r.container),R[t]=r;const o=$(".panel-title",s);o.title=`Collapse or expand the ${LANGUAGE_NAMES[t]}`,o.addEventListener("click",()=>{"tabs"!==w&&D(t,!s.classList.contains("is-collapsed"))});const a=$(".format-button",s);a.title=`Format the ${LANGUAGE_NAMES[t]} (Shift+Alt+F)`,a.hidden=n.readOnly,a.addEventListener("click",()=>F(t))}for(const e of LANGUAGE_KEYS.filter(e=>!A.includes(e))){const t=$(`.panel[data-lang="${e}"]`),n=t.nextElementSibling??t.previousElementSibling;n?.classList.contains("divider")&&n.remove(),t.remove(),$(`#tabs [data-tab="${e}"]`).remove()}function D(e,t){const n=$(`.panel[data-lang="${e}"]`);n&&(n.classList.toggle("is-collapsed",t),$(".panel-title",n).setAttribute("aria-expanded",`${!t}`))}function I(){return{...Object.fromEntries(LANGUAGE_KEYS.map(e=>[e,R[e].getValue()])),cssUrls:[...p.css],jsUrls:[...p.js]}}function P(e){for(const t of LANGUAGE_KEYS)null!=e[t]&&R[t].getValue()!==e[t]&&(R[t].session.doc.setValue(e[t]),R[t].clearSelection());e.cssUrls&&(p.css=[...e.cssUrls]),e.jsUrls&&(p.js=[...e.jsUrls]),Le(),J()}c.classList.toggle("has-no-editors",!A.length),$("#layout-button").hidden=!A.length;let G=0;function B(){clearTimeout(G),G=setTimeout(J,150)}function J(){clearTimeout(G),f.classList.toggle("is-stale",!!T&&JSON.stringify(I())!==T)}let Y=null;async function F(e){if(n.readOnly)return;try{await(Y??=o.reduce((e,t)=>e.then(()=>loadScript(t)),Promise.resolve()),Y.catch(()=>Y=null),Y)}catch(e){return void alert("The code formatter (js-beautify) could not be loaded.")}const t=R[e],s={html:window.html_beautify,css:window.css_beautify,js:window.js_beautify}[e],r=t.getValue(),a=s(r,{indent_size:t.session.getTabSize(),preserve_newlines:!0,max_preserve_newlines:2,wrap_line_length:0,end_with_newline:/\n$/.test(r)});if(a!==r){const{row:e}=t.getCursorPosition();t.session.doc.setValue(a),t.clearSelection(),t.gotoLine(Math.min(e+1,t.session.getLength()),0,!1)}t.focus()}function H(e,{runId:t,fileNames:s}={}){const o=null!=t,a=(new DOMParser).parseFromString(e.html,"text/html"),{documentElement:i,head:l,body:c}=a,d=e=>JSON.stringify(e).replace(/</g,"\\u003C");function u(e,t={},n){const s=a.createElement(e);for(const[e,n]of Object.entries(t))s.setAttribute(e,n);return null!=n&&(s.textContent=n),s}const m=e=>h.has(e)?{integrity:h.get(e),crossorigin:"anonymous"}:{},p=/<(html|head|body)[\s>]/i.test(e.html);l.querySelector("meta[charset]")||l.prepend(u("meta",{charset:"utf-8"}),"\n");const f=[];if(!p){f.push(u("meta",{name:"viewport",content:DEFAULT_VIEWPORT}));const e=n.title||(o?"":"YourJS Page");e&&f.push(u("title",{},e))}o&&!l.querySelector("base[href]")&&f.unshift(u("base",{href:document.baseURI})),o&&f.push(u("script",{},`(${r})(${d({runId:t,loopTimeout:n.loopTimeout})});`)),f.push(...e.cssUrls.map(e=>u("link",{rel:"stylesheet",href:e,...m(e)})),...e.jsUrls.map(e=>u("script",{src:e,...m(e)})));const g=Array.from(l.children).find(e=>!e.matches("meta, title, base"))??null;for(const e of f)l.insertBefore(e,g),l.insertBefore(a.createTextNode("\n"),g);return p||(i.insertBefore(a.createTextNode("\n"),l),i.insertBefore(a.createTextNode("\n"),c),i.append("\n"),l.prepend("\n"),c.prepend("\n"),c.append("\n"),o||i.hasAttribute("lang")||i.setAttribute("lang","en")),l.append(s?u("link",{rel:"stylesheet",href:s.css}):u("style",{},o?escapeStyle(e.css):`\n${escapeStyle(e.css)}\n`),"\n"),c.append(s?u("script",{src:s.js}):u("script",{},o?`yourjsPageRunJs(${d(e.js)});`:`\n${escapeScript(e.js)}\n`),"\n"),a.doctype||a.insertBefore(a.implementation.createDocumentType("html","",""),a.firstChild),`${serializeDocument(a)}\n`}function K(e){const t=document.createElement("iframe");t.title="Result",t.setAttribute("sandbox",RESULT_SANDBOX),t.setAttribute("allow",RESULT_ALLOW);const n=`data:text/html;charset=utf-8,${encodeURIComponent(e)}`;return n.length<=19e5?t.src=n:t.srcdoc=e,t}let z=null;async function W(e){if(!(n.loopTimeout>0&&/\b(for|while|do)\b/.test(e)))return e;try{await(z??=loadScript(a))}catch(t){return z=null,X({level:"warn",parts:[{kind:"string",text:"Loops can\u2019t be stopped if they run for too long because the JavaScript parser (Acorn) couldn\u2019t be loaded."}]}),e}return protectLoops(e)}async function V(e){const t=I();T=JSON.stringify(t),J(),ee(),$("#safe-mode-notice").hidden=!0;const n=_=`${Date.now()}-${Math.random()}`;k?.remove(),k=null,e&&"tabs"===w&&ie("result"),Pe(T===m);const s=await W(t.js);_===n&&(k=K(H({...t,js:s},{runId:_})),$("#result").append(k))}function X({level:e,parts:t,depth:n,location:s,table:r}){if(!CONSOLE_LEVELS.includes(e)||!Array.isArray(t))return;const o=document.createElement("div");o.className=`entry level-${e}`,n>0&&(o.style.paddingLeft=20+16*Math.min(n,20)+"px");const a=createElement("div",{className:"entry-trees"}),i=createElement("div",{className:"entry-text"});t.forEach((e,t)=>{t&&i.append(" "),i.append(q(e,a))}),r&&i.append(function({columns:e,rows:t}){if(!Array.isArray(e)||!Array.isArray(t))return createElement("span");const n=(e,t)=>{const n=createElement(e,{textContent:`${t?.text??""}`});return/^\w+$/.test(t?.kind??"")&&(n.className=`kind-${t.kind}`),n};return createElement("div",{className:"console-table-wrapper"},[createElement("table",{className:"console-table"},[createElement("thead",{},[createElement("tr",{},e.map(e=>n("th",{text:e})))]),createElement("tbody",{},t.filter(Array.isArray).map(e=>createElement("tr",{},e.map(e=>n("td",e)))))])])}(r)),o.append(i);const l=Math.floor(s?.line);if(l>0&&A.includes("js")){const e=Math.max(1,Math.floor(s.column)||1),t=document.createElement("button");t.type="button",t.className="entry-location",t.textContent=`script.js:${l}`,t.title="Show this line in the JavaScript",t.addEventListener("click",()=>function(e,t){"tabs"===w?ie("js"):D("js",!1);const n=R.js;n.gotoLine(e,t-1,!1),n.scrollToLine(e-1,!0,!1),n.focus()}(l,e)),o.append(t)}o.append(a);const c=E.scrollHeight-E.scrollTop-E.clientHeight<4;for(E.append(o);E.childElementCount>1e3;)E.firstElementChild.remove();c&&(E.scrollTop=E.scrollHeight),C||"command"===e||(U++,"error"===e&&x++,te())}function q(e,t){const n=createElement("span",{textContent:`${e?.text??""}`});if(/^\w+$/.test(e?.kind??"")&&(n.className=`kind-${e.kind}`),!Number.isInteger(e?.id))return n;n.classList.add("expander"),n.tabIndex=0,n.setAttribute("role","button"),n.setAttribute("aria-expanded","false");let s=null;const r=async()=>{const r="true"!==n.getAttribute("aria-expanded");if(n.setAttribute("aria-expanded",`${r}`),s)return void(s.hidden=!r);s=createElement("div",{className:"tree"}),t.append(s);const o=await(a=e.id,new Promise(e=>{const t=Q++;Z.set(t,e),k?.contentWindow.postMessage({yourjsPage:_,type:"expand",id:a,requestId:t},"*")}));var a;s.replaceChildren(...o.map(e=>{const t=createElement("div",{className:"tree-children"}),n=createElement("div",{className:"tree-row"},[createElement("span",{className:"tree-key",textContent:`${e?.key??""}`}),`${e?.separator??": "}`,q(e,t)]);return createElement("div",{},[n,t])})),function(e){const t=e.getBoundingClientRect(),n=E.getBoundingClientRect(),s=t.bottom-n.bottom;s>0&&(E.scrollTop+=Math.min(s,t.top-n.top-24))}(s)};return n.addEventListener("click",r),n.addEventListener("keydown",e=>{"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),r())}),n}addEventListener("message",e=>{const t=e.data;if(k&&e.source===k.contentWindow&&t?.yourjsPage===_)if("log"===t.type)X(t);else if("clear"===t.type)ee();else if("run"===t.type)V(!0);else if("loaded"===t.type){const e=_;setTimeout(()=>{_===e&&Pe(!1)},1e3)}else"children"===t.type&&(Z.get(t.requestId)?.(Array.isArray(t.children)?t.children:[]),Z.delete(t.requestId))});const Z=new Map;let Q=1;function ee(){E.replaceChildren();for(const e of Z.values())e([]);Z.clear(),U=x=0,te()}function te(){y.hidden=!U,y.textContent=U>99?"99+":`${U}`,y.classList.toggle("has-errors",!!x),g.title=U?`Console (${U} new message${1===U?"":"s"})`:"Console"}function ne(e,t=!0){C=e,c.classList.toggle("is-console-shown",e),g.setAttribute("aria-pressed",`${e}`),e&&(U=x=0,te(),E.scrollTop=E.scrollHeight,t&&"tabs"===w&&ie("result"))}const se=[];let re=0;function oe(){b.style.height="auto",b.style.height=`${b.scrollHeight}px`}function ae(e){w=e;for(const e of LAYOUTS)c.classList.toggle(`layout-${e}`,e===w);for(const e of $$("#layout-menu [data-layout]"))e.setAttribute("aria-checked",`${e.dataset.layout===w}`)}function ie(e){S=e,c.dataset.tab=e;for(const t of $$(".panel"))t.classList.toggle("is-active-tab",t.dataset.lang===e);for(const t of $$("#tabs [data-tab]"))t.setAttribute("aria-selected",`${t.dataset.tab===e}`)}b.addEventListener("input",oe),b.addEventListener("keydown",e=>{const{value:t,selectionStart:n,selectionEnd:s}=b;if("Enter"!==e.key||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey){if(("ArrowUp"===e.key||"ArrowDown"===e.key)&&n===s){const r="ArrowUp"===e.key,o=r?!t.slice(0,n).includes("\n"):!t.slice(s).includes("\n"),a=re+(r?-1:1);if(!o||a<0||a>se.length)return;e.preventDefault(),re=a,b.value=se[a]??"",oe()}}else{if(e.preventDefault(),!t.trim())return;se.at(-1)!==t&&se.push(t),re=se.length,X({level:"command",parts:[{kind:"string",text:t}]});const n=_;W(t).then(e=>{_===n&&(k?k.contentWindow.postMessage({yourjsPage:_,type:"eval",code:e},"*"):X({level:"error",parts:[{kind:"string",text:"The code can\u2019t be run until the result has loaded."}]}))}),b.value="",oe()}}),g.addEventListener("click",()=>ne(!C)),$("#close-console-button").addEventListener("click",()=>ne(!1)),$("#clear-console-button").addEventListener("click",ee);const le=()=>innerWidth<600?"tabs":"top";ae(L?le():n.layout),ie(S),addEventListener("resize",()=>{L&&le()!==w&&ae(le())});for(const e of $$("#tabs [data-tab]"))e.addEventListener("click",()=>{ie(e.dataset.tab),R[e.dataset.tab]?.focus()});for(const e of $$("#layout-menu [data-layout]"))e.addEventListener("click",()=>{L=!1,ae(e.dataset.layout),pe()});const ce=e=>parseFloat(getComputedStyle(e).flexGrow)||0;function de(e,t){if(0!==t.button)return;const n=e.previousElementSibling,s=e.nextElementSibling;if(n.classList.contains("is-collapsed")||s.classList.contains("is-collapsed"))return;t.preventDefault();const r=getComputedStyle(e.parentElement).flexDirection.startsWith("row"),o=n.getBoundingClientRect(),a=s.getBoundingClientRect(),i=e=>r?e.width:e.height,l=i(o),d=l+i(a),u=ce(n)+ce(s),m=(r?o.left<=a.left:o.top<=a.top)?1:-1,p=r?t.clientX:t.clientY;function h(e){const t=m*((r?e.clientX:e.clientY)-p),o=Math.max(30,Math.min(d-30,l+t));n.style.flexGrow=""+u*o/d,s.style.flexGrow=""+u*(d-o)/d}function f(){e.removeEventListener("pointermove",h),e.removeEventListener("pointerup",f),e.removeEventListener("pointercancel",f),e.classList.remove("is-dragging"),c.classList.remove("is-dragging-divider")}e.setPointerCapture(t.pointerId),e.classList.add("is-dragging"),c.classList.add("is-dragging-divider"),e.addEventListener("pointermove",h),e.addEventListener("pointerup",f),e.addEventListener("pointercancel",f)}for(const e of $$(".divider"))e.addEventListener("pointerdown",t=>de(e,t));let ue=null;function me(e,t){pe(),ue={button:e,menu:t},t.hidden=!1,e.setAttribute("aria-expanded","true");const n=e.getBoundingClientRect(),s=t.offsetWidth;t.style.top=`${n.bottom+4}px`,t.style.left=`${Math.max(8,Math.min(n.right-s,innerWidth-s-8))}px`,($('[aria-checked="true"]',t)??$("button, a",t))?.focus()}function pe(e){if(!ue)return;const{button:t,menu:n}=ue;ue=null,n.hidden=!0,t.setAttribute("aria-expanded","false"),e&&t.focus()}for(const[e,t]of[[$("#layout-button"),$("#layout-menu")],[$("#more-button"),$("#more-menu")]])e.addEventListener("click",()=>{ue?.menu===t?pe():me(e,t)});document.addEventListener("pointerdown",e=>{!ue||ue.menu.contains(e.target)||ue.button.contains(e.target)||pe()}),addEventListener("blur",()=>pe());const he=$("#reset-button");he.hidden=n.readOnly,he.nextElementSibling.hidden=n.readOnly,he.addEventListener("click",()=>{pe(),confirm("Reset the code to how it was when the page was loaded?  Your changes will be lost.")&&(P(u),V(!0))}),$("#run-shortcut").textContent=RUN_SHORTCUT;const fe=$("#about-link");fe.href=l.homepage,fe.textContent=`YourJS Page v${l.version}`,fe.addEventListener("click",()=>pe());const ge=$("#libraries-dialog"),ye=$("#libraries-button"),Ee=$("#libraries-badge"),be=$("#library-search-input"),$e=$("#library-search-status"),ve=$("#library-results");function we(e){const t=/^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/([^/]+)\/([^/]+)\/(.+)$/.exec(e);return t?`${t[1]}@${t[2]}/${t[3]}`:e}function Le(){for(const e of["css","js"]){const t=p[e];$(`#${e}-libraries`).replaceChildren(...t.map((n,s)=>{const r=(e,t,n,s)=>{const r=createElement("button",{type:"button",className:"icon-button",title:t,disabled:n});return r.innerHTML=`<svg aria-hidden="true"><use href="#icon-${e}"/></svg>`,r.addEventListener("click",s),r};return createElement("li",{},[createElement("span",{className:"library-url-text",textContent:we(n),title:n}),r("up","Move up",0===s,()=>Se(e,s,-1)),r("down","Move down",s===t.length-1,()=>Se(e,s,1)),r("close","Remove",!1,()=>Ce(e,s))])}))}const e=p.css.length+p.js.length;Ee.hidden=!e,Ee.textContent=`${e}`,ye.title=e?`Libraries (${e})`:"Libraries"}function Ae(e,t,n){n&&h.set(t,n),p[e].includes(t)||p[e].push(t),Le(),J()}function Se(e,t,n){const s=p[e];[s[t],s[t+n]]=[s[t+n],s[t]],Le(),J();const r=$$(`#${e}-libraries li`)[t+n]?.querySelectorAll("button");(r?.[n<0?0:1].disabled?r[n<0?1:0]:r?.[n<0?0:1])?.focus()}function Ce(e,t){p[e].splice(t,1),Le(),J()}ge.classList.toggle("is-read-only",n.readOnly),$("#library-search").hidden=!n.librarySearch;const Ue=new Map;function xe(e,t){const n=`${e}@${t}`;if(!Ue.has(n)){const s=fetchJson(`${CDNJS_API_URL}/${encodeURIComponent(e)}/${encodeURIComponent(t)}?fields=files,sri`);s.catch(()=>Ue.delete(n)),Ue.set(n,s)}return Ue.get(n)}async function Ne(e,t,n,s){let r;try{r=(await xe(e,t)).sri?.[n]}catch(e){}Ae(/\.css$/i.test(n)?"css":"js",`${CDNJS_FILES_URL}${e}/${t}/${n}`,r);const o=s.textContent;s.textContent="Added",setTimeout(()=>s.textContent=o,1500)}function Te(e){const t=createElement("button",{type:"button",className:"text-button",textContent:"Add",title:`Add ${e.filename}`});t.addEventListener("click",()=>Ne(e.name,e.version,e.filename,t));const n=createElement("button",{type:"button",className:"text-button",textContent:"Files"});n.title="Choose a version and file",n.setAttribute("aria-expanded","false");const s=createElement("div",{className:"library-files",hidden:!0});return n.addEventListener("click",()=>{s.hidden=!s.hidden,n.setAttribute("aria-expanded",`${!s.hidden}`),s.hidden||s.childNodes.length||async function(e,t){let n;t.replaceChildren("Loading\u2026");try{({versions:n}=await fetchJson(`${CDNJS_API_URL}/${encodeURIComponent(e.name)}?fields=versions`))}catch(e){return void t.replaceChildren("The versions could not be loaded.")}n=[...new Set([e.version,...n])].sort((e,t)=>t.localeCompare(e,void 0,{numeric:!0}));const s=createElement("select",{title:"Version"},n.map(t=>createElement("option",{value:t,textContent:t,selected:t===e.version}))),r=createElement("div",{className:"library-file-list"});async function o(){const t=s.value;let n;r.replaceChildren("Loading\u2026");try{({files:n}=await xe(e.name,t))}catch(e){return void r.replaceChildren("The files could not be loaded.")}s.value===t&&(n=n.filter(e=>/\.(css|js)$/i.test(e)).sort((e,t)=>t.includes(".min.")-e.includes(".min.")||e.length-t.length||e.localeCompare(t)),r.replaceChildren(...n.length?n.map(n=>{const s=createElement("button",{type:"button",textContent:n,title:`Add ${n}`});return s.addEventListener("click",()=>Ne(e.name,t,n,s)),s}):["There are no CSS or JavaScript files in this version."]))}s.addEventListener("change",o),t.replaceChildren(s,r),o()}(e,s)}),createElement("div",{className:"library-result"},[createElement("div",{className:"library-result-main"},[createElement("div",{className:"library-result-text"},[createElement("span",{className:"library-name",textContent:e.name}),createElement("span",{className:"library-version",textContent:e.version}),createElement("div",{className:"library-description",textContent:e.description??"",title:e.description??""})]),t,n]),s])}let _e=null,ke=0;async function je(){const e=be.value.trim();if(_e?.abort(),!e)return _e=null,$e.textContent="",void ve.replaceChildren();const t=_e=new AbortController;$e.textContent="Searching\u2026";try{const{results:n}=await fetchJson(`${CDNJS_API_URL}?search=${encodeURIComponent(e)}&fields=version,description,filename&limit=25`,t.signal),s=n.filter(e=>e.version&&e.filename);$e.textContent=s.length?"":`No libraries match \u201c${e}\u201d.`,ve.replaceChildren(...s.map(Te))}catch(e){if(t.signal.aborted)return;$e.textContent="The search failed.  Please check your connection and try again.",ve.replaceChildren()}}be.addEventListener("input",()=>{clearTimeout(ke),ke=setTimeout(je,250)}),$("#library-url-form").addEventListener("submit",e=>{e.preventDefault();const t=$("#library-url-input");let n;try{n=new URL(t.value.trim(),document.baseURI).href}catch(e){return}Ae("css"===e.submitter?.dataset.type?"css":"js",n),t.value=""}),ye.addEventListener("click",()=>{pe(),ge.showModal(),n.librarySearch&&!n.readOnly&&be.focus()});for(const e of $$(".dialog-close",ge))e.addEventListener("click",()=>ge.close());function Oe(){return(n.title||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"yourjs-page"}ge.addEventListener("click",e=>{e.target===ge&&ge.close()}),$("#libraries-run-button").addEventListener("click",()=>{ge.close(),V(!0)}),Le(),$("#download-html-button").addEventListener("click",()=>{pe(),download(new Blob([H(I())],{type:"text/html"}),`${Oe()}.html`)}),$("#download-zip-button").addEventListener("click",()=>{pe();const e=I(),t=Oe();download(createZip([{name:`${t}/index.html`,text:H(e,{fileNames:{css:"style.css",js:"script.js"}})},{name:`${t}/style.css`,text:e.css},{name:`${t}/script.js`,text:e.js}]),`${t}.zip`)});const Me=$("#file-input"),Re=$("#open-file-button");Re.hidden=n.readOnly,Re.addEventListener("click",()=>{pe(),Me.value="",Me.click()}),Me.addEventListener("change",async()=>{const e=Me.files[0];if(e)try{await async function(e){if(e.size>20971520)throw new Error("It is too big.");const t=await e.arrayBuffer(),s=new Uint8Array(t),r=new TextDecoder,o=n.title||"YourJS Page";let a;if(80===s[0]&&75===s[1]&&3===s[2]&&4===s[3]){const e=new Map;let n=0;for(const[s,r]of readZip(t)){if(!/\.(html?|css|m?js)$/i.test(s))continue;const t=await r();if(n+=t.length,n>52428800)throw new Error("Its files are too big.");e.set(s,t)}const s=[...e.keys()].filter(e=>/\.html?$/i.test(e)).sort((e,t)=>/(^|\/)index\.html?$/i.test(t)-/(^|\/)index\.html?$/i.test(e)||e.split("/").length-t.split("/").length||e.localeCompare(t))[0];if(!s)throw new Error("There is no HTML file in it.");const i=s.replace(/[^/]*$/,""),l=t=>{const n=new URL(t,`https://zip/${s}`),o="https://zip"===n.origin?decodeURIComponent(n.pathname.slice(1)):null;return null!=o&&e.has(o)?r.decode(e.get(o)):null};a=parseHtmlDocument(r.decode(e.get(s)),l,o);for(const[t,n]of[["css","style.css"],["js","script.js"]])!a[t]&&e.has(i+n)&&(a[t]=r.decode(e.get(i+n)))}else a=parseHtmlDocument(r.decode(s),()=>null,o);for(const[e,t]of a.integrities)h.set(e,t);P(a),V(!0)}(e)}catch(t){alert(`${e.name} could not be opened.  ${t.message}`)}});const De=`yourjs-page:running:${hashText(`${i}\n${m}`)}`,Ie=(()=>{try{return localStorage}catch(e){return null}})();function Pe(e){try{e?Ie?.setItem(De,`${Date.now()}`):Ie?.removeItem(De)}catch(e){}}function Ge(e){N=e,t.setMaximized(e),Be()}function Be(){const e=!!document.fullscreenElement||N;$("use",v).setAttribute("href",e?"#icon-exit-fullscreen":"#icon-fullscreen"),v.title=e?"Exit full screen":"Full screen"}addEventListener("pagehide",()=>Pe(!1)),$("#safe-mode-run-button").addEventListener("click",()=>V(!0)),v.addEventListener("click",async function(){if(document.fullscreenElement)await document.exitFullscreen();else if(N)Ge(!1);else try{if(!document.fullscreenEnabled)throw new Error("Full screen is not allowed.");await document.documentElement.requestFullscreen()}catch(e){Ge(!0)}}),document.addEventListener("fullscreenchange",Be),addEventListener("keydown",e=>{if(!(IS_MAC?e.metaKey&&!e.ctrlKey:e.ctrlKey&&!e.metaKey)||"Enter"!==e.key||e.shiftKey||e.altKey)if(e.shiftKey&&e.altKey&&!e.ctrlKey&&!e.metaKey&&"KeyF"===e.code){const t=LANGUAGE_KEYS.find(e=>R[e].isFocused());t&&(e.preventDefault(),e.stopPropagation(),F(t))}else"Escape"!==e.key||document.querySelector("dialog[open]")||(ue?pe(!0):N&&Ge(!1));else e.preventDefault(),e.stopPropagation(),V(!0)},!0),f.title=`Run (${RUN_SHORTCUT})`,f.addEventListener("click",()=>V(!0)),$("#open-button").addEventListener("click",async function(){const e=open("","_blank");if(!e)return;const t=I();t.js=await W(t.js);const s=e.document;s.open(),s.write(["<!DOCTYPE html>","<html>","<head>",'<meta charset="utf-8">','<meta name="viewport" content="width=device-width, initial-scale=1">',`<title>${escapeHtml(n.title||"YourJS Page")}</title>`,"<style>html,body{height:100%;margin:0}iframe{border:0;display:block;height:100%;width:100%}</style>","</head>","<body></body>","</html>"].join("")),s.close(),s.body.append(K(H(t,{runId:""}))),e.opener=null});const Je=$("#title");Je.textContent=n.title,Je.title=n.title,te(),ne(n.showConsole,!1);const Ye=$("#logo-link");if(Ye.href=l.homepage,Ye.title=`YourJS Page v${l.version}`,c.hidden=!1,d.classList.add("hidden"),!e.isRestart&&function(){try{return null!=Ie?.getItem(De)}catch(e){return!1}}()?($("#safe-mode-notice").hidden=!1,$("#safe-mode-run-button").focus()):V(!1),s.length){const e=$("#load-error-dialog");$("#load-error-list").replaceChildren(...s.map(e=>createElement("li",{},[createElement("span",{className:"load-error-language",textContent:e.language}),createElement("span",{className:"load-error-message",textContent:e.message})]))),$(".dialog-close",e).addEventListener("click",()=>e.close()),e.showModal(),$(".dialog-close",e).focus()}return{getCode:I,setCode(e,t){P(e),t.run?V(!1):J()},run:()=>V(!1),destroy(){k?.remove(),k=null}}}};
+  }
+
+  /**
+   * The code that runs in the result IFRAME before the user's code (eg. to
+   * show what is logged in the viewer's console).  It is turned into a string
+   * so it can't use anything defined outside of it.
+   * @param {{runId: string}} config
+   */
+  function previewRuntime(config) {
+    const VIEWER=parent,RUN_ID=config.runId,SCRIPT_NAME="script.js",MAX_DEPTH=2,MAX_ITEMS=100,MAX_HTML_LENGTH=500,MAX_CHILDREN=200,MAX_TABLE_ROWS=1e3;function send(e,t){try{VIEWER.postMessage({yourjsPage:RUN_ID,type:e,...t},"*")}catch(e){}}const toString=e=>Object.prototype.toString.call(e),isIdentifier=e=>/^[A-Za-z_$][\w$]*$/.test(e);function getKind(e){return null===e?"null":e instanceof Error?"error":"object"==typeof e&&e instanceof Node?"node":typeof e}function preview(e,t=0,n=[]){switch(typeof e){case"string":return t?JSON.stringify(e):e;case"number":return Object.is(e,-0)?"-0":`${e}`;case"bigint":return`${e}n`;case"symbol":return e.toString();case"boolean":case"undefined":return`${e}`;case"function":return previewFunction(e)}if(null===e)return"null";if(n.includes(e))return"[Circular]";try{return previewObject(e,t,[...n,e])}catch(t){return toString(e)}}function previewFunction(e){const t=Function.prototype.toString.call(e);return/^class\b/.test(t)?`class ${e.name}`:`\u0192 ${e.name}()`}function previewObject(e,t,n){if(e===window)return"Window";if(e instanceof Error){const n=`${e.name}: ${e.message}`;if(t||!e.stack)return n;const r=getStack(e).replace(/(\n[^\n]*append@\[native code\])?\n[^\n]*\byourjsPageRunJs\b[^]*/,"");return r.split("\n")[0].includes(e.message)?r:`${n}\n${r}`}if(e instanceof Node)return previewNode(e,t);if(e instanceof Date)return isNaN(e)?"Invalid Date":t?e.toISOString():`${e}`;if(e instanceof RegExp)return`${e}`;if(e instanceof Promise)return"Promise {\u2026}";if(e instanceof WeakMap||e instanceof WeakSet)return`${e.constructor.name} {\u2026}`;const r=Array.isArray(e)||ArrayBuffer.isView(e),o=getConstructorName(e),s=r?"Array"===o?"":o:"Object"===o?"":`${o} `;if(e instanceof Map||e instanceof Set){const r=`${o}(${e.size})`;if(t>2)return`${r} {\u2026}`;const s=[];for(const r of e){if(s.length>=100){s.push("\u2026");break}s.push(e instanceof Map?`${preview(r[0],t+1,n)} => ${preview(r[1],t+1,n)}`:preview(r,t+1,n))}return`${r} {${s.join(", ")}}`}if(r){if(t>2)return`${s||"Array"}(${e.length})`;const r=[];for(let o=0;o<e.length;o++){if(r.length>=100){r.push("\u2026");break}r.push(o in e?preview(e[o],t+1,n):"empty")}return`${s?`${s}(${e.length}) `:""}[${r.join(", ")}]`}if(t>2)return`${s}{\u2026}`;const a=Reflect.ownKeys(e).filter(t=>Object.prototype.propertyIsEnumerable.call(e,t)),i=a.slice(0,100).map(r=>{let o;try{o=preview(e[r],t+1,n)}catch(e){o="(\u2026)"}return`${"symbol"==typeof r?`[${r.toString()}]`:isIdentifier(r)?r:JSON.stringify(r)}: ${o}`});return a.length>100&&i.push("\u2026"),`${s}{${i.join(", ")}}`}function getConstructorName(e){const t=Object.getPrototypeOf(e);if(!t)return"Object";const n=t.constructor?.name;return"string"==typeof n&&n?n:toString(e).slice(8,-1)}function previewNode(e,t){switch(e.nodeType){case Node.ELEMENT_NODE:{if(!t){const t=e.outerHTML;return t.length>500?`${t.slice(0,500)}\u2026`:t}const n=Array.from(e.attributes,({name:e,value:t})=>` ${e}="${t}"`).join("");return`<${e.localName}${n}>`}case Node.TEXT_NODE:return`#text ${JSON.stringify(e.data)}`;case Node.COMMENT_NODE:return`\x3c!--${e.data}--\x3e`;case Node.DOCUMENT_NODE:return"#document";case Node.DOCUMENT_FRAGMENT_NODE:return"#document-fragment";default:return e.nodeName}}function toParts(e){if("string"==typeof e[0]&&e.length>1&&/%[sdifoOc]/.test(e[0])){const t=e.slice(1),n=e[0].replace(/%([sdifoOc%])/g,(e,n)=>{if("%"===n)return"%";if(!t.length)return e;const r=t.shift();switch(n){case"s":return"string"==typeof r?r:preview(r,1);case"d":case"i":return"symbol"==typeof r?"NaN":`${parseInt(r,10)}`;case"f":return"symbol"==typeof r?"NaN":`${parseFloat(r)}`;case"c":return"";default:return preview(r,1)}});e=[n,...t]}return e.map(e=>toPart(e))}const expandableValues=new Map,MAX_EXPANDABLE_VALUES=5e3;let lastExpandableId=0;function isExpandable(e){return null!==e&&"object"==typeof e&&(e instanceof Node?e.hasChildNodes():!(e instanceof Error||e instanceof Date||e instanceof RegExp||e instanceof Promise))}function toPart(e,t=0){const n={kind:getKind(e),text:preview(e,t)};return isExpandable(e)&&(n.id=++lastExpandableId,expandableValues.set(n.id,e),expandableValues.size>MAX_EXPANDABLE_VALUES&&expandableValues.delete(expandableValues.keys().next().value)),n}function isBuiltInPrototype(e){try{return e===Object.prototype||/\[native code\]\s*\}$/.test(Function.prototype.toString.call(e.constructor))}catch(e){return!0}}function getChildren(e){const t=[];let n=0;const r=(e,r,o)=>{n++,t.length<200&&t.push({key:e,...o&&{separator:o},...r})};try{if(e instanceof Map)for(const[t,n]of e)r(preview(t,1),toPart(n,1)," => ");else if(e instanceof Set){let t=0;for(const n of e)r(""+t++,toPart(n,1))}else if(e instanceof Node)for(const t of e.childNodes)r("",toPart(t,1),"");else{for(const t of Reflect.ownKeys(e)){const n="symbol"==typeof t?`[${t.toString()}]`:t,o=Object.getOwnPropertyDescriptor(e,t);r(n,o&&!("value"in o)?{kind:"getter",text:o.get?"(\u2026)":"undefined"}:toPart(o?.value,1))}const t=Object.getPrototypeOf(e);t&&!isBuiltInPrototype(t)&&r("[[Prototype]]",toPart(t,1))}}catch(e){r("",{kind:"error",text:`${e}`},"")}return n>t.length&&t.push({key:"",separator:"",kind:"null",text:`\u2026 ${n-t.length} more`}),t}function toTable(e,t){if(null===e||"object"!=typeof e)return null;const n=(e instanceof Map?Array.from(e,([e,t])=>[preview(e,1),t]):e instanceof Set?Array.from(e,(e,t)=>[`${t}`,e]):Object.keys(e).map(t=>[t,e[t]])).slice(0,1e3),r=e=>null!==e&&("object"==typeof e||"function"==typeof e),o=(e,t)=>{try{return toPart(null==t?e:e[t],1)}catch(e){return{kind:"error",text:`${e}`}}},s=new Set;let a=!1;for(const[,e]of n)r(e)?Object.keys(e).forEach(e=>s.add(e)):a=!0;const i=Array.isArray(t)?t.map(e=>`${e}`):[...s];return{columns:["(index)",...i,...a?["Value"]:[]],rows:n.map(([e,t])=>[{kind:"index",text:e},...i.map(e=>r(t)&&e in t?o(t,e):null),...a?[r(t)?null:o(t)]:[]])}}function getStack(e){return`${e?.stack??""}`.split(location.href).join("result")}function getScriptLocation(e){const t=new RegExp(`(?<![\\w./-])${"script.js".replace(".","\\.")}:(\\d+):(\\d+)`).exec(getStack(e));return t?{line:+t[1],column:+t[2]}:null}let groupDepth=0;function log(e,t,n){send("log",{level:e,parts:toParts(t),depth:groupDepth,...n})}const counts=new Map,timers=new Map,ORIGINAL_CONSOLE={...console},CONSOLE_FUNCS={log:(...e)=>log("log",e),info:(...e)=>log("info",e),debug:(...e)=>log("debug",e),warn:(...e)=>log("warn",e),error:(...e)=>log("error",e),dir:e=>log("log",[e]),dirxml:(...e)=>log("log",e),table:(e,t)=>{const n=toTable(e,t);n?send("log",{level:"log",parts:[],table:n,depth:groupDepth}):log("log",[e])},trace:(...e)=>log("log",e.length?e:["console.trace"]),assert:(e,...t)=>{e||log("error","string"==typeof t[0]?[`Assertion failed: ${t[0]}`,...t.slice(1)]:["Assertion failed",...t])},clear:()=>send("clear"),count:(e="default")=>{counts.set(`${e}`,(counts.get(`${e}`)??0)+1),log("log",[`${e}: ${counts.get(`${e}`)}`])},countReset:(e="default")=>counts.delete(`${e}`),time:(e="default")=>timers.set(`${e}`,performance.now()),timeLog:(e="default",...t)=>{timers.has(`${e}`)&&log("log",[`${e}: ${performance.now()-timers.get(`${e}`)} ms`,...t])},timeEnd:(e="default")=>{timers.has(`${e}`)&&log("log",[`${e}: ${performance.now()-timers.get(`${e}`)} ms`]),timers.delete(`${e}`)},group:(...e)=>{log("log",e.length?e:["console.group"]),groupDepth++},groupCollapsed:(...e)=>CONSOLE_FUNCS.group(...e),groupEnd:()=>{groupDepth=Math.max(0,groupDepth-1)}};for(const[e,t]of Object.entries(CONSOLE_FUNCS)){const n=ORIGINAL_CONSOLE[e];console[e]=function(...e){try{t(...e)}catch(e){}return n?.apply(this,e)}}function logUncaught(e,t,n){send("log",{level:"error",parts:[{kind:"error",text:t instanceof Error?`${e} ${t.name}: ${t.message}`:`${e} ${preview(t,1)}`}],depth:0,location:n??getScriptLocation(t)})}addEventListener("error",e=>{const t="script.js"===e.filename||isRunningScript&&!getStack(e.error).includes("script.js");null!=e.error||t?logUncaught("Uncaught",e.error,t?{line:e.lineno,column:e.colno}:null):send("log",{level:"error",parts:[{kind:"error",text:e.message}],depth:0})}),addEventListener("error",e=>{const{target:t}=e;(t instanceof HTMLScriptElement||t instanceof HTMLLinkElement)&&send("log",{level:"error",parts:[{kind:"error",text:`Failed to load ${t.src||t.href}`}],depth:0})},!0),addEventListener("unhandledrejection",e=>{logUncaught("Uncaught (in promise)",e.reason)}),addEventListener("message",e=>{const t=e.data;if(e.source!==VIEWER||t?.yourjsPage!==RUN_ID)return;if("expand"===t.type){const e=expandableValues.get(t.id);return void send("children",{requestId:t.requestId,children:e?getChildren(e):[]})}if("eval"!==t.type)return;let n;try{n=(0,eval)(`${t.code}\n//# sourceURL=console.js`)}catch(e){return void logUncaught("Uncaught",e,null)}send("log",{level:"result",parts:[toPart(n,"string"==typeof n?1:0)],depth:0})});let loopTaskStart=null;const stoppedLoopLines=new Set;window.__yourjsPageLoopGuard=e=>{const t=performance.now();return null==loopTaskStart?(loopTaskStart=t,setTimeout(()=>{loopTaskStart=null,stoppedLoopLines.clear()}),!1):!(t-loopTaskStart<config.loopTimeout)&&(stoppedLoopLines.has(e)||(stoppedLoopLines.add(e),send("log",{level:"warn",parts:[{kind:"string",text:`The loop on line ${e} was stopped because the code ran for more than ${config.loopTimeout/1e3} seconds without a break.`}],depth:0,location:{line:e,column:1}})),!0)};for(const e of["alert","confirm","prompt"]){const t=window[e];window[e]=function(...e){try{return t.apply(this,e)}finally{null!=loopTaskStart&&(loopTaskStart=performance.now())}}}document.addEventListener("DOMContentLoaded",()=>send("loaded")),addEventListener("click",e=>{const t=e.target instanceof Element&&e.target.closest('a[href^="#"]');if(!t||e.defaultPrevented||t.target&&"_self"!==t.target)return;e.preventDefault();let n=t.getAttribute("href").slice(1);try{n=decodeURIComponent(n)}catch(e){}const r=n?document.getElementById(n)??document.getElementsByName(n)[0]:document.documentElement;r?.scrollIntoView()}),addEventListener("keydown",e=>{!(/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent)?e.metaKey&&!e.ctrlKey:e.ctrlKey&&!e.metaKey)||"Enter"!==e.key||e.shiftKey||e.altKey||(e.preventDefault(),send("run"))},!0);let isRunningScript=!1;function yourjsPageRunJs(e){delete window.yourjsPageRunJs,document.currentScript?.remove();const t=document.createElement("script");t.textContent=`${e}\n//# sourceURL=script.js`,isRunningScript=!0;try{document.body.append(t)}finally{isRunningScript=!1}t.remove()}window.yourjsPageRunJs=yourjsPageRunJs,document.currentScript?.remove();
+  }
+
+  /**
+   * The libraries that the viewer loads along with the exact versions that it
+   * was tested with.
+   */
+  const LIBRARY_VERSIONS = {
+    'ace-builds': '1.44.0',
+    // Only loaded the first time code is formatted.
+    'js-beautify': '2.0.3',
+    // Only loaded the first time JavaScript with a loop runs (to stop loops
+    // that run for too long).
+    'acorn': '8.18.0',
+  };
+
+  /**
+   * Where the libraries are loaded from unless data-libraries-url is given.
+   * `{name}` and `{version}` are replaced with each library's name and version.
+   */
+  const DEFAULT_LIBRARIES_URL = 'https://unpkg.com/{name}@{version}/';
+
+  /**
+   * @param {string} librariesUrl
+   *   The URL template (see DEFAULT_LIBRARIES_URL).  Relative URLs are relative
+   *   to the page.
+   * @param {keyof LIBRARY_VERSIONS} name
+   * @param {string} path
+   *   The path of the file within the library's package.
+   * @returns {string}
+   */
+  function getLibraryFileUrl(librariesUrl, name, path) {
+    const baseUrl = librariesUrl
+      .replace(/\{(name|version)\}/g, (_, key) => key === 'name' ? name : LIBRARY_VERSIONS[name])
+      .replace(/\/?$/, '/');
+    return new URL(baseUrl + path, document.baseURI).href;
+  }
+
+  /**
+   * The languages that a page has code for.
+   */
+  const LANGUAGES = [
+    // The text (eg. a URL) can't end the comment early.
+    {key: 'html', name: 'HTML', toComment: text => `<!-- ${text.replace(/--(!?)>/g, '--$1 >')} -->`},
+    {key: 'css', name: 'CSS', toComment: text => `/* ${text.replace(/\*\//g, '* /')} */`},
+    {key: 'js', name: 'JavaScript', toComment: text => `// ${text.replace(/[\r\n]+/g, ' ')}`},
+  ];
+
+  /** How long to wait for code from a URL or a gist (in milliseconds). */
+  const LOAD_TIMEOUT = 30000;
+  /** How long to wait for the list of a gist's files (in milliseconds). */
+  const GIST_LIST_TIMEOUT = 15000;
+
+  /**
+   * Something that couldn't be loaded (which the viewer shows in a dialog).
+   * @typedef {{key: string, language: string, message: string}} LoadError
+   */
+
+  /**
+   * Gets the starting code for one language from (in this order) the code
+   * itself, the first element that matches a selector, a URL or a file in a
+   * gist.
+   * @param {(typeof LANGUAGES)[number]} language
+   * @param {{code?: *, selector?: *, url?: *, gist?: *, gistFile?: *}} sources
+   * @param {LoadError[]} errors
+   *   Where to add what couldn't be loaded.
+   * @param {string=} missingMessage
+   *   If given and there is nothing to get the code from, the code is a
+   *   comment with this message.
+   * @returns {string|(() => Promise<string>)}
+   *   The code or, if it needs to be loaded (from a URL or a gist), a function
+   *   that loads it (which is called once the page is about to be shown).
+   */
+  function getStartingCode(language, {code, selector, url, gist, gistFile}, errors, missingMessage) {
+    if (code != null) return `${code}`;
+    if (selector != null) return getCodeFromSelector(language, `${selector}`);
+    // What couldn't be loaded is also shown in the editor (as a comment).
+    const fail = message => {
+      errors.push({key: language.key, language: language.name, message});
+      return language.toComment(message);
+    };
+    if (url != null) return () => getCodeFromUrl(language, `${url}`, fail);
+    if (gist != null) return () => getCodeFromGist(language, `${gist}`, gistFile == null ? null : `${gistFile}`, fail);
+    return missingMessage ? language.toComment(missingMessage) : '';
+  }
+
+  /**
+   * Gets the code for one language from the first element that matches a
+   * selector.  If there isn't one a comment in that language says so.
+   * @param {(typeof LANGUAGES)[number]} language
+   * @param {string} selector
+   * @returns {string}
+   */
+  function getCodeFromSelector(language, selector) {
+    let element;
+    try {
+      element = document.querySelector(selector);
+    }
+    catch (e) {
+      return language.toComment(`The ${language.name} selector is not valid:  ${selector}`);
+    }
+    if (!element) return language.toComment(`No element matches the ${language.name} selector:  ${selector}`);
+    // The text of a <template> is in its content.  Its HTML is used as is so
+    // that the HTML doesn't need to be escaped.
+    if (element.localName === 'template') {
+      return language.key === 'html' ? element.innerHTML : element.content.textContent;
+    }
+    return element.textContent;
+  }
+
+  /**
+   * Loads the code for one language from a URL (relative to the page).
+   * @param {(typeof LANGUAGES)[number]} language
+   * @param {string} url
+   * @param {(message: string) => string} fail
+   *   Called (and its result returned) if the code can't be loaded.
+   * @returns {Promise<string>}
+   */
+  async function getCodeFromUrl(language, url, fail) {
+    let response;
+    try {
+      response = await fetch(new URL(url, document.baseURI), {signal: AbortSignal.timeout(LOAD_TIMEOUT)});
+    }
+    catch (e) {
+      // Eg. the URL isn't valid, there's no connection, it took too long or
+      // (for a URL on another site) the site doesn't allow it.
+      return fail(`The ${language.name} could not be loaded from:  ${url}`);
+    }
+    if (!response.ok) {
+      return fail(`The ${language.name} could not be loaded (${getStatusText(response)}) from:  ${url}`);
+    }
+    try {
+      return await response.text();
+    }
+    catch (e) {
+      return fail(`The ${language.name} could not be loaded from:  ${url}`);
+    }
+  }
+
+  /**
+   * @param {Response} response
+   * @returns {string}
+   *   Eg. "404 Not Found".
+   */
+  function getStatusText(response) {
+    return `${response.status} ${response.statusText}`.trim();
+  }
+
+  /**
+   * The files that are used for each language when a gist's file isn't named
+   * (the first pattern that matches one of the gist's files wins).
+   */
+  const GIST_FILE_PATTERNS = {
+    html: [/^index\.html?$/i, /\.html?$/i],
+    css: [/^styles?\.css$/i, /\.css$/i],
+    js: [/^(script|index|main|app)\.m?js$/i, /\.m?js$/i],
+  };
+
+  /**
+   * Added to the URLs of gists' files so that GitHub's cache (which keeps
+   * them for 5 minutes) is skipped and edits show up right away.  The same
+   * value is used for every file loaded while the page is open.  (The list of
+   * a gist's files doesn't need it since its URL has a new callback name each
+   * time.)
+   */
+  const GIST_CACHE_BUSTER = `${Date.now()}`;
+
+  /**
+   * Gets the ID of a gist from its URL (eg.
+   * "https://gist.github.com/westc/2fe0bfa42237139860f32972ddc608f1") or ID.
+   * @param {string} gist
+   * @returns {string?}
+   */
+  function getGistId(gist) {
+    const match = /^\s*(?:https?:\/\/gist\.github(?:usercontent)?\.com\/(?:[^/?#]+\/)?)?([\da-f]+)(?:[/?#.][^]*)?\s*$/i.exec(gist);
+    return match?.[1] ?? null;
+  }
+
+  /**
+   * The names of the files in each gist (by ID) so each gist's list is only
+   * loaded once.
+   * @type {Map<string, Promise<string[]>>}
+   */
+  const gistFileNames = new Map();
+
+  /**
+   * Gets the names of the files in a gist.  This uses the JSONP version of
+   * the gist (like https://gist.github.com/westc/2fe0bfa42237139860f32972ddc608f1)
+   * instead of GitHub's API which only allows 60 requests an hour.
+   * @param {string} id
+   * @returns {Promise<string[]>}
+   */
+  function getGistFileNames(id) {
+    if (!gistFileNames.has(id)) {
+      const promise = new Promise((resolve, reject) => {
+        const callbackName = `yourjsPageGist_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement('script');
+        // The callback is never called if GitHub sends something unexpected.
+        const timer = setTimeout(() => {
+          cleanUp();
+          reject(new Error(`The gist ${id} took too long to load.`));
+        }, GIST_LIST_TIMEOUT);
+        const cleanUp = () => {
+          clearTimeout(timer);
+          // Keeps a late response from causing an error.
+          window[callbackName] = () => {};
+          script.remove();
+        };
+        window[callbackName] = data => {
+          cleanUp();
+          if (Array.isArray(data?.files)) resolve(data.files.map(name => `${name}`));
+          else reject(new Error(`The gist ${id} could not be read.`));
+        };
+        script.onerror = () => {
+          cleanUp();
+          reject(new Error(`The gist ${id} could not be loaded.  Check that it exists.`));
+        };
+        script.src = `https://gist.github.com/${id}.json?callback=${callbackName}`;
+        document.head.append(script);
+      });
+      // Lets it be tried again later.
+      promise.catch(() => gistFileNames.delete(id));
+      gistFileNames.set(id, promise);
+    }
+    return gistFileNames.get(id);
+  }
+
+  /**
+   * Loads the code for one language from a file in a gist.
+   * @param {(typeof LANGUAGES)[number]} language
+   * @param {string} gist
+   *   The gist's URL or ID.
+   * @param {string?} fileName
+   *   The file to use.  If not given, the gist's file for the language is
+   *   found by its name (see GIST_FILE_PATTERNS).
+   * @param {(message: string) => string} fail
+   *   Called (and its result returned) if the code can't be loaded.
+   * @returns {Promise<string>}
+   */
+  async function getCodeFromGist(language, gist, fileName, fail) {
+    const id = getGistId(gist);
+    if (!id) return fail(`This is not the URL or ID of a gist:  ${gist}`);
+    if (fileName == null) {
+      let names;
+      try {
+        names = await getGistFileNames(id);
+      }
+      catch (e) {
+        return fail(e.message);
+      }
+      fileName = GIST_FILE_PATTERNS[language.key]
+        .map(pattern => names.find(name => pattern.test(name)))
+        .find(Boolean);
+      // A gist doesn't need a file for every language.
+      if (!fileName) return language.toComment(`The gist ${id} has no ${language.name} file.`);
+    }
+    // The raw files can be loaded from any site and (unlike GitHub's API)
+    // aren't limited to a number of requests an hour.  The browser's cache is
+    // skipped too.
+    let response;
+    try {
+      response = await fetch(
+        `https://gist.githubusercontent.com/raw/${id}/${encodeURIComponent(fileName)}?t=${GIST_CACHE_BUSTER}`,
+        {cache: 'no-store', signal: AbortSignal.timeout(LOAD_TIMEOUT)}
+      );
+    }
+    catch (e) {
+      return fail(`${fileName} could not be loaded from the gist ${id}.`);
+    }
+    if (response.status === 404) return fail(`The gist ${id} doesn't have a file named ${fileName}.`);
+    if (!response.ok) return fail(`${fileName} could not be loaded (${getStatusText(response)}) from the gist ${id}.`);
+    try {
+      return await response.text();
+    }
+    catch (e) {
+      return fail(`${fileName} could not be loaded from the gist ${id}.`);
+    }
+  }
+
+  /**
+   * Turns a list of URLs (an array or a string of URLs separated by
+   * whitespace) into an array.
+   * @param {*} value
+   * @returns {string[]}
+   */
+  function toUrlList(value) {
+    if (value == null) return [];
+    return (Array.isArray(value) ? value.map(url => `${url}`) : `${value}`.split(/\s+/))
+      .map(url => url.trim())
+      .filter(Boolean);
+  }
+
+  /**
+   * Prevents the HTML parser from ending an inline script early.  The code
+   * must only have "</script" and "<!--" in strings.
+   * @param {string} code
+   * @returns {string}
+   */
+  function toInlineScript(code) {
+    return code.replace(/<(?=\/script|!--)/gi, '\\x3C');
+  }
+
+  /**
+   * Calls the function once the page has been parsed (so that elements after
+   * the script can be found).
+   * @param {() => void} callback
+   */
+  function whenParsed(callback) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', callback, {once: true});
+    }
+    else {
+      callback();
+    }
+  }
+
+  /**
+   * Creates a page.
+   * @param {Object} options
+   * @param {(errors: LoadError[]) => {[key in keyof import('./yourjs-page').YourJSPageCode]: import('./yourjs-page').YourJSPageCode[key] | (() => Promise<import('./yourjs-page').YourJSPageCode[key]>)}} options.getCode
+   *   Gets the code that the page starts with (where each part may be a
+   *   function that loads it from a URL or a gist) and adds what can't be
+   *   loaded to `errors`.  It is called once the document has been parsed.
+   * @param {{[name: string]: string}} options.dataset
+   *   The options for the page in the same form as the data attributes of a
+   *   script tag (eg. `{layout: 'left', theme: 'dark'}`).
+   * @param {(element: HTMLIFrameElement) => void} options.insert
+   *   Puts the page's element into the document.
+   * @returns {import('./yourjs-page').YourJSPageInstance}
+   */
+  function createPage({getCode, dataset, insert}) {
+    const libraryUrl = getLibraryFileUrl.bind(null, dataset.librariesUrl || DEFAULT_LIBRARIES_URL);
+
+    // The theme is determined up front so that the loading screen uses it.
+    const theme = /^(light|dark)$/.test(dataset.theme) ? dataset.theme : null;
+    const initialTheme = theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    const iframe = document.createElement('iframe');
+    iframe.title = dataset.title || 'YourJS Page';
+    // The result can go full screen and use the clipboard.
+    iframe.setAttribute('allow', 'fullscreen; clipboard-read; clipboard-write');
+    const height = dataset.height;
+    Object.assign(iframe.style, {
+      width: '100%',
+      // Fills its container unless a height is given but, since a container
+      // without a height would make it very short, it is never less than
+      // 400px unless a height is given.
+      height: height ? (/^\d+(\.\d+)?$/.test(height) ? `${height}px` : height) : '100%',
+      minHeight: height ? '150px' : '400px',
+      border: '0',
+      display: 'block',
+    });
+    insert(iframe);
+
+    /**
+     * The code before the viewer is loaded (or after it is destroyed).  The
+     * parts that are loaded from URLs are empty until they are loaded.
+     * @type {import('./yourjs-page').YourJSPageCode}
+     */
+    let code = {html: '', css: '', js: '', cssUrls: [], jsUrls: []};
+    /**
+     * The parts of the code that were given to setCode() before the viewer
+     * was loaded.  These win over parts that are still being loaded.
+     */
+    const changedKeys = new Set();
+    /** @type {ReturnType<Window['yourjsPageViewer']['init']>?} */
+    let viewer = null;
+    let normalCssText = null;
+    let isDestroyed = false;
+
+    // What the viewer can ask this script to do.
+    const hostApi = {
+      /**
+       * Makes the IFRAME fill the window (used if full screen isn't allowed).
+       * @param {boolean} isMaximized
+       */
+      setMaximized(isMaximized) {
+        const {style} = iframe;
+        if (isMaximized) {
+          normalCssText ??= style.cssText;
+          Object.assign(style, {position: 'fixed', inset: '0', width: '100%', height: '100%', zIndex: '2147483647'});
+        }
+        else if (normalCssText != null) {
+          style.cssText = normalCssText;
+          normalCssText = null;
+        }
+      },
+    };
+
+    /** @type {LoadError[]} */
+    const loadErrors = [];
+    /**
+     * The functions that load the parts of the starting code that come from
+     * a URL or a gist (by their keys).
+     * @type {[string, () => Promise<string>][]}
+     */
+    const codeLoaders = [];
+    let isCodeCollected = false;
+
+    /**
+     * Gets the starting code (once the document has been parsed).
+     */
+    function collectCode() {
+      if (isCodeCollected) return;
+      isCodeCollected = true;
+      for (const [key, value] of Object.entries(getCode(loadErrors))) {
+        // Code given to setCode() wins.
+        if (changedKeys.has(key)) continue;
+        // Code that doesn't need to be loaded is available right away.
+        if ('function' === typeof value) codeLoaders.push([key, value]);
+        else code[key] = value;
+      }
+    }
+    whenParsed(collectCode);
+    /** @type {Promise<void>?} */
+    let codeLoaded = null;
+
+    /**
+     * Loads the parts of the starting code that come from a URL or a gist (once
+     * the page is about to be shown).
+     * @returns {Promise<void>}
+     */
+    function loadCode() {
+      // (Some browsers (eg. Firefox) can say that the document was parsed
+      // before it calls the DOMContentLoaded listeners.)
+      collectCode();
+      return codeLoaded ??= Promise.all(codeLoaders.map(async ([key, load]) => {
+        const value = await load();
+        if (!changedKeys.has(key)) code[key] = value;
+      }));
+    }
+
+    /**
+     * Loads the viewer once the document has been parsed.
+     */
+    function load() {
+      whenParsed(() => {
+        if (isDestroyed || iframe.srcdoc) return;
+        loadCode();
+        const runtimeCode = toInlineScript(`${previewRuntime}`);
+        let startCount = 0;
+        // The loading screen is shown until the code is loaded too.  The
+        // viewer is started each time its page loads because the browser
+        // reloads an IFRAME that is moved (eg. by a framework) and then it
+        // starts with the last code that it was given.
+        iframe.addEventListener('load', async () => {
+          await loadCode();
+          const viewerWindow = iframe.contentWindow;
+          if (isDestroyed || !viewerWindow?.yourjsPageViewer) return;
+          viewer = viewerWindow.yourjsPageViewer.init({
+            code,
+            // The viewer is starting again (eg. because its IFRAME moved).
+            isRestart: startCount++ > 0,
+            options: {
+              layout: dataset.layout,
+              tab: dataset.tab,
+              theme,
+              title: dataset.title || '',
+              wordWrap: dataset.wordWrap === 'true',
+              readOnly: dataset.readOnly === 'true',
+              showConsole: dataset.showConsole === 'true',
+              librarySearch: dataset.librarySearch !== 'false',
+              // How long loops can keep the page busy (0 turns this off).
+              loopTimeout: /^\d+$/.test(dataset.loopTimeout ?? '') ? +dataset.loopTimeout : 2000,
+              // Which editors are shown (all of them unless the attribute is
+              // given).
+              editors: dataset.editors == null
+                ? null
+                : dataset.editors.toLowerCase().split(/[\s,]+/).filter(key => LANGUAGES.some(language => language.key === key)),
+            },
+            // Code that was replaced with setCode() before it was loaded
+            // doesn't matter.
+            loadErrors: loadErrors
+              .filter(error => !changedKeys.has(error.key))
+              // In the same order as the editors (instead of the order they
+              // failed in).
+              .sort((a, b) => LANGUAGES.findIndex(({key}) => key === a.key) - LANGUAGES.findIndex(({key}) => key === b.key)),
+            runtimeCode,
+            parserUrl: libraryUrl('acorn', 'dist/acorn.js'),
+            // Used to know when the page's own code froze the last time.
+            pageUrl: location.href.replace(/#.*/, ''),
+            formatterUrls: [
+              libraryUrl('js-beautify', 'js/lib/beautify.js'),
+              libraryUrl('js-beautify', 'js/lib/beautify-css.js'),
+              libraryUrl('js-beautify', 'js/lib/beautify-html.js'),
+            ],
+            packageInfo: PACKAGE_INFO,
+          }, hostApi);
+        });
+
+        iframe.srcdoc = [
+          '<!DOCTYPE html>',
+          `<html lang="en" data-theme="${initialTheme}">`,
+          '<head>',
+          '<meta charset="utf-8">',
+          `<style>${VIEWER_CSS}</style>`,
+          '</head>',
+          '<body>',
+          VIEWER_HTML,
+          // Exact versions are used so that a new release of a library can
+          // never change how an existing version of this page works.  Ace
+          // loads other files (eg. language modes) from next to this file.
+          `<script src="${libraryUrl('ace-builds', 'src-min-noconflict/ace.js')}"><\/script>`,
+          `<script>${toInlineScript(`(${viewerScript})();`)}<\/script>`,
+          '</body>',
+          '</html>',
+        ].join('\n');
+      });
+    }
+
+    // Unless data-loading="eager" is given, nothing is loaded until the page
+    // is about to be scrolled into view (or a hidden page is shown).
+    /** @type {IntersectionObserver?} */
+    let loadObserver = null;
+    if (dataset.loading !== 'eager' && 'function' === typeof window.IntersectionObserver) {
+      loadObserver = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          loadObserver.disconnect();
+          loadObserver = null;
+          load();
+        }
+      }, {rootMargin: '200px'});
+      loadObserver.observe(iframe);
+    }
+    else {
+      load();
+    }
+
+    const getCurrentCode = () => {
+      const current = viewer?.getCode() ?? code;
+      return {...current, cssUrls: [...current.cssUrls], jsUrls: [...current.jsUrls]};
+    };
+
+    return {
+      element: iframe,
+      getCode: getCurrentCode,
+      setCode(newCode, options) {
+        const current = getCurrentCode();
+        newCode = Object(newCode);
+        for (const {key} of LANGUAGES) {
+          if (newCode[key] != null) current[key] = `${newCode[key]}`;
+        }
+        for (const key of ['cssUrls', 'jsUrls']) {
+          if (newCode[key] != null) current[key] = toUrlList(newCode[key]);
+        }
+        for (const key of Object.keys(current)) {
+          if (newCode[key] != null) changedKeys.add(key);
+        }
+        code = current;
+        // Before the viewer is loaded there is nothing to run (the code runs
+        // once it is loaded).
+        viewer?.setCode(current, {run: options?.run !== false});
+      },
+      run() {
+        viewer?.run();
+      },
+      destroy() {
+        if (isDestroyed) return;
+        isDestroyed = true;
+        // Keeps the code for getCode().
+        if (viewer) code = viewer.getCode();
+        viewer?.destroy();
+        viewer = null;
+        loadObserver?.disconnect();
+        iframe.remove();
+      },
+    };
+  }
+
+  /**
+   * Creates a page in place of a script tag using its data attributes.
+   * @param {HTMLScriptElement} script
+   */
+  function createPageFromScript(script) {
+    const dataset = JSON.parse(JSON.stringify(script.dataset));
+    return createPage({
+      getCode: errors => ({
+        ...Object.fromEntries(LANGUAGES.map(({key}, index) => [
+          key,
+          getStartingCode(
+            LANGUAGES[index],
+            {
+              selector: dataset[`${key}Selector`],
+              url: dataset[`${key}Url`],
+              gist: dataset.gist,
+              gistFile: dataset[`gist${key[0].toUpperCase()}${key.slice(1)}`],
+            },
+            errors,
+            `No data-${key}-selector, data-${key}-url or data-gist attribute was given.`
+          ),
+        ])),
+        cssUrls: toUrlList(dataset.cssUrls),
+        jsUrls: toUrlList(dataset.jsUrls),
+      }),
+      dataset,
+      insert: element => script.replaceWith(element),
+    });
+  }
+
+  /**
+   * Where YourJSPage.create() can put a page relative to its target.
+   */
+  const PLACEMENTS = {
+    fill: (target, element) => target.replaceChildren(element),
+    append: (target, element) => target.append(element),
+    prepend: (target, element) => target.prepend(element),
+    replace: (target, element) => target.replaceWith(element),
+    before: (target, element) => target.before(element),
+    after: (target, element) => target.after(element),
+  };
+
+  /**
+   * The options of YourJSPage.create() which are the same as the data
+   * attributes of a script tag.
+   */
+  const PAGE_OPTION_NAMES = ['editors', 'height', 'layout', 'librariesUrl', 'librarySearch', 'loading', 'loopTimeout', 'readOnly', 'showConsole', 'tab', 'theme', 'title', 'wordWrap'];
+
+  /**
+   * The JavaScript API for creating pages (available as window.YourJSPage).
+   */
+  const YourJSPage = Object.freeze({
+    version: PACKAGE_INFO.version,
+
+    /**
+     * Creates a page.  See yourjs-page.d.ts for the options.
+     * @param {import('./yourjs-page').YourJSPageOptions} options
+     * @returns {import('./yourjs-page').YourJSPageInstance}
+     */
+    create(options) {
+      options = Object(options);
+      const {target, placement = 'fill'} = options;
+      const targetElement = 'string' === typeof target ? document.querySelector(target) : target;
+      if (targetElement?.nodeType !== 1) {
+        throw new TypeError(
+          'string' === typeof target
+            ? `YourJSPage.create(): no element matches the target ${JSON.stringify(target)}.`
+            : 'YourJSPage.create(): target must be an element or a CSS selector.'
+        );
+      }
+      if (!Object.hasOwn(PLACEMENTS, placement)) {
+        throw new TypeError(`YourJSPage.create(): placement must be one of ${Object.keys(PLACEMENTS).join(', ')}.`);
+      }
+
+      const dataset = {};
+      for (const name of PAGE_OPTION_NAMES) {
+        if (options[name] != null) dataset[name] = `${options[name]}`;
+      }
+
+      return createPage({
+        getCode: errors => ({
+          ...Object.fromEntries(LANGUAGES.map(({key}, index) => [
+            key,
+            getStartingCode(LANGUAGES[index], {
+              code: options[key],
+              selector: options[`${key}Selector`],
+              url: options[`${key}Url`],
+              gist: options.gist,
+              gistFile: options[`gist${key[0].toUpperCase()}${key.slice(1)}`],
+            }, errors),
+          ])),
+          cssUrls: toUrlList(options.cssUrls),
+          jsUrls: toUrlList(options.jsUrls),
+        }),
+        dataset,
+        insert: element => PLACEMENTS[placement](targetElement, element),
+      });
+    },
+  });
+
+  // The first copy of this script that is loaded provides the API.
+  if (!window.YourJSPage) window.YourJSPage = YourJSPage;
+
+  // A script in the body is replaced by a page while a script in the head only
+  // provides the API.
+  const currentScript = document.currentScript;
+  if (currentScript && !document.head?.contains(currentScript)) {
+    createPageFromScript(currentScript);
+  }
+})();

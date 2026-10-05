@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YourJS Page - A CodePen-like playground in one script tag</title>
+  <meta name="description" content="Embed a CodePen-like HTML, CSS and JavaScript playground on any web page with one script tag.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="YourJS Page">
+  <meta property="og:description" content="Embed a CodePen-like HTML, CSS and JavaScript playground on any web page with one script tag.">
+  <meta property="og:url" content="https://westc.github.io/yourjs-page/">
+  <meta property="og:image" content="https://westc.github.io/yourjs-page/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="YourJS Page:  an HTML, CSS and JS playground you can drop into any page">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root { color-scheme: light dark; --accent: #1a73e8; --muted: #5f6368; --code-bg: #f3f3f3; }
+    @media (prefers-color-scheme: dark) { :root { --accent: #8ab4f8; --muted: #9aa0a6; --code-bg: #2b2b2b; } }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; margin: 0 auto; max-width: 1100px; padding: 24px 16px 64px; }
+    h1 { align-items: center; display: flex; font-size: 2.5em; font-weight: 700; gap: 14px; margin: 0; }
+    h1 img { filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.18)); height: 56px; width: 56px; }
+    h1 .your { font-weight: 400; opacity: 0.8; }
+    .tagline { color: var(--muted); font-size: 1.2em; margin-top: 4px; }
+    a { color: var(--accent); }
+    pre, code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.9em; }
+    pre { background: var(--code-bg); border-radius: 6px; overflow-x: auto; padding: 12px 16px; }
+    #demo { height: 600px; margin: 24px 0; }
+    .links { display: flex; flex-wrap: wrap; gap: 16px; }
+  </style>
+</head>
+<body>
+  <h1><img src="logo.svg" alt=""><span><span class="your">Your</span>JS Page</span></h1>
+  <p class="tagline">A CodePen-like HTML, CSS and JavaScript playground that you can embed on any web page with one script tag.</p>
+  <p class="links">
+    <a href="https://github.com/westc/yourjs-page#readme">Documentation</a>
+    <a href="https://github.com/westc/yourjs-page">GitHub</a>
+    <a href="https://www.npmjs.com/package/yourjs-page">npm</a>
+    <a href="https://github.com/westc/yourjs-page/blob/main/CHANGELOG.md">Changelog</a>
+  </p>
+
+  <div id="demo">
+    <script src="dist/yourjs-page.min.js" data-title="Try it!" data-html-selector="#demo-html" data-css-selector="#demo-css" data-js-selector="#demo-js"></script>
+  </div>
+
+  <template id="demo-html"><main>
+  <h1>Hello, <span id="name">world</span>!</h1>
+  <label>
+    Your name:
+    <input id="input" placeholder="Type your name">
+  </label>
+</main></template>
+  <template id="demo-css">body {
+  font-family: system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  min-height: 90vh;
+  background: linear-gradient(135deg, #e0f2ff, #fce7f3);
+}
+h1 {
+  color: #333;
+}
+#name {
+  color: rebeccapurple;
+}</template>
+  <template id="demo-js">const input = document.getElementById('input');
+const nameSpan = document.getElementById('name');
+
+input.addEventListener('input', () => {
+  nameSpan.textContent = input.value || 'world';
+  console.log('Name changed to', input.value);
+});
+
+console.log('Ready!  Open the console (in the toolbar) and type in the box.');</template>
+
+  <h2>Usage</h2>
+  <p>Add the script wherever the page should appear and point it at the code with CSS selectors:</p>
+<pre><code>&lt;div id="yourjs-page-wrapper" style="height: 600px;"&gt;
+  &lt;script src="https://cdn.jsdelivr.net/npm/yourjs-page@1/dist/yourjs-page.min.js"
+          data-html-selector="pre#html-code &gt; code"
+          data-css-selector="pre#css-code &gt; code"
+          data-js-selector="pre#javascript-code &gt; code"&gt;&lt;/script&gt;
+&lt;/div&gt;</code></pre>
+  <p>Edit the code, then click <b>Run</b> (or press <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Enter</kbd>).  The toolbar shows the console, adds CSS and JavaScript libraries (with a search of cdnjs), changes the view (editors on top, left, right or tabs), opens the result in a new tab and goes full screen.  The <b>&#8943;</b> menu downloads the code as an HTML or ZIP file and opens those files again.  See the <a href="https://github.com/westc/yourjs-page#readme">documentation</a> for every option.</p>
+
+  <h2 id="examples">Examples</h2>
+  <ul>
+    <li><a href="examples/basic.html">Basic</a>:  code from <code>&lt;pre&gt;&lt;code&gt;</code> blocks.</li>
+    <li><a href="examples/options.html">Options</a>:  layouts, the dark theme, a title, a height and a missing selector.</li>
+    <li><a href="examples/libraries.html">Libraries</a>:  starting with Animate.css and jQuery from cdnjs.</li>
+    <li><a href="examples/gist.html">Gists</a>:  code loaded from a gist, and the dialog shown when code can&rsquo;t be loaded.</li>
+    <li><a href="examples/api.html">JavaScript API</a>:  <code>YourJSPage.create()</code>, <code>getCode()</code>, <code>setCode()</code>, <code>run()</code> and <code>destroy()</code>.</li>
+  </ul>
+</body>
+</html>

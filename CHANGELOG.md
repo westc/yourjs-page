@@ -1,0 +1,60 @@
+# Changelog
+
+All notable changes to YourJS Page are listed here, newest first.  The format
+is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
+project uses [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Added
+
+- A CodePen-like playground that replaces its script tag, with HTML, CSS and
+  JS editors (Ace) whose starting code comes from the elements matched by
+  `data-html-selector`, `data-css-selector` and `data-js-selector` (or from
+  `<template>` elements).  A missing selector, or one that matches nothing,
+  starts that editor with a comment saying so.
+- `data-html-url`, `data-css-url` and `data-js-url` (and the `htmlUrl`,
+  `cssUrl` and `jsUrl` options) load the starting code from files.
+- `data-gist` (and `data-gist-html`, `data-gist-css` and `data-gist-js` to
+  name the files) loads the starting code from a gist without GitHub's API
+  (and its limit of 60 requests an hour).  GitHub's cache is skipped so edits
+  to a gist show up right away.
+- A dialog lists the code that couldn't be loaded from a URL or a gist, and
+  those editors start with a comment saying what went wrong.
+- Like JSBin, the HTML can be a whole document (with `<html>`, `<head>` and
+  `<body>`) or just what goes in the body.  The libraries go at the start of
+  the head, the CSS at the end of the head and the JavaScript at the end of
+  the body.
+- The code runs in a sandboxed IFRAME when the page loads and then whenever
+  **Run** is clicked or <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>Enter</kbd> is
+  pressed.
+- A console that shows what the code logs and its uncaught errors (with links
+  to the line in the JS editor) and runs code typed into it.  Objects, arrays,
+  maps, sets and elements can be expanded and `console.table()` shows a table.
+- Loops that keep the page busy for more than 2 seconds are stopped (with a
+  warning) so that a loop that never ends can't freeze the page
+  (`data-loop-timeout` changes how long or turns this off).  If the code that
+  a page starts with didn't finish running the last time, it isn't run
+  automatically again.
+- `data-editors` chooses which editors are shown (or only the result).
+- Layouts with the editors on top, on the left or on the right of the result,
+  or tabs (automatically used on narrow screens).  Editors can be collapsed
+  and the dividers can be dragged.
+- Formatting (js-beautify), opening the result in a new tab, full screen and
+  resetting the code.
+- Options:  `data-layout`, `data-tab`, `data-theme`, `data-title`,
+  `data-height`, `data-word-wrap`, `data-read-only`, `data-show-console`,
+  `data-loading` and `data-libraries-url`.
+- A Libraries dialog that searches cdnjs (adding files with their integrity
+  hashes) or takes any URL, and lets the CSS and JavaScript libraries be
+  reordered and removed.  `data-css-urls` and `data-js-urls` start a page
+  with libraries and `data-library-search="false"` hides the search.
+- Downloading the code as an HTML file or as a ZIP file (`index.html`,
+  `style.css` and `script.js`), and opening HTML and ZIP files (including
+  CodePen exports).
+- A logo and a loading screen.
+- `YourJSPage.create()` for making pages from JavaScript, which returns an
+  object with `getCode()`, `setCode()`, `run()` and `destroy()`, along with
+  TypeScript types (`dist/yourjs-page.d.ts`).
+
+[Unreleased]: https://github.com/westc/yourjs-page/commits/main

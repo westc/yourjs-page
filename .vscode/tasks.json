@@ -1,0 +1,103 @@
+{
+  // Run these with "Terminal: Run Task" (or Cmd/Ctrl+Shift+B for Build).
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "detail": "Builds the files in dist/ once.",
+      "type": "npm",
+      "script": "build",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev server",
+      "detail": "Builds, rebuilds on changes and serves http://localhost:3000/ with live reload.",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test",
+      "detail": "Builds and runs all of the browser tests.",
+      "type": "npm",
+      "script": "test",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test (only matching tests)",
+      "detail": "Builds and runs the tests whose names contain some text.",
+      "type": "shell",
+      "command": "npm run build && node test/run.js \"${input:testFilter}\"",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Release...",
+      "detail": "Tests, versions, pushes, publishes to npm and purges jsDelivr.",
+      "type": "shell",
+      "command": "npm run release -- ${input:releaseType}",
+      "presentation": { "focus": true, "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Release (dry run)",
+      "detail": "Shows what a release would do without changing anything.",
+      "type": "shell",
+      "command": "npm run release -- ${input:releaseType} --dry-run",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test (all browsers)",
+      "detail": "Builds and runs the tests in Chrome, WebKit (Safari) and Firefox.",
+      "type": "npm",
+      "script": "test:all",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Record demo GIF",
+      "detail": "Builds and then records demo.gif for the README (needs ffmpeg).",
+      "type": "shell",
+      "command": "npm run build && npm run record-demo",
+      "problemMatcher": []
+    },
+    {
+      "label": "Make share image",
+      "detail": "Builds and then makes og-image.png for the landing page.",
+      "type": "shell",
+      "command": "npm run build && npm run og-image",
+      "problemMatcher": []
+    },
+    {
+      "label": "Purge jsDelivr cache",
+      "detail": "Makes yourjs-page@1 style URLs point to the latest version right away.",
+      "type": "npm",
+      "script": "purge-cdn",
+      "problemMatcher": []
+    },
+    {
+      "label": "Redeploy GitHub Pages",
+      "detail": "Pushes an empty commit to main for when GitHub Pages misses a push.",
+      "type": "shell",
+      "command": "git switch main && git commit --allow-empty -m \"Trigger GitHub Pages deployment\" && git push",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "releaseType",
+      "type": "pickString",
+      "description": "What kind of release is this?",
+      "options": ["patch", "minor", "major"],
+      "default": "patch"
+    },
+    {
+      "id": "testFilter",
+      "type": "promptString",
+      "description": "Run the tests whose names contain:"
+    }
+  ]
+}

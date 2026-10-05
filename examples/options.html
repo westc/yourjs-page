@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../logo.svg" type="image/svg+xml">
+  <title>YourJS Page - Options</title>
+  <style>body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; } .page { height: 500px; margin-bottom: 24px; }</style>
+</head>
+<body>
+<template id="html"><div class="card">
+  <h2>Counter</h2>
+  <output id="count">0</output>
+  <button id="add">+1</button>
+</div></template>
+<template id="css">.card { font-family: system-ui; padding: 1em; }
+output { font-size: 3em; display: block; }</template>
+<template id="js">const count = document.getElementById('count');
+document.getElementById('add').onclick = () => {
+  count.textContent = +count.textContent + 1;
+  console.log('count is now', +count.textContent);
+};</template>
+
+<h2>data-layout="left" data-theme="dark" data-show-console="true" data-title="Counter"</h2>
+<div class="page">
+  <script src="../dist/yourjs-page.min.js" data-layout="left" data-theme="dark" data-show-console="true" data-title="Counter"
+    data-html-selector="#html" data-css-selector="#css" data-js-selector="#js"></script>
+</div>
+
+<h2>data-layout="tabs" data-tab="js" data-height="350"</h2>
+<script src="../dist/yourjs-page.min.js" data-layout="tabs" data-tab="js" data-height="350"
+  data-html-selector="#html" data-css-selector="#nothing-matches-this" data-js-selector="#js"></script>
+
+<h2>data-editors="html js" data-layout="right"</h2>
+<div class="page">
+  <script src="../dist/yourjs-page.min.js" data-editors="html js" data-layout="right"
+    data-html-selector="#html" data-css-selector="#css" data-js-selector="#js"></script>
+</div>
+
+<h2>data-editors="" (only the result) data-height="250"</h2>
+<script src="../dist/yourjs-page.min.js" data-editors="" data-height="250"
+  data-html-selector="#html" data-css-selector="#css" data-js-selector="#js"></script>
+
+<h2>A loop that never ends (stopped after data-loop-timeout="1000")</h2>
+<template id="loop-js">console.log('Starting a loop that never ends...');
+let count = 0;
+while (true) {
+  count++;
+}
+console.log(`The loop was stopped after ${count.toLocaleString()} passes.`);</template>
+<div class="page">
+  <script src="../dist/yourjs-page.min.js" data-loop-timeout="1000" data-show-console="true" data-editors="js"
+    data-js-selector="#loop-js"></script>
+</div>
+</body>
+</html>

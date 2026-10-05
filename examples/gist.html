@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../logo.svg" type="image/svg+xml">
+  <title>YourJS Page - Gists</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 1100px; padding: 16px; }
+    .page { height: 500px; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <h1>Gists</h1>
+  <p>The code in this page comes from a gist (<code>data-gist</code>).  Its JavaScript file is found by its name.  The gist has no HTML or CSS files.</p>
+  <div class="page">
+    <script src="../dist/yourjs-page.min.js" data-gist="https://gist.github.com/westc/2fe0bfa42237139860f32972ddc608f1" data-show-console="true" data-layout="left"></script>
+  </div>
+
+  <h2>Code that can't be loaded</h2>
+  <p>This page asks for a CSS file that isn't in the gist and HTML from a URL that doesn't exist, so a dialog explains what went wrong.</p>
+  <div class="page">
+    <script src="../dist/yourjs-page.min.js" data-gist="2fe0bfa42237139860f32972ddc608f1" data-gist-css="missing.css" data-html-url="missing.html"></script>
+  </div>
+</body>
+</html>
