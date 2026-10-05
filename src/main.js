@@ -360,6 +360,9 @@
    *   Puts the page's element into the document.
    * @returns {import('./yourjs-page').YourJSPageInstance}
    */
+  /** The settings that copies of a page keep (see "Embed" in the viewer). */
+  const EMBED_SETTING_NAMES = ['layout', 'tab', 'menu', 'theme', 'title', 'height', 'editors', 'wordWrap', 'readOnly', 'showConsole', 'librarySearch', 'loopTimeout', 'loading'];
+
   /** How many pages have been made in this document. */
   let pageCount = 0;
 
@@ -496,6 +499,9 @@
               readOnly: dataset.readOnly === 'true',
               showConsole: dataset.showConsole === 'true',
               librarySearch: dataset.librarySearch !== 'false',
+              // Where the menu (the toolbar) is:  at the bottom unless "top"
+              // is given.
+              menu: dataset.menu === 'top' ? 'top' : 'bottom',
               // How long loops can keep the page busy (0 turns this off).
               loopTimeout: /^\d+$/.test(dataset.loopTimeout ?? '') ? +dataset.loopTimeout : 2000,
               // Which editors are shown (all of them unless the attribute is
@@ -513,6 +519,8 @@
               .sort((a, b) => LANGUAGES.findIndex(({key}) => key === a.key) - LANGUAGES.findIndex(({key}) => key === b.key)),
             runtimeCode,
             parserUrl: libraryUrl('acorn', 'dist/acorn.js'),
+            // For editors that are popped out into their own windows.
+            aceUrl: libraryUrl('ace-builds', 'src-min-noconflict/ace.js'),
             // Used to know when the page's own code froze the last time.
             pageUrl: location.href.replace(/#.*/, ''),
             // Which page this is in the document (so that pages with the
@@ -524,6 +532,11 @@
               libraryUrl('js-beautify', 'js/lib/beautify-html.js'),
             ],
             packageInfo: PACKAGE_INFO,
+            libraryVersions: LIBRARY_VERSIONS,
+            // The settings for copies of this page (see "Embed" in the
+            // viewer's About window) which get their code another way and
+            // load the libraries from the CDN.
+            embedSettings: Object.fromEntries(Object.entries(dataset).filter(([name]) => EMBED_SETTING_NAMES.includes(name))),
           }, hostApi);
         });
 
@@ -532,7 +545,7 @@
           `<html lang="en" data-theme="${initialTheme}">`,
           '<head>',
           '<meta charset="utf-8">',
-          `<style>${VIEWER_CSS}</style>`,
+          `<style id="viewer-style">${VIEWER_CSS}</style>`,
           '</head>',
           '<body>',
           VIEWER_HTML,
@@ -652,7 +665,7 @@
    * The options of YourJSPage.create() which are the same as the data
    * attributes of a script tag.
    */
-  const PAGE_OPTION_NAMES = ['editors', 'height', 'layout', 'librariesUrl', 'librarySearch', 'loading', 'loopTimeout', 'readOnly', 'showConsole', 'tab', 'theme', 'title', 'wordWrap'];
+  const PAGE_OPTION_NAMES = ['editors', 'height', 'layout', 'librariesUrl', 'librarySearch', 'loading', 'loopTimeout', 'readOnly', 'showConsole', 'menu', 'tab', 'theme', 'title', 'wordWrap'];
 
   /**
    * The JavaScript API for creating pages (available as window.YourJSPage).

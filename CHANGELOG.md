@@ -6,6 +6,34 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- An About window (opened by clicking the logo or from the **&#8943;** menu)
+  with the version, links, how the page is set up and the keyboard shortcuts,
+  like YourJS Box's.  The shortcuts moved there from the **&#8943;** menu.
+  Its **Embed** tab has the HTML and the JavaScript (`YourJSPage.create()`)
+  for a copy of the page (with its current or original code), each with a
+  **Copy** button.
+- `data-menu="top"` (or the `menu` option) puts the menu (the toolbar with
+  the **Run** button) at the top.
+- Each editor has a **&#8942;** menu that formats, copies, saves (as
+  `index.html`, `style.css` or `script.js`) or loads its code (instead of a
+  format button), or pops the editor out into its own window until the window
+  is closed.
+- **Text size** in the **&#8943;** menu makes the editors' and the console's
+  text smaller or bigger (and is remembered in the browser).
+- A playground on the landing page's site (`playground.html`) that saves the
+  code in the browser, makes links that open the code, opens gists (`?gist=`)
+  and saves the code as a gist (with a GitHub token that can only change
+  gists).
+
+### Changed
+
+- Like YourJS Box, the menu (the toolbar) is at the bottom (unless
+  `data-menu="top"` is given), the logo is followed by "YourJS Page" and
+  **Run** is on the right.
+- The loading screen is shown for at least a second (instead of flashing).
+
 ## [1.0.1] - 2026-10-05
 
 ### Changed

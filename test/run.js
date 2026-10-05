@@ -820,12 +820,135 @@ test('dividers resize the editors and the result', async t => {
 test('formats the code', async t => {
   await t.openPage({ html: '<div><p>hi</p></div>', css: 'a{color:red}', js: 'if(a){b()}' });
   for (const key of ['js', 'css', 'html']) {
-    await t.click(`.panel[data-lang="${key}"] .format-button`);
+    await t.click(`.panel[data-lang="${key}"] .panel-menu-button`);
+    await t.click('[data-panel-action="format"]');
   }
   await t.viewer.waitForFunction(() => ace.edit(document.querySelector('.panel[data-lang="html"] .editor')).getValue().includes('\n'));
   assert.equal(await t.editorValue('js'), 'if (a) {\n  b()\n}');
   assert.equal(await t.editorValue('css'), 'a {\n  color: red\n}');
   assert.equal(await t.editorValue('html'), '<div>\n  <p>hi</p>\n</div>');
+});
+
+test('each editor\'s menu copies, saves and loads its code', async t => {
+  await t.openPage(SIMPLE_CODE);
+  const openPanelMenu = key => t.click(`.panel[data-lang="${key}"] .panel-menu-button`);
+
+  // Copy
+  await t.inViewer(() => {
+    navigator.clipboard.writeText = async text => {
+      window.copiedText = text;
+    };
+  });
+  await openPanelMenu('css');
+  await t.click('[data-panel-action="copy"]');
+  await t.viewer.waitForFunction(() => window.copiedText);
+  assert.equal(await t.inViewer(() => window.copiedText), SIMPLE_CODE.css);
+  assert.equal(await t.inViewer(() => document.querySelector('.panel[data-lang="css"] .panel-status').textContent), 'Copied!');
+
+  // Save
+  await openPanelMenu('js');
+  assert.equal(await t.inViewer(() => document.querySelector('[data-panel-action="save"]').textContent), 'Save as script.js');
+  const [download] = await Promise.all([t.page.waitForEvent('download'), t.click('[data-panel-action="save"]')]);
+  assert.equal(download.suggestedFilename(), 'script.js');
+  assert.equal(fs.readFileSync(await download.path(), 'utf8'), SIMPLE_CODE.js);
+
+  // Load (which can be undone)
+  const filePath = path.join(require('os').tmpdir(), `yourjs-page-test-${Date.now()}.html`);
+  fs.writeFileSync(filePath, '<p>Loaded</p>');
+  try {
+    await openPanelMenu('html');
+    const [chooser] = await Promise.all([t.page.waitForEvent('filechooser'), t.click('[data-panel-action="load"]')]);
+    await chooser.setFiles(filePath);
+    await t.viewer.waitForFunction(() => ace.edit(document.querySelector('.panel[data-lang="html"] .editor')).getValue() === '<p>Loaded</p>');
+  }
+  finally {
+    fs.unlinkSync(filePath);
+  }
+  assert.equal(await t.inViewer(() => document.querySelector('#run-button').classList.contains('is-stale')), true);
+  await t.inViewer(() => ace.edit(document.querySelector('.panel[data-lang="html"] .editor')).undo());
+  assert.equal(await t.editorValue('html'), SIMPLE_CODE.html);
+});
+
+test('editors can be popped out into their own windows', async t => {
+  await t.openPage(SIMPLE_CODE);
+  const popOut = async key => {
+    await t.click(`.panel[data-lang="${key}"] .panel-menu-button`);
+    const [popup] = await Promise.all([t.page.waitForEvent('popup'), t.click('[data-panel-action="popOut"]')]);
+    await popup.waitForFunction(() => window.ace && document.querySelector('#popout-editor.ace_editor'), null, { timeout: 20000 });
+    return popup;
+  };
+  const isPoppedOut = key => t.inViewer(k => document.querySelector(`.panel[data-lang="${k}"]`).classList.contains('is-popped-out'), key);
+  const popupValue = popup => popup.evaluate(() => ace.edit(document.querySelector('#popout-editor')).getValue());
+
+  const popup = await popOut('css');
+  assert.equal(await popupValue(popup), SIMPLE_CODE.css);
+  assert.equal(await isPoppedOut('css'), true);
+  assert.equal(await t.inViewer(() => document.querySelector('.panel[data-lang="css"] .popped-out-notice').innerText.includes('The CSS is in its own window.')), true);
+  await t.click('.panel[data-lang="css"] .panel-menu-button');
+  assert.equal(await t.inViewer(() => document.querySelector('[data-panel-action="popOut"]').textContent), 'Bring back into the page');
+  await t.inViewer(() => document.querySelector('#panel-menu').hidden = true);
+
+  // Changes in the window are made in the page (and the other way around).
+  await popup.evaluate(() => ace.edit(document.querySelector('#popout-editor')).session.insert({ row: 0, column: 0 }, 'p { margin: 0; }\n'));
+  assert.equal(await t.editorValue('css'), `p { margin: 0; }\n${SIMPLE_CODE.css}`);
+  await t.inViewer(() => ace.edit(document.querySelector('.panel[data-lang="css"] .editor')).session.insert({ row: 0, column: 0 }, '/* page */\n'));
+  assert.equal(await popupValue(popup), `/* page */\np { margin: 0; }\n${SIMPLE_CODE.css}`);
+
+  // The run shortcut works in the window.
+  const oldFrame = await t.viewer.$('#result iframe');
+  await popup.click('#popout-editor');
+  await popup.keyboard.press(RUN_KEYS);
+  await t.viewer.waitForFunction(old => document.querySelector('#result iframe') !== old, oldFrame);
+
+  // Closing the window brings the editor back (with its changes).
+  await popup.close();
+  await t.viewer.waitForFunction(() => !document.querySelector('.panel[data-lang="css"]').classList.contains('is-popped-out'));
+  assert.equal(await t.editorValue('css'), `/* page */\np { margin: 0; }\n${SIMPLE_CODE.css}`);
+
+  // So does "Bring it back" (which closes the window).
+  const popup2 = await popOut('js');
+  await t.click('.panel[data-lang="js"] .popped-out-bring-back-button');
+  assert.equal(await isPoppedOut('js'), false);
+  await popup2.waitForEvent('close', { timeout: 5000 }).catch(() => {});
+  assert.equal(popup2.isClosed(), true);
+});
+
+test('the text can be made bigger or smaller', async t => {
+  await t.openPage(SIMPLE_CODE, { showConsole: 'true' });
+  const sizes = () => t.inViewer(() => [
+    document.querySelector('#text-reset-button').textContent,
+    ace.edit(document.querySelector('.panel[data-lang="js"] .editor')).getFontSize(),
+    getComputedStyle(document.querySelector('#console-entries')).fontSize,
+  ]);
+  assert.deepEqual(await sizes(), ['100%', 13, '12px']);
+  await t.click('#more-button');
+  await t.click('#text-bigger-button');
+  await t.click('#text-bigger-button');
+  // The menu stays open to keep changing the size.
+  assert.equal(await t.inViewer(() => document.querySelector('#more-menu').hidden), false);
+  assert.deepEqual(await sizes(), ['125%', 16.25, '15px']);
+
+  // The size is remembered for every page.
+  await t.openPage(SIMPLE_CODE);
+  t.page = await t.context.newPage();
+  await t.page.goto(`${t.baseUrl}/examples/basic.html`, { waitUntil: 'domcontentloaded' });
+  await t.useViewer();
+  await t.inViewer(() => localStorage.setItem('yourjs-page:text-scale', '0.7'));
+  await t.page.reload({ waitUntil: 'domcontentloaded' });
+  await t.useViewer();
+  assert.deepEqual((await sizes()).slice(0, 2), ['70%', 9.1]);
+  assert.equal(await t.inViewer(() => document.querySelector('#text-smaller-button').disabled), true);
+  await t.click('#more-button');
+  await t.click('#text-reset-button');
+  assert.deepEqual((await sizes()).slice(0, 2), ['100%', 13]);
+  assert.equal(await t.inViewer(() => localStorage.getItem('yourjs-page:text-scale')), null);
+});
+
+test('the loading screen is shown for at least a second', async t => {
+  await t.openPage(SIMPLE_CODE);
+  await t.viewer.waitForSelector('#splash.hidden', { state: 'attached' });
+  // (The time since the viewer's page started loading.)
+  assert.ok(await t.inViewer(() => performance.now()) >= 1000);
 });
 
 test('reset puts back the original code', async t => {
@@ -849,6 +972,122 @@ test('opens the result in a new tab', async t => {
   await frame.waitForFunction(() => document.querySelector('#title').textContent === 'Hello world');
 });
 
+test('the menu is at the bottom unless data-menu="top" is given', async t => {
+  const positions = () => t.inViewer(() => {
+    const toolbar = document.querySelector('#toolbar').getBoundingClientRect();
+    const main = document.querySelector('#main').getBoundingClientRect();
+    const buttons = Array.from(document.querySelectorAll('#toolbar > button'), button => button.id);
+    return {isBottom: toolbar.top >= main.bottom, first: buttons[0], last: buttons.at(-1), name: document.querySelector('#logo-button').textContent};
+  });
+  await t.openPage(SIMPLE_CODE);
+  assert.deepEqual(await positions(), { isBottom: true, first: 'logo-button', last: 'run-button', name: 'YourJS Page' });
+  // Menus open upwards.
+  await t.click('#more-button');
+  assert.equal(await t.inViewer(() => document.querySelector('#more-menu').getBoundingClientRect().bottom <= document.querySelector('#more-button').getBoundingClientRect().top), true);
+
+  await t.openPage(SIMPLE_CODE, { menu: 'top' });
+  assert.equal((await positions()).isBottom, false);
+  await t.click('#more-button');
+  assert.equal(await t.inViewer(() => document.querySelector('#more-menu').getBoundingClientRect().top >= document.querySelector('#more-button').getBoundingClientRect().bottom), true);
+});
+
+test('the About window describes the page', async t => {
+  await t.openPage(SIMPLE_CODE, { layout: 'left', theme: 'dark', jsUrls: `${t.cdn}a.js`, loopTimeout: '1500' });
+  const about = () => t.inViewer(() => {
+    const dialog = document.querySelector('#about-dialog');
+    return {
+      open: dialog.open,
+      version: dialog.querySelector('#about-version').textContent,
+      details: Array.from(dialog.querySelectorAll('#about-details dd'), dd => dd.textContent),
+      shortcuts: Array.from(dialog.querySelectorAll('#about-shortcuts dd'), dd => dd.textContent).length,
+      links: Array.from(dialog.querySelectorAll('.about-links a'), a => a.getAttribute('href')),
+    };
+  });
+
+  // The logo opens it.
+  await t.click('#logo-button');
+  const { version } = require('../package.json');
+  assert.deepEqual(await about(), {
+    open: true,
+    version: `Version ${version}`,
+    details: [
+      'Editors on the left of the result',
+      'Dark',
+      'At the bottom',
+      'Allowed',
+      '0 CSS and 1 JavaScript',
+      'Runs in a sandbox so its code can’t reach this page',
+      'Stopped if the code runs them for more than 1.5 seconds without a break',
+    ],
+    shortcuts: 6,
+    links: [
+      'https://westc.github.io/yourjs-page/',
+      'https://github.com/westc/yourjs-page',
+      'https://github.com/westc/yourjs-page#readme',
+      'https://github.com/westc/yourjs-page/issues',
+    ],
+  });
+  await t.viewer.press('#about-dialog .dialog-close', 'Escape');
+  assert.equal((await about()).open, false);
+
+  // So does the "..." menu.
+  await t.click('#more-button');
+  await t.click('#about-button');
+  assert.equal((await about()).open, true);
+});
+
+test('the About window\'s Embed tab makes copies of the page', async t => {
+  const code = {
+    html: '<p id="p">a &amp; b</p>\n<script>console.log("inline")</script>',
+    css: 'p::after { content: "</style>"; }',
+    js: 'console.log(`x ${1 + 1}`, "a\\\\b", "</script>", document.getElementById("p").textContent);',
+  };
+  await openApiPage(t, { ...code, jsUrls: [`${t.cdn}a.js`], layout: 'left', theme: 'dark', title: 'Copy me', loopTimeout: 1500 });
+  await t.click('#logo-button');
+  await t.click('[data-about-tab="embed"]');
+  const snippet = key => t.inViewer(k => ace.edit(document.querySelector(`#embed-${k}-preview`)).getValue(), key);
+  const html = await snippet('html');
+  const api = await snippet('api');
+  assert.match(html, /<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/yourjs-page@\d+\/dist\/yourjs-page\.min\.js"\n\s+data-layout="left"/);
+  assert.match(api, /YourJSPage\.create\(\{\n    target: '#yourjs-page-\w+',/);
+
+  // Each copy has the same code and settings as the page.
+  for (const snippetHtml of [html, api]) {
+    await t.open(`<!DOCTYPE html><html><body>${snippetHtml.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/yourjs-page@\d+\/dist\/yourjs-page\.min\.js/, 'SRC')}</body></html>`);
+    await t.useViewer();
+    for (const key of ['html', 'css', 'js']) assert.equal(await t.editorValue(key), code[key], key);
+    assert.deepEqual(await t.messages(2), ['log: inline', 'log: x 2 a\\b </script> a & b']);
+    assert.deepEqual(await t.inViewer(() => [
+      document.querySelector('#app').className.includes('layout-left'),
+      document.documentElement.dataset.theme,
+      document.querySelector('#title').textContent,
+      document.querySelector('#js-libraries li').textContent.endsWith('/a.js'),
+    ]), [true, 'dark', 'Copy me', true]);
+  }
+});
+
+test('the Embed tab copies the current or original code', async t => {
+  await openApiPage(t, { html: '<p>Original</p>' });
+  // Stands in for the clipboard.
+  await t.inViewer(() => {
+    navigator.clipboard.writeText = async text => {
+      window.top.copiedText = text;
+    };
+  });
+  await t.setEditorValue('html', '<p>Changed</p>');
+  await t.click('#logo-button');
+  await t.click('[data-about-tab="embed"]');
+  await t.click('[data-embed-copy="html"]');
+  await t.page.waitForFunction(() => window.copiedText);
+  assert.match(await t.page.evaluate(() => window.copiedText), /&lt;p&gt;Changed&lt;\/p&gt;/);
+  assert.equal(await t.inViewer(() => document.querySelector('[data-embed-copy="html"]').textContent), 'Copied!');
+
+  await t.click('[data-embed-code="original"]');
+  await t.click('[data-embed-copy="api"]');
+  await t.page.waitForFunction(() => /Original/.test(window.copiedText));
+  assert.match(await t.page.evaluate(() => window.copiedText), /html: `<p>Original<\/p>`,/);
+});
+
 test('full screen falls back to filling the window', async t => {
   await t.openPage(SIMPLE_CODE);
   await t.inViewer(() => Object.defineProperty(document, 'fullscreenEnabled', { value: false }));
@@ -863,11 +1102,13 @@ test('full screen falls back to filling the window', async t => {
 
 test('data-read-only stops the code from being edited', async t => {
   await t.openPage(SIMPLE_CODE, { readOnly: 'true' });
+  // Read-only code can only be copied, saved and popped out.
+  await t.click('.panel[data-lang="js"] .panel-menu-button');
   assert.deepEqual(await t.inViewer(() => [
     ace.edit(document.querySelector('.panel[data-lang="js"] .editor')).getReadOnly(),
-    document.querySelector('.format-button').hidden,
+    Array.from(document.querySelectorAll('#panel-menu button'), button => button.hidden),
     document.querySelector('#reset-button').hidden,
-  ]), [true, true, true]);
+  ]), [true, [true, false, false, true, false], true]);
 });
 
 test('data-theme, data-title and data-word-wrap', async t => {
@@ -1386,6 +1627,267 @@ test('opens a compressed ZIP file like the ones CodePen exports', async t => {
 test('opening a file is not offered on read-only pages', async t => {
   await t.openPage(SIMPLE_CODE, { readOnly: 'true' });
   assert.equal(await t.inViewer(() => document.querySelector('#open-file-button').hidden), true);
+});
+
+// ---------------------------------------------------------------------------
+// Playground (playground.html)
+
+/**
+ * Opens the playground (with what is copied to the clipboard kept in
+ * window.copiedText).
+ * @param {string=} query
+ *   Eg. "?layout=left" or "#code=...".
+ */
+async function openPlayground(t, query = '', options = {}) {
+  if (!t.page) await t.open('<!DOCTYPE html>', options);
+  await t.page.addInitScript(() => {
+    navigator.clipboard.writeText = async text => {
+      window.copiedText = text;
+    };
+  });
+  await t.page.goto(`${t.baseUrl}/playground.html${query}`, { waitUntil: 'domcontentloaded' });
+  await t.useViewer('#playground iframe');
+}
+
+test('the playground starts with an example and saves changes', async t => {
+  await openPlayground(t);
+  assert.match(await t.editorValue('js'), /Edit the code and press Run/);
+  await t.setEditorValue('js', 'console.log("mine")');
+  // Changes are saved every second.
+  await t.page.waitForTimeout(1500);
+  await t.page.reload({ waitUntil: 'domcontentloaded' });
+  await t.useViewer('#playground iframe');
+  assert.equal(await t.editorValue('js'), 'console.log("mine")');
+  assert.deepEqual(await t.messages(1), ['log: mine']);
+
+  // "New" starts over with the example.
+  await t.page.click('#new-button');
+  await t.viewer.waitForFunction(() => /Edit the code/.test(ace.edit(document.querySelector('.panel[data-lang="js"] .editor')).getValue()));
+});
+
+test('the playground\'s links have the code in them', async t => {
+  await openPlayground(t, '?layout=left');
+  await t.setEditorValue('html', '<p>Shared</p>');
+  await t.page.evaluate(() => playground.setCode({ cssUrls: [`${location.origin}/fake-cdn/lib.css`] }, { run: false }));
+  await t.page.click('#copy-link-button');
+  const link = await t.page.waitForFunction(() => window.copiedText).then(handle => handle.jsonValue());
+  assert.match(link, /\/playground\.html\?layout=left#code=[\w-]+$/);
+
+  // Opening the link (in a new page) shows the code without saving over the
+  // playground's own code.
+  t.page = await t.context.newPage();
+  await openPlayground(t, link.slice(link.indexOf('?')));
+  assert.equal(await t.editorValue('html'), '<p>Shared</p>');
+  assert.deepEqual(await t.page.evaluate(() => playground.getCode().cssUrls), [`${t.baseUrl}/fake-cdn/lib.css`]);
+  assert.ok((await t.appClasses()).includes('layout-left'));
+  assert.equal(await t.page.textContent('#source'), 'Shared code');
+  await t.setEditorValue('html', '<p>Changed</p>');
+  await t.page.waitForTimeout(1500);
+  t.page = await t.context.newPage();
+  await openPlayground(t);
+  // (The first page was the playground itself so its code was saved.)
+  assert.equal(await t.editorValue('html'), '<p>Shared</p>');
+});
+
+test('the playground opens gists', async t => {
+  await openPlayground(t, `?gist=https://gist.github.com/someone/${GIST_ID}&theme=dark`, { routes: fakeGistRoutes(FAKE_GISTS) });
+  assert.equal(await t.editorValue('html'), FAKE_GISTS[GIST_ID]['index.html']);
+  assert.deepEqual(await t.messages(1), ['log: app.js rgb(0, 0, 255)']);
+  assert.equal(await t.page.textContent('#source'), `Gist someone/${GIST_ID}`);
+  assert.equal(await t.inViewer(() => document.documentElement.dataset.theme), 'dark');
+});
+
+/**
+ * Stands in for GitHub's API for gists.  The tokens "good-token" (which can
+ * only change gists), "broad-token" (which can do more) and "fine-token"
+ * (which doesn't say what it can do, like a fine-grained token) belong to
+ * "me" and every request is added to `api.requests`.
+ * @param {{[id: string]: {owner: string, files: {[name: string]: string}}}} gists
+ */
+function fakeGitHubApi(gists) {
+  const api = { requests: [], gists };
+  api.route = ['https://api.github.com/**', route => {
+    const request = route.request();
+    const { pathname } = new URL(request.url());
+    const body = request.postData() ? JSON.parse(request.postData()) : null;
+    api.requests.push({ method: request.method(), path: pathname, body, authorization: request.headers().authorization });
+    const token = request.headers().authorization?.replace(/^Bearer /, '');
+    const scopes = { 'good-token': 'gist', 'broad-token': 'gist, repo' }[token];
+    const json = (status, data) => route.fulfill({
+      status,
+      contentType: 'application/json',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Expose-Headers': 'X-OAuth-Scopes',
+        ...scopes && { 'X-OAuth-Scopes': scopes },
+      },
+      body: JSON.stringify(data),
+    });
+    if (request.method() === 'OPTIONS') {
+      return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*' } });
+    }
+    if (!['good-token', 'broad-token', 'fine-token'].includes(token)) return json(401, { message: 'Bad credentials' });
+    const toJson = id => ({
+      id,
+      html_url: `https://gist.github.com/${gists[id].owner}/${id}`,
+      owner: { login: gists[id].owner },
+      files: Object.fromEntries(Object.entries(gists[id].files).map(([name, content]) => [name, { filename: name, content }])),
+    });
+    if (pathname === '/user') return json(200, { login: 'me' });
+    if (pathname === '/gists' && request.method() === 'POST') {
+      const id = `feed${Object.keys(gists).length}`;
+      gists[id] = { owner: 'me', files: Object.fromEntries(Object.entries(body.files).map(([name, file]) => [name, file.content])) };
+      return json(201, toJson(id));
+    }
+    const id = /^\/gists\/(\w+)$/.exec(pathname)?.[1];
+    if (!gists[id]) return json(404, { message: 'Not Found' });
+    if (request.method() === 'PATCH') {
+      for (const [name, file] of Object.entries(body.files)) {
+        if (file) gists[id].files[name] = file.content;
+        else delete gists[id].files[name];
+      }
+    }
+    return json(200, toJson(id));
+  }];
+  return api;
+}
+
+/**
+ * Waits until a function returns something truthy.
+ * @param {() => any} fn
+ */
+async function waitUntil(fn, timeout = 10000) {
+  const start = Date.now();
+  while (!fn()) {
+    if (Date.now() - start > timeout) throw new Error(`Timed out waiting for ${fn}`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+}
+
+/**
+ * Saves the playground's code as a gist (using the dialog).
+ * @param {string=} token
+ */
+async function saveAsGist(t, token = 'good-token') {
+  await t.page.click('#save-gist-button');
+  await t.page.fill('#gist-token', token);
+  await t.page.click('#gist-save-button');
+  await t.page.waitForFunction(() => !document.querySelector('#gist-save-button').disabled);
+}
+
+test('the playground saves its code as a gist', async t => {
+  const api = fakeGitHubApi({});
+  await openPlayground(t, '?layout=left', { routes: [api.route] });
+  await t.setEditorValue('html', '<p id="p">Saved</p>');
+  await t.setEditorValue('css', '');
+  await t.page.evaluate(() => playground.setCode({ jsUrls: ['https://cdn.example.com/lib.js'] }, { run: false }));
+  await t.page.click('#save-gist-button');
+  await t.page.fill('#gist-description', 'My pen');
+  await t.page.fill('#gist-token', 'good-token');
+  await t.page.click('#gist-save-button');
+  await t.page.waitForFunction(() => location.search.includes('gist='));
+
+  const create = api.requests.find(request => request.method === 'POST');
+  assert.equal(create.authorization, 'Bearer good-token');
+  assert.equal(create.body.description, 'My pen');
+  assert.equal(create.body.public, false);
+  // Empty files aren't allowed and the libraries are tags in index.html.
+  assert.deepEqual(Object.keys(create.body.files), ['index.html', 'script.js']);
+  assert.equal(create.body.files['index.html'].content, '<script src="https://cdn.example.com/lib.js"></script>\n<p id="p">Saved</p>');
+
+  // The address opens the gist (and keeps the other settings).
+  assert.match(t.page.url(), /\/playground\.html\?layout=left&gist=feed0$/);
+  assert.equal(await t.page.textContent('#source'), 'Gist me/feed0');
+  assert.equal(await t.page.evaluate(() => document.querySelector('#gist-dialog').open), false);
+  // The token is remembered.
+  assert.equal(await t.page.evaluate(() => localStorage.getItem('yourjs-page:github-token')), 'good-token');
+
+  // Saving again updates the gist.
+  await t.setEditorValue('css', 'p { color: red; }');
+  await t.setEditorValue('js', '');
+  await t.page.click('#save-gist-button');
+  assert.equal(await t.page.inputValue('#gist-token'), 'good-token');
+  await t.page.click('#gist-save-button');
+  await waitUntil(() => api.requests.some(request => request.method === 'PATCH'));
+  const update = api.requests.find(request => request.method === 'PATCH');
+  assert.equal(update.path, '/gists/feed0');
+  assert.deepEqual(update.body.files, {
+    'index.html': { content: '<script src="https://cdn.example.com/lib.js"></script>\n<p id="p">Saved</p>' },
+    'style.css': { content: 'p { color: red; }' },
+    'script.js': null,
+  });
+  assert.equal(api.requests.filter(request => request.method === 'POST').length, 1);
+});
+
+test('the playground updates the user\'s own gists using their file names', async t => {
+  const api = fakeGitHubApi({
+    abc1: { owner: 'me', files: { 'page.html': '<p>Old</p>', 'app.js': 'console.log("old")' } },
+    abc2: { owner: 'someone', files: { 'index.html': '<p>Theirs</p>' } },
+  });
+  const routes = [api.route, ...fakeGistRoutes({ abc1: api.gists.abc1.files, abc2: api.gists.abc2.files })];
+  await openPlayground(t, '?gist=abc1', { routes });
+  await t.setEditorValue('js', 'console.log("new")');
+  await saveAsGist(t);
+  const update = api.requests.find(request => request.method === 'PATCH');
+  assert.equal(update.path, '/gists/abc1');
+  assert.deepEqual(update.body.files, { 'page.html': { content: '<p>Old</p>' }, 'app.js': { content: 'console.log("new")' } });
+
+  // Someone else's gist is saved as a new one.
+  t.page = await t.context.newPage();
+  await openPlayground(t, '?gist=abc2', { routes });
+  await saveAsGist(t);
+  assert.equal(api.requests.filter(request => request.method === 'PATCH').length, 1);
+  assert.deepEqual(Object.keys(api.requests.find(request => request.method === 'POST').body.files), ['index.html']);
+  assert.match(t.page.url(), /\?gist=feed2$/);
+});
+
+test('the playground explains when a gist can\'t be saved', async t => {
+  const api = fakeGitHubApi({});
+  await openPlayground(t, '', { routes: [api.route] });
+  await saveAsGist(t, 'bad-token');
+  assert.match(await t.page.textContent('#gist-error'), /didn.t accept the token/);
+  assert.equal(await t.page.evaluate(() => document.querySelector('#gist-dialog').open), true);
+  assert.doesNotMatch(t.page.url(), /gist=/);
+  assert.equal(await t.page.evaluate(() => localStorage.getItem('yourjs-page:github-token')), null);
+});
+
+test('the playground remembers tokens that can only change gists', async t => {
+  const api = fakeGitHubApi({});
+  await openPlayground(t, '', { routes: [api.route] });
+  const storedToken = () => t.page.evaluate(() => localStorage.getItem('yourjs-page:github-token'));
+  const notice = () => t.page.textContent('#gist-notice');
+
+  // Tokens that can do more (or don't say what they can do) aren't
+  // remembered but the gist is still saved.
+  for (const [token, reason] of [['broad-token', /can do more than change gists \(gist, repo\)/], ['fine-token', /doesn.t say what it is allowed to do/]]) {
+    await saveAsGist(t, token);
+    assert.match(await notice(), reason);
+    assert.equal(await storedToken(), null);
+    await t.page.click('#gist-cancel-button');
+  }
+  assert.equal(api.requests.filter(request => request.method === 'POST' || request.method === 'PATCH').length, 2);
+
+  // Unchecking "Remember" forgets a token.
+  await saveAsGist(t, 'good-token');
+  assert.equal(await storedToken(), 'good-token');
+  await t.page.click('#save-gist-button');
+  assert.equal(await t.page.inputValue('#gist-token'), 'good-token');
+  await t.page.uncheck('#gist-remember');
+  await t.page.click('#gist-save-button');
+  await waitUntil(() => api.requests.filter(request => request.method === 'PATCH').length === 2);
+  await t.page.waitForFunction(() => localStorage.getItem('yourjs-page:github-token') === null);
+
+  // A remembered token that GitHub stops accepting (eg. because it expired)
+  // is forgotten.
+  await t.page.evaluate(() => localStorage.setItem('yourjs-page:github-token', 'expired-token'));
+  t.page = await t.context.newPage();
+  await openPlayground(t);
+  await t.page.click('#save-gist-button');
+  assert.equal(await t.page.inputValue('#gist-token'), 'expired-token');
+  await t.page.click('#gist-save-button');
+  await t.page.waitForFunction(() => document.querySelector('#gist-error').textContent);
+  assert.equal(await storedToken(), null);
+  assert.equal(await t.page.inputValue('#gist-token'), '');
 });
 
 // ---------------------------------------------------------------------------

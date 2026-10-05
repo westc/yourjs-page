@@ -16,6 +16,7 @@
     <symbol id="icon-libraries" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></symbol>
     <symbol id="icon-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
     <symbol id="icon-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="icon-more-vertical" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.75" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.75" fill="currentColor" stroke="none"/></symbol>
     <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M10.3 4.1L2.6 17.5A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3L13.7 4.1a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/></symbol>
     <!-- The logo:  a page (with a folded corner) of JavaScript. -->
@@ -40,11 +41,7 @@
 
 <div id="app" hidden>
   <header id="toolbar">
-    <a id="logo-link" class="logo-link" target="_blank" rel="noopener"><svg class="logo-mark" aria-hidden="true"><use href="#logo-mark"/></svg></a>
-    <button id="run-button" class="run-button" type="button">
-      <svg aria-hidden="true"><use href="#icon-run"/></svg>
-      <span>Run</span>
-    </button>
+    <button id="logo-button" class="logo-button" type="button" aria-haspopup="dialog"><span class="logo"><svg class="logo-mark" aria-hidden="true"><use href="#logo-mark"/></svg><span class="logo-text"><span class="logo-your">Your</span>JS Page</span></span></button>
     <div id="title" class="title"></div>
     <div class="spacer"></div>
     <button id="console-button" class="icon-button" type="button" aria-pressed="false">
@@ -67,6 +64,10 @@
     <button id="more-button" class="icon-button" type="button" title="More" aria-haspopup="menu" aria-expanded="false">
       <svg aria-hidden="true"><use href="#icon-more"/></svg>
     </button>
+    <button id="run-button" class="run-button" type="button">
+      <svg aria-hidden="true"><use href="#icon-run"/></svg>
+      <span>Run</span>
+    </button>
   </header>
 
   <nav id="tabs" role="tablist">
@@ -84,11 +85,19 @@
             <svg aria-hidden="true"><use href="#icon-chevron"/></svg>
             <span>HTML</span>
           </button>
-          <button class="icon-button format-button" type="button">
-            <svg aria-hidden="true"><use href="#icon-format"/></svg>
+          <span class="panel-status" role="status"></span>
+          <button class="icon-button panel-menu-button" type="button" aria-haspopup="menu" aria-expanded="false">
+            <svg aria-hidden="true"><use href="#icon-more-vertical"/></svg>
           </button>
         </div>
         <div class="editor"></div>
+        <div class="popped-out-notice">
+          <div>The <span class="popped-out-name"></span> is in its own window.</div>
+          <div class="popped-out-buttons">
+            <button class="text-button popped-out-show-button" type="button">Show the window</button>
+            <button class="text-button popped-out-bring-back-button" type="button">Bring it back</button>
+          </div>
+        </div>
       </div>
       <div class="divider" role="separator"></div>
       <div class="panel" data-lang="css">
@@ -97,11 +106,19 @@
             <svg aria-hidden="true"><use href="#icon-chevron"/></svg>
             <span>CSS</span>
           </button>
-          <button class="icon-button format-button" type="button">
-            <svg aria-hidden="true"><use href="#icon-format"/></svg>
+          <span class="panel-status" role="status"></span>
+          <button class="icon-button panel-menu-button" type="button" aria-haspopup="menu" aria-expanded="false">
+            <svg aria-hidden="true"><use href="#icon-more-vertical"/></svg>
           </button>
         </div>
         <div class="editor"></div>
+        <div class="popped-out-notice">
+          <div>The <span class="popped-out-name"></span> is in its own window.</div>
+          <div class="popped-out-buttons">
+            <button class="text-button popped-out-show-button" type="button">Show the window</button>
+            <button class="text-button popped-out-bring-back-button" type="button">Bring it back</button>
+          </div>
+        </div>
       </div>
       <div class="divider" role="separator"></div>
       <div class="panel" data-lang="js">
@@ -110,11 +127,19 @@
             <svg aria-hidden="true"><use href="#icon-chevron"/></svg>
             <span>JS</span>
           </button>
-          <button class="icon-button format-button" type="button">
-            <svg aria-hidden="true"><use href="#icon-format"/></svg>
+          <span class="panel-status" role="status"></span>
+          <button class="icon-button panel-menu-button" type="button" aria-haspopup="menu" aria-expanded="false">
+            <svg aria-hidden="true"><use href="#icon-more-vertical"/></svg>
           </button>
         </div>
         <div class="editor"></div>
+        <div class="popped-out-notice">
+          <div>The <span class="popped-out-name"></span> is in its own window.</div>
+          <div class="popped-out-buttons">
+            <button class="text-button popped-out-show-button" type="button">Show the window</button>
+            <button class="text-button popped-out-bring-back-button" type="button">Bring it back</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -169,13 +194,87 @@
     <div class="menu-separator" role="separator"></div>
     <button id="reset-button" type="button" role="menuitem">Reset the code</button>
     <div class="menu-separator" role="separator"></div>
-    <div class="menu-info">
-      <div class="shortcut"><span>Run</span><kbd id="run-shortcut"></kbd></div>
-      <div class="shortcut"><span>Format</span><kbd>Shift+Alt+F</kbd></div>
+    <div class="menu-row" role="group" aria-label="Text size">
+      <span class="menu-row-label">Text size</span>
+      <button id="text-smaller-button" class="menu-step" type="button" role="menuitem" title="Smaller text" aria-label="Smaller text">A&minus;</button>
+      <button id="text-reset-button" class="menu-step menu-percent" type="button" role="menuitem" title="Reset the text size">100%</button>
+      <button id="text-bigger-button" class="menu-step" type="button" role="menuitem" title="Bigger text" aria-label="Bigger text">A+</button>
     </div>
     <div class="menu-separator" role="separator"></div>
-    <a id="about-link" role="menuitem" target="_blank" rel="noopener"></a>
+    <button id="about-button" type="button" role="menuitem">About YourJS Page</button>
   </div>
+
+  <div id="panel-menu" class="menu" role="menu" hidden>
+    <button type="button" role="menuitem" data-panel-action="format">Format <span class="menu-shortcut">Shift+Alt+F</span></button>
+    <button type="button" role="menuitem" data-panel-action="copy">Copy</button>
+    <button type="button" role="menuitem" data-panel-action="save">Save</button>
+    <button type="button" role="menuitem" data-panel-action="load">Load a file&hellip;</button>
+    <div class="menu-separator" role="separator"></div>
+    <button type="button" role="menuitem" data-panel-action="popOut">Pop out into a window</button>
+  </div>
+  <input id="panel-file-input" type="file" tabindex="-1" aria-hidden="true" hidden>
+
+  <dialog id="about-dialog" class="about-dialog" aria-labelledby="about-name">
+    <div class="dialog-header">
+      <div class="about-tabs" role="tablist">
+        <button type="button" role="tab" data-about-tab="about" aria-selected="true">About</button>
+        <button type="button" role="tab" data-about-tab="embed" aria-selected="false">Embed</button>
+      </div>
+      <button class="icon-button dialog-close" type="button" title="Close">
+        <svg aria-hidden="true"><use href="#icon-close"/></svg>
+      </button>
+    </div>
+    <div class="dialog-body about-body" data-about-panel="about">
+      <div class="about-title">
+        <svg class="logo-mark" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <div>
+          <div id="about-name" class="about-name">YourJS Page</div>
+          <div id="about-version" class="about-version"></div>
+        </div>
+      </div>
+      <p class="about-description">An HTML, CSS and JavaScript playground that can be embedded in any web page with a single script tag.</p>
+      <div class="about-links">
+        <a id="about-website-link" target="_blank" rel="noopener">Website</a>
+        <a id="about-github-link" target="_blank" rel="noopener">GitHub</a>
+        <a id="about-docs-link" target="_blank" rel="noopener">Documentation</a>
+        <a id="about-issues-link" target="_blank" rel="noopener">Report an issue</a>
+      </div>
+      <h3>This page</h3>
+      <dl id="about-details" class="about-details"></dl>
+      <h3>Keyboard shortcuts</h3>
+      <dl id="about-shortcuts" class="about-details"></dl>
+      <div id="about-footer" class="about-footer"></div>
+    </div>
+    <div class="dialog-body embed-body" data-about-panel="embed" hidden>
+      <div class="embed-options">
+        <span class="embed-label">Code</span>
+        <div class="segmented" role="radiogroup" aria-label="Code">
+          <button type="button" role="radio" data-embed-code="current" aria-checked="true">Current code</button>
+          <button type="button" role="radio" data-embed-code="original" aria-checked="false">Original code</button>
+        </div>
+      </div>
+      <section class="embed-section">
+        <div class="embed-section-header">
+          <div>
+            <h3>HTML</h3>
+            <div class="embed-hint">Paste it where the page should go.  The code is in the hidden <code>&lt;pre&gt;</code> elements.</div>
+          </div>
+          <button class="text-button embed-copy-button" type="button" data-embed-copy="html">Copy</button>
+        </div>
+        <div id="embed-html-preview" class="embed-preview"></div>
+      </section>
+      <section class="embed-section">
+        <div class="embed-section-header">
+          <div>
+            <h3>JavaScript API</h3>
+            <div class="embed-hint">Uses <code>YourJSPage.create()</code> so the page can be controlled from JavaScript.</div>
+          </div>
+          <button class="text-button embed-copy-button" type="button" data-embed-copy="api">Copy</button>
+        </div>
+        <div id="embed-api-preview" class="embed-preview"></div>
+      </section>
+    </div>
+  </dialog>
 
   <input id="file-input" type="file" accept=".html,.htm,.zip,text/html,application/zip" tabindex="-1" aria-hidden="true" hidden>
 

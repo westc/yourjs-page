@@ -7,6 +7,7 @@ one script tag.  Everything runs in the browser:  edit the code in the HTML,
 CSS and JS editors, run it, and see the result (and what it logs) right away.
 
 **[Live demo](https://westc.github.io/yourjs-page/)** &middot;
+**[Playground](https://westc.github.io/yourjs-page/playground.html)** &middot;
 [Examples](https://westc.github.io/yourjs-page/#examples) &middot;
 [Changelog](CHANGELOG.md)
 
@@ -152,13 +153,26 @@ returns.  The console is cleared each time the code runs.
 | Change view | Puts the editors on top, on the left or on the right of the result, or shows one thing at a time in tabs. |
 | Open in a new tab | Opens the result in a new tab (still sandboxed). |
 | Full screen | Makes the page fill the screen (or the window if full screen isn't allowed).  <kbd>Esc</kbd> exits. |
-| **&#8943;** | Downloads the code, opens a file, resets the code to how it was when the page loaded and lists the keyboard shortcuts (see "Saving and Opening" below). |
+| **&#8943;** | Downloads the code, opens a file, resets the code to how it was when the page loaded (see "Saving and Opening" below) and changes the text size.  **About YourJS Page** opens the About window. |
+| Logo | Opens the About window:  the version, links to the website and documentation, how the page is set up (eg. its layout and theme) and the keyboard shortcuts.  Its **Embed** tab has the HTML (a script tag with the code in hidden `<pre>` elements) and the JavaScript (`YourJSPage.create()`) for a copy of the page with the same settings, each with a **Copy** button, using either the current code or the code the page started with. |
 
-Each editor also has a button that formats its code (<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>,
-using [js-beautify](https://github.com/beautifier/js-beautify), which is only
-loaded the first time it is used).  Clicking an editor's title collapses or
-expands it, and the dividers between the editors, the result and the console
-can be dragged.
+Each editor has a **&#8942;** menu that:
+
+- **Formats** its code (<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>, using
+  [js-beautify](https://github.com/beautifier/js-beautify), which is only
+  loaded the first time it is used).
+- **Copies** its code.
+- **Saves** its code as a file (`index.html`, `style.css` or `script.js`).
+- **Loads** a file into it (which can be undone).
+- **Pops it out** into its own window (with **Run** and the same keyboard
+  shortcuts) for more room.  The editor in the window and the page stay the
+  same and closing the window (or **Bring it back**) puts the editor back.
+
+Read-only pages can only copy, save and pop out.  Clicking an editor's title collapses
+or expands it, and the dividers between the editors, the result and the
+console can be dragged.  **Text size** in the **&#8943;** menu makes the text
+in the editors and the console smaller or bigger (and is remembered in the
+browser).
 
 ### Libraries
 
@@ -234,6 +248,7 @@ of [`YourJSPage.create()`](#javascript-api).
 | `data-css-urls` | `cssUrls` | None | The URLs of CSS libraries to start with, separated by whitespace (or an array with the API). |
 | `data-js-urls` | `jsUrls` | None | The URLs of JavaScript libraries to start with, separated by whitespace (or an array with the API). |
 | `data-library-search` | `librarySearch` | `"true"` | `"false"` hides the search for libraries on cdnjs (libraries can still be added by URL). |
+| `data-menu` | `menu` | `"bottom"` | Where the menu (the toolbar with the **Run** button) goes:  `"bottom"` (like YourJS Box) or `"top"`. |
 | `data-layout` | `layout` | Automatic | `"top"`, `"left"` or `"right"` puts the editors there (next to the result).  `"tabs"` shows one thing at a time.  If not given, the editors are on top unless the page is narrower than 600px, in which case tabs are used. |
 | `data-tab` | `tab` | `"result"` | Which tab is shown first in the tabs layout:  `"html"`, `"css"`, `"js"` or `"result"`. |
 | `data-theme` | `theme` | The system's | `"light"` or `"dark"`.  If not given, it follows the system's color scheme. |
@@ -302,6 +317,48 @@ object with:
 `YourJSPage.version` is the version that was loaded.  TypeScript types (which
 also give autocomplete in VS Code) are in `dist/yourjs-page.d.ts`.
 
+## Playground
+
+The [playground](https://westc.github.io/yourjs-page/playground.html) is a
+whole window for writing code:
+
+- It saves your code in your browser as you go (and **New** starts over).
+- **Copy link** makes a link that opens your code.  The code is in the part of
+  the link after the `#` so it is never sent to a server.
+- **Open gist** (or `playground.html?gist=` followed by a gist's URL or ID)
+  opens a gist.  `&gist-html=`, `&gist-css=` and `&gist-js=` name its files.
+- **Save as gist** saves the code in a gist on your GitHub account (secret
+  unless you choose public) and changes the address to open it, so the address
+  can be shared.  Saving again updates the gist, as does saving a gist of
+  yours that was opened.  Libraries are saved as tags at the top of
+  `index.html`.
+- `?layout=`, `?theme=`, `?editors=` and `?tab=` work like the data attributes
+  of the same names (eg. `playground.html?layout=left&theme=dark`).
+
+Only the playground's own code is saved in your browser:  changing the code
+from a link or a gist doesn't replace it.
+
+#### Saving Gists With a Token
+
+GitHub needs to know who is saving a gist, so the first time you save one the
+playground asks for a GitHub *personal access token*:  a password-like key that
+only lets it create and change your gists (not your repositories or your
+account).  To make one:
+
+1. Click **Create a token** in the dialog.  It opens
+   [GitHub's page for new tokens](https://github.com/settings/tokens/new?scopes=gist&description=YourJS%20Page%20Playground)
+   with the name filled in and only the **gist** permission checked.
+2. Choose when it expires and click **Generate token**.
+3. Copy the token (GitHub only shows it once) and paste it into the dialog.
+
+The token is only sent to GitHub.  The playground remembers it in your browser
+(uncheck **Remember the token** to be asked every time) until GitHub stops
+accepting it (eg. once it expires or you delete it from **Settings &rarr;
+Developer settings &rarr; Personal access tokens** on GitHub).  Only tokens
+that can do nothing but change gists are remembered:  a token that can do
+more (or a fine-grained token, which doesn't say what it can do) still saves
+the gist but has to be pasted each time.
+
 ## Development
 
 Install the development dependencies by running `npm install`.  The tests need
@@ -360,19 +417,24 @@ too long and run the JavaScript.
 
 Ideas for future versions:
 
-- **Copy and save each editor:** buttons next to each editor's format button
-  that copy its code or download it as a file (eg. `style.css`), also
-  available on read-only pages.
+- **Open in the playground:** a button in embeds that opens their code in the
+  [playground](#playground) (in a new tab) where it can be changed, shared as a
+  link or saved as a gist.
+- **`data-remember`:** keep an embed's edits in the browser so they are still
+  there after a reload (like the playground already does).
+- **`data-autorun`:** run the code (after a short delay) whenever it changes.
 - **Preprocessors:** TypeScript, JSX, SCSS and Markdown.
 - **Importing packages:** `import confetti from 'canvas-confetti'` loaded from
   esm.sh, like YourJS Box.
-- **Sharing:** copying a link that has the code in it.
+- **Multiple files:** more CSS and JavaScript files that the HTML can use (eg.
+  `<script src="utils.js">`), like CodePen's projects.
+- **Emmet:** HTML and CSS abbreviations in the editors.
 - **Accessibility:** resizing with the keyboard, arrow keys in the tabs and
   menus, and announcing new console messages to screen readers.
-- **`data-remember`:** keep edits in the browser so they are still there after
-  a reload.
-- **`data-autorun`:** run the code (after a short delay) whenever it changes.
-- **Emmet:** HTML and CSS abbreviations in the editors.
+- **Sign in with GitHub:** save gists from the playground without pasting a
+  token (which needs a small server to finish signing in).
+- **Tests on GitHub:** GitHub Actions that run the tests in Chrome, WebKit and
+  Firefox on every push.
 
 ## License
 

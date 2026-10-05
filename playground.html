@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YourJS Page Playground</title>
+  <meta name="description" content="Write HTML, CSS and JavaScript and see the result right away.  Open any gist as a pen and share your code with a link.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="YourJS Page Playground">
+  <meta property="og:description" content="Write HTML, CSS and JavaScript and see the result right away.  Open any gist as a pen and share your code with a link.">
+  <meta property="og:url" content="https://westc.github.io/yourjs-page/playground.html">
+  <meta property="og:image" content="https://westc.github.io/yourjs-page/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bar-bg: #f3f3f3;
+      --bar-border: #d6d6d6;
+      --text: #333;
+      --muted: #5f6368;
+      --hover: rgb(0 0 0 / 0.08);
+      --accent: #1a73e8;
+      --accent-text: #fff;
+      --dialog-bg: #fff;
+      --input-bg: #fff;
+      --error-bg: #fff0f0;
+      --error-text: #dc362e;
+      --notice-bg: #fffbe5;
+      --notice-text: #5c3c00;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bar-bg: #2b2b2b;
+        --bar-border: #474747;
+        --text: #e3e3e3;
+        --muted: #9aa0a6;
+        --hover: rgb(255 255 255 / 0.1);
+        --accent: #8ab4f8;
+        --accent-text: #202124;
+        --dialog-bg: #2d2e30;
+        --input-bg: #242424;
+        --error-bg: #290000;
+        --error-text: #ff8080;
+        --notice-bg: #332b00;
+        --notice-text: #ffd17a;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bar-bg: #f3f3f3;
+      --bar-border: #d6d6d6;
+      --text: #333;
+      --muted: #5f6368;
+      --hover: rgb(0 0 0 / 0.08);
+      --accent: #1a73e8;
+      --accent-text: #fff;
+      --dialog-bg: #fff;
+      --input-bg: #fff;
+      --error-bg: #fff0f0;
+      --error-text: #dc362e;
+      --notice-bg: #fffbe5;
+      --notice-text: #5c3c00;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bar-bg: #2b2b2b;
+      --bar-border: #474747;
+      --text: #e3e3e3;
+      --muted: #9aa0a6;
+      --hover: rgb(255 255 255 / 0.1);
+      --accent: #8ab4f8;
+      --accent-text: #202124;
+      --dialog-bg: #2d2e30;
+      --input-bg: #242424;
+      --error-bg: #290000;
+      --error-text: #ff8080;
+      --notice-bg: #332b00;
+      --notice-text: #ffd17a;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background: var(--bar-bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+    }
+    #bar {
+      align-items: center;
+      border-bottom: 1px solid var(--bar-border);
+      display: flex;
+      flex-shrink: 0;
+      gap: 4px;
+      height: 40px;
+      padding: 0 8px;
+    }
+    .logo {
+      align-items: center;
+      color: inherit;
+      display: flex;
+      font-size: 14px;
+      font-weight: 700;
+      gap: 6px;
+      margin-right: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .logo img {
+      height: 22px;
+      width: 22px;
+    }
+    .logo .your {
+      font-weight: 400;
+      opacity: 0.8;
+    }
+    .logo .playground {
+      color: var(--muted);
+      font-weight: 400;
+    }
+    #source,
+    #source a {
+      color: var(--muted);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .spacer {
+      flex-grow: 1;
+    }
+    #bar button,
+    #bar .link {
+      background: none;
+      border: 0;
+      border-radius: 4px;
+      color: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+      font: inherit;
+      padding: 6px 10px;
+      text-decoration: none;
+    }
+    #bar button:hover,
+    #bar .link:hover {
+      background: var(--hover);
+    }
+    #bar button:focus-visible,
+    #bar .link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+    /* The "Save as gist" dialog */
+    dialog {
+      background: var(--dialog-bg);
+      border: 1px solid var(--bar-border);
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgb(0 0 0 / 0.3);
+      box-sizing: border-box;
+      color: var(--text);
+      max-width: calc(100% - 16px);
+      padding: 20px;
+      width: 460px;
+    }
+    dialog::backdrop {
+      background: rgb(0 0 0 / 0.35);
+    }
+    dialog h2 {
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+    dialog p {
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0 0 14px;
+    }
+    dialog label {
+      display: block;
+      font-weight: 600;
+      margin: 12px 0 4px;
+    }
+    dialog input[type="text"],
+    dialog input[type="password"] {
+      background: var(--input-bg);
+      border: 1px solid var(--bar-border);
+      border-radius: 4px;
+      box-sizing: border-box;
+      color: inherit;
+      font: inherit;
+      height: 32px;
+      padding: 0 8px;
+      width: 100%;
+    }
+    dialog input:focus {
+      border-color: var(--accent);
+      outline: 1px solid var(--accent);
+    }
+    dialog .choices {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    dialog .choices label,
+    dialog label.check {
+      align-items: center;
+      display: flex;
+      font-weight: 400;
+      gap: 6px;
+      margin: 0;
+    }
+    dialog label.check {
+      margin-top: 8px;
+    }
+    dialog .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    dialog a {
+      color: var(--accent);
+    }
+    #gist-error {
+      background: var(--error-bg);
+      border-radius: 4px;
+      color: var(--error-text);
+      margin-top: 14px;
+      padding: 8px 10px;
+    }
+    #gist-notice {
+      background: var(--notice-bg);
+      border-radius: 4px;
+      color: var(--notice-text);
+      line-height: 1.45;
+      margin-top: 14px;
+      padding: 8px 10px;
+    }
+    #gist-notice:empty {
+      display: none;
+    }
+    #gist-error:empty {
+      display: none;
+    }
+    dialog .buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+    dialog .buttons button {
+      border: 1px solid var(--bar-border);
+      border-radius: 4px;
+      cursor: pointer;
+      font: inherit;
+      height: 32px;
+      padding: 0 14px;
+    }
+    dialog .buttons .primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+    dialog .buttons button:not(.primary) {
+      background: none;
+      color: inherit;
+    }
+    dialog .buttons button:disabled {
+      cursor: progress;
+      opacity: 0.6;
+    }
+    #copy-link-button.copied,
+    #save-gist-button.saved {
+      color: var(--accent);
+    }
+    #copy-link-button.copied {
+      color: var(--accent);
+    }
+    #playground {
+      flex-grow: 1;
+      min-height: 0;
+      position: relative;
+    }
+    /* Narrow screens only have room for the buttons. */
+    @media (max-width: 640px) {
+      .logo .text, #source, #docs-link {
+        display: none;
+      }
+    }
+  </style>
+  <script src="dist/yourjs-page.min.js"></script>
+</head>
+<body>
+  <header id="bar">
+    <a class="logo" href="./" title="YourJS Page">
+      <img src="logo.svg" alt="">
+      <span class="text"><span class="your">Your</span>JS Page <span class="playground">Playground</span></span>
+    </a>
+    <span id="source"></span>
+    <span class="spacer"></span>
+    <button id="new-button" type="button" title="Start over with the example code">New</button>
+    <button id="gist-button" type="button" title="Open a gist in the playground">Open gist</button>
+    <button id="copy-link-button" type="button" title="Copy a link that opens this code">Copy link</button>
+    <button id="save-gist-button" type="button" title="Save the code as a gist on GitHub">Save as gist</button>
+    <a id="docs-link" class="link" href="https://github.com/westc/yourjs-page#readme" target="_blank" rel="noopener">Docs</a>
+  </header>
+  <main id="playground"></main>
+
+  <dialog id="gist-dialog" aria-labelledby="gist-dialog-title">
+    <form id="gist-form" method="dialog">
+      <h2 id="gist-dialog-title">Save as a gist</h2>
+      <p id="gist-dialog-description">The HTML, CSS and JavaScript are saved as <code>index.html</code>, <code>style.css</code> and <code>script.js</code> in a gist on your GitHub account.</p>
+
+      <label for="gist-description">Description</label>
+      <input id="gist-description" type="text" placeholder="Made with YourJS Page">
+
+      <div id="gist-visibility">
+        <label>Who can see it</label>
+        <div class="choices">
+          <label><input type="radio" name="visibility" value="secret" checked> Secret (anyone with the link)</label>
+          <label><input type="radio" name="visibility" value="public"> Public</label>
+        </div>
+      </div>
+
+      <label for="gist-token">GitHub token</label>
+      <input id="gist-token" type="password" autocomplete="off" spellcheck="false" required placeholder="ghp_...">
+      <div class="hint">
+        A token lets this page save gists for you (and nothing else).
+        <a id="create-token-link" target="_blank" rel="noopener">Create a token</a>
+        with only the <b>gist</b> permission, then paste it here.
+      </div>
+      <label class="check"><input id="gist-remember" type="checkbox" checked> Remember the token in this browser</label>
+      <div class="hint">It is forgotten as soon as GitHub stops accepting it (eg. once it expires).</div>
+
+      <div id="gist-error" role="alert"></div>
+      <div id="gist-notice" role="status"></div>
+
+      <div class="buttons">
+        <button type="button" id="gist-cancel-button">Cancel</button>
+        <button type="submit" id="gist-save-button" class="primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    /**
+     * The playground:  a full window YourJS Page.  Its code comes from (in
+     * this order):
+     * - A share link (#code=... made by "Copy link").
+     * - A gist (?gist=... with the gist's URL or ID).
+     * - The code that was saved in this browser the last time.
+     * - The example code below.
+     * Only the code of the playground itself (not a share link or a gist) is
+     * saved in this browser as it changes.  ?layout=, ?theme=, ?editors= and
+     * ?tab= work like the data-* attributes of the same names.
+     */
+
+    const EXAMPLE_CODE = {
+      html: [
+        '<main class="card">',
+        '  <h1>Hello, <span id="name">world</span>!</h1>',
+        '  <label>',
+        '    Your name:',
+        '    <input id="input" placeholder="Type your name">',
+        '  </label>',
+        '</main>',
+      ].join('\n'),
+      css: [
+        'body {',
+        '  font-family: system-ui, sans-serif;',
+        '  display: grid;',
+        '  place-items: center;',
+        '  min-height: 100vh;',
+        '  margin: 0;',
+        '  background: linear-gradient(135deg, #e0f2ff, #fce7f3);',
+        '}',
+        '.card {',
+        '  background: white;',
+        '  padding: 1em 2em;',
+        '  border-radius: 12px;',
+        '  box-shadow: 0 8px 24px #0002;',
+        '}',
+        '#name {',
+        '  color: rebeccapurple;',
+        '}',
+      ].join('\n'),
+      js: [
+        "const input = document.getElementById('input');",
+        "const nameSpan = document.getElementById('name');",
+        '',
+        "input.addEventListener('input', () => {",
+        "  nameSpan.textContent = input.value || 'world';",
+        "  console.log('Name changed to', input.value);",
+        '});',
+        '',
+        "console.log('Edit the code and press Run (or Ctrl/Cmd+Enter).');",
+      ].join('\n'),
+      cssUrls: [],
+      jsUrls: [],
+    };
+
+    /** Where the playground's own code is saved in this browser. */
+    const STORAGE_KEY = 'yourjs-page:playground';
+    /** How often (in milliseconds) changes to the code are saved. */
+    const SAVE_INTERVAL = 1000;
+
+    const params = new URLSearchParams(location.search);
+    const sourceElement = document.getElementById('source');
+
+    /**
+     * Shows where the code came from (eg. a link to its gist).
+     * @param {string} text
+     * @param {string=} url
+     */
+    function setSource(text, url) {
+      sourceElement.replaceChildren(url
+        ? Object.assign(document.createElement('a'), {href: url, target: '_blank', rel: 'noopener', textContent: text, title: 'Open on GitHub'})
+        : text);
+    }
+
+    // The page's colors follow the playground's theme.
+    if (/^(light|dark)$/.test(params.get('theme'))) document.documentElement.dataset.theme = params.get('theme');
+
+    /**
+     * Turns code into text for a share link:  compressed JSON as base64url.
+     * @param {Object} code
+     * @returns {Promise<string>}
+     */
+    async function encodeCode(code) {
+      const stream = new Blob([JSON.stringify(code)]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+      const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+      let binary = '';
+      for (const byte of bytes) binary += String.fromCharCode(byte);
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    /**
+     * Turns the text of a share link back into code.
+     * @param {string} text
+     * @returns {Promise<Object>}
+     */
+    async function decodeCode(text) {
+      const binary = atob(text.replace(/-/g, '+').replace(/_/g, '/'));
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return JSON.parse(await new Response(stream).text());
+    }
+
+    /**
+     * Keeps only the parts of code that a page uses (eg. from a share link
+     * or from storage).
+     * @param {*} code
+     * @returns {Object}
+     */
+    function toCode(code) {
+      code = Object(code);
+      return {
+        html: `${code.html ?? ''}`,
+        css: `${code.css ?? ''}`,
+        js: `${code.js ?? ''}`,
+        cssUrls: Array.isArray(code.cssUrls) ? code.cssUrls.map(String) : [],
+        jsUrls: Array.isArray(code.jsUrls) ? code.jsUrls.map(String) : [],
+      };
+    }
+
+    function readSavedCode() {
+      try {
+        const json = localStorage.getItem(STORAGE_KEY);
+        return json ? toCode(JSON.parse(json)) : null;
+      }
+      catch (e) {
+        return null;
+      }
+    }
+
+    function saveCode(code) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(code));
+      }
+      catch (e) {
+        // Eg. storage is turned off.
+      }
+    }
+
+    (async () => {
+      // The options that come from the URL.
+      const options = {target: '#playground', height: '100%', loading: 'eager'};
+      for (const name of ['layout', 'theme', 'editors', 'tab']) {
+        if (params.has(name)) options[name] = params.get(name);
+      }
+
+      let isPlaygroundCode = false;
+      const shared = /^#code=(.+)$/.exec(location.hash)?.[1];
+      let sharedCode = null;
+      if (shared) {
+        try {
+          sharedCode = toCode(await decodeCode(shared));
+        }
+        catch (e) {
+          alert('The code in this link could not be read.  The link may not be complete.');
+        }
+      }
+
+      if (sharedCode) {
+        Object.assign(options, sharedCode);
+        setSource('Shared code');
+      }
+      else if (params.get('gist')) {
+        options.gist = params.get('gist');
+        for (const [param, option] of [['gist-html', 'gistHtml'], ['gist-css', 'gistCss'], ['gist-js', 'gistJs']]) {
+          if (params.has(param)) options[option] = params.get(param);
+        }
+        const gistName = params.get('gist').replace(/^https?:\/\/gist\.github\.com\//, '');
+        setSource(`Gist ${gistName}`, `https://gist.github.com/${gistName}`);
+      }
+      else {
+        isPlaygroundCode = true;
+        Object.assign(options, readSavedCode() ?? EXAMPLE_CODE);
+      }
+
+      const page = YourJSPage.create(options);
+      window.playground = page;
+
+      // The playground's own code is saved as it changes.
+      if (isPlaygroundCode) {
+        let lastJson = JSON.stringify(page.getCode());
+        const saveIfChanged = () => {
+          // (The code is saved in a gist after "Save as gist".)
+          if (!isPlaygroundCode) return;
+          const json = JSON.stringify(page.getCode());
+          if (json !== lastJson) {
+            lastJson = json;
+            saveCode(JSON.parse(json));
+          }
+        };
+        setInterval(saveIfChanged, SAVE_INTERVAL);
+        addEventListener('pagehide', saveIfChanged);
+      }
+
+      document.getElementById('new-button').addEventListener('click', () => {
+        if (!confirm('Start over with the example code?  The code that you saved in the playground will be replaced (copy a link to it first to keep it).')) return;
+        // Also leaves a share link or a gist for the playground's own code.
+        saveCode(EXAMPLE_CODE);
+        const url = new URL(location.href);
+        url.hash = '';
+        url.searchParams.delete('gist');
+        url.searchParams.delete('gist-html');
+        url.searchParams.delete('gist-css');
+        url.searchParams.delete('gist-js');
+        if (isPlaygroundCode) page.setCode(EXAMPLE_CODE);
+        else location.href = url.href;
+      });
+
+      document.getElementById('gist-button').addEventListener('click', () => {
+        const gist = prompt('The URL or ID of the gist to open:');
+        if (!gist?.trim()) return;
+        const url = new URL(location.href);
+        url.hash = '';
+        url.searchParams.set('gist', gist.trim());
+        location.href = url.href;
+      });
+
+      //#region Saving as a gist
+      const GITHUB_API_URL = 'https://api.github.com';
+      /** Where the token is remembered (if the person chooses to). */
+      const TOKEN_KEY = 'yourjs-page:github-token';
+      /** The files that a gist made by the playground has. */
+      const DEFAULT_GIST_FILES = {html: 'index.html', css: 'style.css', js: 'script.js'};
+      /**
+       * The files that are used for each language when a gist's file isn't
+       * named (the same as in yourjs-page.js).
+       */
+      const GIST_FILE_PATTERNS = {
+        html: [/^index\.html?$/i, /\.html?$/i],
+        css: [/^styles?\.css$/i, /\.css$/i],
+        js: [/^(script|index|main|app)\.m?js$/i, /\.m?js$/i],
+      };
+
+      const gistDialog = document.getElementById('gist-dialog');
+      const gistError = document.getElementById('gist-error');
+      const tokenInput = document.getElementById('gist-token');
+      const rememberInput = document.getElementById('gist-remember');
+      const saveGistButton = document.getElementById('save-gist-button');
+      const gistSaveButton = document.getElementById('gist-save-button');
+      document.getElementById('create-token-link').href = 'https://github.com/settings/tokens/new?scopes=gist&description=YourJS%20Page%20Playground';
+
+      /** The ID of the gist that the code is in (if any). */
+      const getCurrentGistId = () => /(?:^|\/)([\da-f]+)(?:[/?#.]|$)/i.exec(new URL(location.href).searchParams.get('gist') ?? '')?.[1] ?? null;
+
+      /**
+       * Calls GitHub's API.
+       * @param {string} path
+       * @param {string} token
+       * @param {Object=} init
+       * @returns {Promise<any>}
+       */
+      /**
+       * The permissions (scopes) of the token used for the last call to
+       * GitHub's API (eg. "gist" or "gist, repo") or null if GitHub didn't say
+       * (eg. for fine-grained tokens).
+       * @type {string?}
+       */
+      let lastTokenScopes = null;
+
+      const readToken = () => {
+        try {
+          return localStorage.getItem(TOKEN_KEY);
+        }
+        catch (e) {
+          return null;
+        }
+      };
+      const rememberToken = token => {
+        try {
+          if (token) localStorage.setItem(TOKEN_KEY, token);
+          else localStorage.removeItem(TOKEN_KEY);
+        }
+        catch (e) {}
+      };
+
+      async function callGitHub(path, token, init = {}) {
+        let response;
+        try {
+          response = await fetch(GITHUB_API_URL + path, {
+            ...init,
+            headers: {
+              'Accept': 'application/vnd.github+json',
+              'Authorization': `Bearer ${token}`,
+              'X-GitHub-Api-Version': '2022-11-28',
+              ...init.body && {'Content-Type': 'application/json'},
+            },
+          });
+        }
+        catch (e) {
+          throw new Error('GitHub could not be reached.  Please check your connection and try again.');
+        }
+        if (response.status === 401) {
+          // A token that GitHub doesn't accept (eg. because it expired) is
+          // forgotten.
+          if (readToken() === token) rememberToken(null);
+          tokenInput.value = '';
+          throw new Error('GitHub didn’t accept the token.  It may have expired or been deleted.  Please paste a new one.');
+        }
+        lastTokenScopes = response.headers.get('X-OAuth-Scopes');
+        if (response.status === 403 || response.status === 404) {
+          throw Object.assign(new Error('The token isn’t allowed to save gists.  Make sure that it has the gist permission.'), {status: response.status});
+        }
+        if (!response.ok) {
+          const message = (await response.json().catch(() => null))?.message;
+          throw new Error(`GitHub couldn’t save the gist${message ? ` (${message})` : ''}.`);
+        }
+        return response.json();
+      }
+
+      /**
+       * Gets what goes in index.html:  the HTML with the libraries added as
+       * tags (since a gist has no other place for them).
+       * @param {ReturnType<typeof page.getCode>} code
+       * @returns {string}
+       */
+      function getHtmlWithLibraries(code) {
+        const escape = text => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        const tags = [
+          ...code.cssUrls.map(url => `<link rel="stylesheet" href="${escape(url)}">`),
+          ...code.jsUrls.map(url => `<script src="${escape(url)}"><\/script>`),
+        ].join('\n');
+        if (!tags) return code.html;
+        // In a whole document they go at the start of the head.
+        const head = /<head(\s[^>]*)?>/i.exec(code.html);
+        if (head) return code.html.slice(0, head.index + head[0].length) + `\n${tags}` + code.html.slice(head.index + head[0].length);
+        return `${tags}\n${code.html}`;
+      }
+
+      /**
+       * Saves the code in a new gist or (if the code came from one of the
+       * user's gists) in that gist.
+       * @param {string} token
+       * @param {{description: string, isPublic: boolean}} details
+       * @returns {Promise<{id: string, html_url: string}>}
+       */
+      async function saveGist(token, {description, isPublic}) {
+        const code = page.getCode();
+        const contents = {html: getHtmlWithLibraries(code), css: code.css, js: code.js};
+        // The comment that a language starts with when the gist it came from
+        // doesn't have a file for it (see yourjs-page.js) isn't saved.
+        const gistId = getCurrentGistId();
+        if (gistId) {
+          const missingComments = {
+            html: `<!-- The gist ${gistId} has no HTML file. -->`,
+            css: `/* The gist ${gistId} has no CSS file. */`,
+            js: `// The gist ${gistId} has no JavaScript file.`,
+          };
+          for (const key of Object.keys(contents)) {
+            if (contents[key].trim() === missingComments[key]) contents[key] = '';
+          }
+        }
+        if (!Object.values(contents).some(text => text.trim())) throw new Error('There is no code to save.');
+
+        // The user's own gist is updated (using the names of its files).
+        if (gistId) {
+          const [user, gist] = await Promise.all([
+            callGitHub('/user', token),
+            callGitHub(`/gists/${gistId}`, token).catch(e => {
+              if (e.status === 404) return null;
+              throw e;
+            }),
+          ]);
+          if (gist && gist.owner?.login === user.login) {
+            const names = Object.keys(gist.files ?? {});
+            const params = new URL(location.href).searchParams;
+            const files = {};
+            for (const [key, text] of Object.entries(contents)) {
+              const name = params.get(`gist-${key}`)
+                ?? GIST_FILE_PATTERNS[key].map(pattern => names.find(name => pattern.test(name))).find(Boolean)
+                ?? DEFAULT_GIST_FILES[key];
+              // GitHub doesn't allow empty files so an empty editor removes
+              // its file.
+              if (text.trim()) files[name] = {content: text};
+              else if (names.includes(name)) files[name] = null;
+            }
+            return callGitHub(`/gists/${gistId}`, token, {
+              method: 'PATCH',
+              body: JSON.stringify({...description && {description}, files}),
+            });
+          }
+        }
+
+        const files = {};
+        for (const [key, text] of Object.entries(contents)) {
+          if (text.trim()) files[DEFAULT_GIST_FILES[key]] = {content: text};
+        }
+        return callGitHub('/gists', token, {
+          method: 'POST',
+          body: JSON.stringify({description: description || 'Made with YourJS Page', public: isPublic, files}),
+        });
+      }
+
+      saveGistButton.addEventListener('click', () => {
+        gistError.textContent = '';
+        gistNotice.textContent = '';
+        gistSaveButton.hidden = false;
+        cancelButton.textContent = 'Cancel';
+        tokenInput.value = readToken() ?? '';
+        // A gist that is being updated keeps whether it is public.
+        const isUpdate = !!getCurrentGistId();
+        document.getElementById('gist-visibility').hidden = isUpdate;
+        document.getElementById('gist-dialog-title').textContent = isUpdate ? 'Save the gist' : 'Save as a gist';
+        document.getElementById('gist-dialog-description').textContent = isUpdate
+          ? 'If this gist is yours it is updated.  Otherwise the code is saved in a new gist on your GitHub account.'
+          : 'The HTML, CSS and JavaScript are saved as index.html, style.css and script.js in a gist on your GitHub account.';
+        gistDialog.showModal();
+        (tokenInput.value ? document.getElementById('gist-description') : tokenInput).focus();
+      });
+      const gistNotice = document.getElementById('gist-notice');
+      const cancelButton = document.getElementById('gist-cancel-button');
+      cancelButton.addEventListener('click', () => gistDialog.close());
+
+      /**
+       * Whether a token can only change gists (so that it is safe to
+       * remember).
+       * @param {string?} scopes
+       */
+      const isGistOnly = scopes => scopes != null && scopes.split(',').map(scope => scope.trim()).filter(Boolean).join() === 'gist';
+
+      document.getElementById('gist-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const token = tokenInput.value.trim();
+        if (!token) return;
+        gistError.textContent = '';
+        gistSaveButton.disabled = true;
+        gistSaveButton.textContent = 'Saving…';
+        try {
+          const gist = await saveGist(token, {
+            description: document.getElementById('gist-description').value.trim(),
+            isPublic: gistDialog.querySelector('[name="visibility"]:checked').value === 'public',
+          });
+          // Only a token that can do nothing but change gists is remembered.
+          const canRemember = isGistOnly(lastTokenScopes);
+          rememberToken(rememberInput.checked && canRemember ? token : null);
+          // The page's address now opens the gist (and is the link to share).
+          const url = new URL(location.href);
+          url.hash = '';
+          for (const name of ['gist-html', 'gist-css', 'gist-js']) url.searchParams.delete(name);
+          url.searchParams.set('gist', gist.id);
+          history.replaceState(null, '', url.href);
+          isPlaygroundCode = false;
+          setSource(`Gist ${gist.owner?.login ? `${gist.owner.login}/` : ''}${gist.id}`, gist.html_url);
+          if (rememberInput.checked && !canRemember) {
+            // The gist was saved but the dialog stays open to explain why the
+            // token wasn't remembered.
+            gistNotice.textContent = lastTokenScopes == null
+              ? 'The gist was saved.  The token wasn’t remembered because this kind of token doesn’t say what it is allowed to do.  Use “Create a token” to make one that can only change gists and it will be remembered.'
+              : `The gist was saved.  The token wasn’t remembered because it can do more than change gists (${lastTokenScopes}).  Use “Create a token” to make one that can only change gists and it will be remembered.`;
+            gistSaveButton.hidden = true;
+            cancelButton.textContent = 'Close';
+          }
+          else {
+            gistDialog.close();
+          }
+          saveGistButton.textContent = 'Saved!';
+          saveGistButton.classList.add('saved');
+          setTimeout(() => {
+            saveGistButton.textContent = 'Save as gist';
+            saveGistButton.classList.remove('saved');
+          }, 1500);
+          window.savedGistUrl = gist.html_url;
+        }
+        catch (e) {
+          gistError.textContent = e.message;
+        }
+        finally {
+          gistSaveButton.disabled = false;
+          gistSaveButton.textContent = 'Save';
+        }
+      });
+      //#endregion
+
+      const copyButton = document.getElementById('copy-link-button');
+      copyButton.addEventListener('click', async () => {
+        // The link keeps the settings (eg. the layout) but not the gist since
+        // the code is in the link.
+        const url = new URL(location.href);
+        for (const name of ['gist', 'gist-html', 'gist-css', 'gist-js']) url.searchParams.delete(name);
+        url.hash = `code=${await encodeCode(page.getCode())}`;
+        try {
+          await navigator.clipboard.writeText(url.href);
+          copyButton.textContent = 'Copied!';
+        }
+        catch (e) {
+          // Eg. the clipboard isn't allowed.
+          prompt('Copy this link:', url.href);
+        }
+        copyButton.classList.add('copied');
+        setTimeout(() => {
+          copyButton.textContent = 'Copy link';
+          copyButton.classList.remove('copied');
+        }, 1500);
+      });
+    })();
+  </script>
+</body>
+</html>

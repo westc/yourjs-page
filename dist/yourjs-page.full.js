@@ -4,12 +4,12 @@
    * The viewer IFRAME's CSS code.
    * @type {string}
    */
-  const VIEWER_CSS = ":root{color-scheme:light;--font:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--code-font:ui-monospace,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;--bg:#fff;--text:#1f1f1f;--muted-text:#5f6368;--toolbar-bg:#f3f3f3;--toolbar-border:#d6d6d6;--toolbar-text:#333;--panel-header-bg:#f8f8f8;--button-hover:rgb(0 0 0 / 0.08);--accent:#1a73e8;--accent-hover:#1765cc;--accent-text:#fff;--divider-bg:#e6e6e6;--divider-hover-bg:#c8c8c8;--menu-bg:#fff;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.18);--row-border:#f0f0f0;--string:#c41a16;--number:#1a1aa6;--keyword:#881391;--null:#80868b;--warn-bg:#fffbe5;--warn-border:#fff5c2;--warn-text:#5c3c00;--error-bg:#fff0f0;--error-border:#ffd6d6;--error-text:#dc362e;--info-text:#1a73e8}:root[data-theme=dark]{color-scheme:dark;--bg:#242424;--text:#e3e3e3;--muted-text:#9aa0a6;--toolbar-bg:#2b2b2b;--toolbar-border:#474747;--toolbar-text:#e3e3e3;--panel-header-bg:#2f2f2f;--button-hover:rgb(255 255 255 / 0.1);--accent:#8ab4f8;--accent-hover:#aecbfa;--accent-text:#202124;--divider-bg:#3a3a3a;--divider-hover-bg:#5a5a5a;--menu-bg:#2d2e30;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.5);--row-border:#3a3a3a;--string:#f28b54;--number:#9980ff;--keyword:#5db0d7;--null:#8e8e8e;--warn-bg:#332b00;--warn-border:#665500;--warn-text:#ffd17a;--error-bg:#290000;--error-border:#5c0000;--error-text:#ff8080;--info-text:#8ab4f8}body,html{height:100%;margin:0;overflow:hidden}body{background-color:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}[hidden]{display:none!important}button{color:inherit;font:inherit}.svg-defs{height:0;position:absolute;width:0}svg{fill:none;flex-shrink:0;height:18px;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2;width:18px}.spacer{flex-grow:1}.logo{align-items:center;color:var(--toolbar-text);display:inline-flex;font-weight:700;gap:5px;letter-spacing:-.01em;line-height:1}.logo-mark{height:22px;stroke:none;width:22px}.logo-text{font-size:14px;white-space:nowrap}.logo-your{font-weight:400;opacity:.8}.logo-large{gap:12px}.logo-large>.logo-mark{filter:drop-shadow(0 6px 12px rgb(0 0 0 / .18));height:56px;width:56px}.logo-large>.logo-text{font-size:36px}.logo-link{align-items:center;border-radius:4px;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;margin-right:4px;width:30px}.logo-link:hover{background-color:var(--button-hover)}#splash{align-items:center;background-color:var(--bg);display:flex;inset:0;justify-content:center;position:fixed;transition:opacity .35s ease,visibility .35s;z-index:1000}#splash.hidden{opacity:0;pointer-events:none;visibility:hidden}.splash-content{align-items:center;animation:splash-in .4s ease-out both;display:flex;flex-direction:column;gap:24px;padding:16px}.splash-progress{background-color:var(--toolbar-border);border-radius:3px;height:3px;overflow:hidden;width:140px}.splash-progress>div{animation:splash-progress 1.1s ease-in-out infinite;background-color:var(--accent);border-radius:inherit;height:100%;width:40%}@keyframes splash-in{from{opacity:0;transform:translateY(6px)}}@keyframes splash-progress{from{transform:translateX(-100%)}to{transform:translateX(250%)}}.splash-message{color:var(--muted-text);font-size:13px;max-width:280px;text-align:center}.splash-slow{animation:show-after-delay 0s 10s both}@keyframes show-after-delay{from{visibility:hidden}to{visibility:visible}}#splash.failed .splash-progress,#splash.failed .splash-slow,.splash-error{display:none}#splash.failed .splash-error{color:var(--error-text);display:block}#app{display:flex;flex-direction:column;inset:0;position:fixed}#toolbar{align-items:center;background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);color:var(--toolbar-text);display:flex;flex-shrink:0;gap:2px;height:40px;padding:0 6px}.icon-button{align-items:center;background:0 0;border:0;border-radius:4px;cursor:pointer;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;padding:0;position:relative;width:30px}.icon-button:hover,.icon-button[aria-expanded=true],.icon-button[aria-pressed=true]{background-color:var(--button-hover)}.icon-button[aria-pressed=true]{color:var(--accent)}#tabs button:focus-visible,.icon-button:focus-visible,.menu>:focus-visible,.panel-title:focus-visible,.run-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.run-button{align-items:center;background-color:var(--accent);border:0;border-radius:4px;color:var(--accent-text);cursor:pointer;display:inline-flex;flex-shrink:0;font-weight:600;gap:4px;height:30px;padding:0 12px 0 8px;position:relative}.run-button:hover{background-color:var(--accent-hover)}.run-button.is-stale::after{background-color:#f9ab00;border:2px solid var(--toolbar-bg);border-radius:50%;content:'';height:8px;position:absolute;right:-4px;top:-4px;width:8px}.title{font-weight:600;margin-left:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{background-color:var(--muted-text);border-radius:8px;color:var(--bg);font-size:10px;font-weight:700;line-height:14px;min-width:14px;padding:0 3px;position:absolute;right:-2px;top:-1px;box-sizing:border-box}.badge.has-errors{background-color:var(--error-text)}#tabs{background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);display:none;flex-shrink:0;overflow-x:auto}.layout-tabs #tabs{display:flex}#tabs button{background:0 0;border:0;border-bottom:2px solid transparent;color:var(--muted-text);cursor:pointer;flex:1 1 0;font-weight:600;padding:7px 12px 5px}#tabs button:hover{color:var(--toolbar-text)}#tabs button[aria-selected=true]{border-bottom-color:var(--accent);color:var(--toolbar-text)}#main{display:flex;flex-grow:1;min-height:0}.layout-tabs #main,.layout-top #main{flex-direction:column}.layout-left #main{flex-direction:row}.layout-right #main{flex-direction:row-reverse}#console,#editors,#output,#result,.panel{display:flex;flex:1 1 0;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.layout-top #editors{flex-direction:row}#result iframe{background-color:#fff;border:0;display:block;flex-grow:1;width:100%}.panel-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px}.panel-header .icon-button{color:var(--muted-text);height:26px;width:26px}.panel-header .icon-button:hover{color:var(--toolbar-text)}.panel-header svg{height:16px;width:16px}.panel-title{align-items:center;background:0 0;border:0;border-radius:4px;color:var(--toolbar-text);cursor:pointer;display:flex;flex-grow:1;font-size:12px;font-weight:700;gap:2px;height:26px;letter-spacing:.04em;min-width:0;padding:0 4px}.panel-title svg{color:var(--muted-text);transform:rotate(90deg);transition:transform .15s}.panel.is-collapsed .panel-title svg{transform:none}.editor{flex-grow:1;min-height:0}.panel.is-collapsed{flex:0 0 auto!important}.panel.is-collapsed .editor,.panel.is-collapsed .format-button{display:none}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-header{border-bottom:0;flex-direction:column;height:100%;padding:2px 0}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title{flex-direction:column;flex-grow:0;height:auto;padding:4px 0;width:26px}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title span{writing-mode:vertical-lr}.are-editors-collapsed:is(.layout-left,.layout-right) #editors{flex-direction:row}.are-editors-collapsed:not(.layout-tabs) #editors{flex:0 0 auto!important}.are-editors-collapsed:not(.layout-tabs) #main-divider{display:none}.layout-top.are-editors-collapsed .panel.is-collapsed{flex:1 1 0!important}.divider{background-color:var(--divider-bg);cursor:row-resize;flex:0 0 4px;position:relative;touch-action:none}.divider.is-dragging,.divider:hover{background-color:var(--divider-hover-bg)}.divider::before{content:'';inset:-4px 0;position:absolute;z-index:2}.layout-left #main-divider,.layout-right #main-divider,.layout-top #editors>.divider{cursor:col-resize}.layout-left #main-divider::before,.layout-right #main-divider::before,.layout-top #editors>.divider::before{inset:0 -4px}.divider:has(+ .is-collapsed),.is-collapsed+.divider{cursor:default}.divider:has(+ .is-collapsed):hover,.is-collapsed+.divider:hover{background-color:var(--divider-bg)}.is-dragging-divider iframe{pointer-events:none}.is-dragging-divider,.is-dragging-divider *{-webkit-user-select:none;user-select:none}.layout-tabs #editors>.divider,.layout-tabs #main-divider,.layout-tabs .panel-title svg{display:none}.layout-tabs .panel-title{cursor:default}.layout-tabs #editors,.layout-tabs #output,.layout-tabs .panel{flex:1 1 0!important}.layout-tabs .panel:not(.is-active-tab),.layout-tabs:not([data-tab=result]) #output,.layout-tabs[data-tab=result] #editors{display:none}.layout-tabs .panel.is-collapsed .editor,.layout-tabs .panel.is-collapsed .format-button{display:block}.layout-tabs .panel.is-collapsed .format-button{display:inline-flex}#app:not(.is-console-shown) #console,#app:not(.is-console-shown) #console-divider{display:none}#console{background-color:var(--bg);flex-grow:0.8}.console-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px 0 8px}.console-header .icon-button{color:var(--muted-text);height:26px;width:26px}.console-header svg{height:16px;width:16px}.console-title{font-size:12px;font-weight:700;letter-spacing:.04em}#console-entries{flex-grow:1;font-family:var(--code-font);font-size:12px;line-height:16px;min-height:0;overflow:auto}.entry{border-bottom:1px solid var(--row-border);display:flex;gap:8px;padding:3px 8px 3px 20px;position:relative}.entry-text{flex-grow:1;min-width:0;white-space:pre-wrap;word-break:break-word}.entry.level-warn{background-color:var(--warn-bg);border-bottom-color:var(--warn-border);color:var(--warn-text)}.entry.level-error{background-color:var(--error-bg);border-bottom-color:var(--error-border);color:var(--error-text)}.entry.level-info{color:var(--info-text)}.entry.level-debug{color:var(--muted-text)}.entry.level-command::before,.entry.level-result::before{color:var(--muted-text);left:6px;position:absolute}.entry.level-command::before{content:'\\203A'}.entry.level-result::before{content:'\\2190'}.entry .kind-bigint,.entry .kind-boolean,.entry .kind-number{color:var(--number)}.entry .kind-null,.entry .kind-undefined{color:var(--null)}.entry .kind-symbol,.entry.level-result .kind-string{color:var(--string)}.entry .kind-function{color:var(--keyword)}.entry{flex-wrap:wrap}.entry-trees{flex-basis:100%}.entry-trees:empty{display:none}.expander{border-radius:2px;cursor:pointer}.expander::before{color:var(--muted-text);content:'\\25B8';display:inline-block;font-size:10px;margin-right:3px;transition:transform .1s;width:8px}.expander[aria-expanded=true]::before{transform:rotate(90deg)}.expander:hover{background-color:var(--button-hover)}.expander:focus-visible{outline:1px solid var(--accent)}.tree{color:var(--text);padding-left:12px}.tree-children{padding-left:12px}.tree-row{white-space:pre-wrap;word-break:break-word}.tree-key{color:var(--keyword)}.entry .kind-getter,.entry .kind-index{color:var(--muted-text)}.entry .tree .kind-string{color:var(--string)}.console-table-wrapper{margin:2px 0;max-height:320px;overflow:auto}.console-table{border-collapse:collapse;font-size:12px}.console-table td,.console-table th{border:1px solid var(--toolbar-border);max-width:300px;overflow:hidden;padding:2px 8px;text-align:left;text-overflow:ellipsis;white-space:nowrap}.console-table th{background-color:var(--panel-header-bg);font-weight:600;position:sticky;top:0}.console-table .kind-string{color:var(--string)}.entry-location{background:0 0;border:0;color:var(--muted-text);cursor:pointer;flex-shrink:0;font-family:var(--code-font);font-size:11px;padding:0;text-decoration:underline}.entry-location:hover{color:inherit}.console-input{align-items:flex-start;border-top:1px solid var(--toolbar-border);display:flex;flex-shrink:0;padding:3px 8px 3px 4px}.console-input svg{color:var(--accent);height:14px;margin-top:2px;width:14px}#console-input{background:0 0;border:0;color:inherit;flex-grow:1;font-family:var(--code-font);font-size:12px;line-height:18px;margin-left:2px;max-height:120px;outline:0;padding:0;resize:none}.menu{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:6px;box-shadow:var(--menu-shadow);display:flex;flex-direction:column;max-width:calc(100vw - 16px);min-width:200px;padding:4px;position:fixed;z-index:10}.menu>a,.menu>button{background:0 0;border:0;border-radius:4px;color:var(--text);cursor:pointer;padding:6px 10px 6px 28px;position:relative;text-align:left;text-decoration:none}.menu>a:hover,.menu>button:hover{background-color:var(--button-hover)}.menu [aria-checked=true]::before{color:var(--accent);content:'\\2713';left:10px;position:absolute}.menu>a{color:var(--muted-text);font-size:12px}.menu-separator{border-top:1px solid var(--toolbar-border);margin:4px 0}.menu-info{color:var(--muted-text);font-size:12px;padding:2px 10px 2px 28px}.shortcut{display:flex;gap:16px;justify-content:space-between;padding:2px 0}kbd{font-family:var(--code-font);font-size:11px}dialog{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:8px;box-shadow:var(--menu-shadow);box-sizing:border-box;color:var(--text);flex-direction:column;max-height:calc(100% - 16px);max-width:calc(100% - 16px);padding:0;width:560px}dialog[open]{display:flex}dialog::backdrop{background-color:rgb(0 0 0 / .3)}.dialog-footer,.dialog-header{align-items:center;display:flex;flex-shrink:0;gap:8px;padding:8px 8px 8px 16px}.dialog-header{border-bottom:1px solid var(--toolbar-border)}.dialog-header h2{flex-grow:1;font-size:15px;margin:0}.dialog-footer{border-top:1px solid var(--toolbar-border);justify-content:flex-end}.dialog-body{min-height:0;overflow:auto;padding:12px 16px}.dialog-body h3{font-size:12px;letter-spacing:.04em;margin:16px 0 6px;text-transform:uppercase}.dialog-note{color:var(--muted-text);font-size:12px;margin:16px 0 0}.text-button{background:0 0;border:1px solid var(--toolbar-border);border-radius:4px;cursor:pointer;flex-shrink:0;height:30px;padding:0 12px}.text-button:hover{background-color:var(--button-hover)}.text-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}dialog input{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;box-sizing:border-box;color:inherit;font:inherit;height:32px;min-width:0;padding:0 8px}dialog input:focus{border-color:var(--accent);outline:1px solid var(--accent)}#library-search-input{width:100%}.library-status{color:var(--muted-text);font-size:12px;padding:6px 2px 0}.library-status:empty{display:none}.library-results{display:flex;flex-direction:column;margin-top:6px;max-height:260px;overflow:auto}.library-result{border-bottom:1px solid var(--row-border);padding:6px 2px}.library-result-main{align-items:flex-start;display:flex;gap:8px}.library-result-text{flex-grow:1;min-width:0}.library-name{font-weight:600}.library-version{color:var(--muted-text);font-size:12px;margin-left:6px}.library-description{color:var(--muted-text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-result .text-button{font-size:12px;height:26px;padding:0 8px}.library-files{margin:6px 0 0;padding-left:12px}.library-files select{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;color:inherit;font:inherit;font-size:12px;height:26px;margin-bottom:4px}.library-file-list{display:flex;flex-direction:column;max-height:160px;overflow:auto}.library-file-list button{background:0 0;border:0;border-radius:4px;cursor:pointer;font-family:var(--code-font);font-size:12px;padding:3px 6px;text-align:left}.library-file-list button:hover{background-color:var(--button-hover)}.library-url{display:flex;gap:6px;margin-top:12px}.library-url input{flex-grow:1}.library-list{border:1px solid var(--row-border);border-radius:4px;list-style:none;margin:0;padding:0}.library-list:empty::before{color:var(--muted-text);content:attr(data-empty);display:block;font-size:12px;padding:6px 8px}.library-list li{align-items:center;border-bottom:1px solid var(--row-border);display:flex;gap:2px;padding:2px 2px 2px 8px}.library-list li:last-child{border-bottom:0}.library-url-text{flex-grow:1;font-family:var(--code-font);font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-list .icon-button{color:var(--muted-text);height:26px;width:26px}.library-list .icon-button:disabled{cursor:default;opacity:.35}.library-list svg{height:16px;width:16px}dialog.is-read-only :is(.library-search,.library-url,.library-list .icon-button,#libraries-run-button){display:none}.load-error-dialog{width:480px}.load-error-body{display:flex;gap:14px;padding:20px 20px 8px}.load-error-icon{align-items:center;background-color:var(--error-bg);border-radius:50%;color:var(--error-text);display:flex;flex-shrink:0;height:40px;justify-content:center;width:40px}.load-error-icon svg{height:22px;width:22px}.load-error-text{min-width:0}.load-error-text h2{font-size:15px;margin:2px 0 6px}.load-error-text p{color:var(--muted-text);line-height:1.45;margin:0 0 12px}.load-error-list{display:flex;flex-direction:column;gap:6px;list-style:none;margin:0;padding:0}.load-error-list li{align-items:baseline;background-color:var(--panel-header-bg);border:1px solid var(--row-border);border-radius:6px;display:flex;gap:8px;padding:8px 10px}.load-error-language{border:1px solid var(--toolbar-border);border-radius:4px;flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:.04em;padding:1px 6px}.load-error-message{font-size:12px;line-height:1.45;min-width:0;overflow-wrap:anywhere}.load-error-dialog .dialog-footer{border-top:0;padding:12px 16px 16px}.load-error-dialog .run-button{padding:0 18px}#result{position:relative}.safe-mode-notice{align-items:center;background-color:var(--bg);display:flex;inset:0;justify-content:center;overflow:auto;padding:16px;position:absolute}.safe-mode-card{align-items:center;display:flex;flex-direction:column;gap:10px;max-width:360px;text-align:center}.safe-mode-card h2{font-size:15px;margin:4px 0 0}.safe-mode-card p{color:var(--muted-text);line-height:1.45;margin:0 0 6px}";
+  const VIEWER_CSS = ":root{color-scheme:light;--font:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--code-font:ui-monospace,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;--bg:#fff;--text:#1f1f1f;--muted-text:#5f6368;--toolbar-bg:#f3f3f3;--toolbar-border:#d6d6d6;--toolbar-text:#333;--panel-header-bg:#f8f8f8;--button-hover:rgb(0 0 0 / 0.08);--accent:#1a73e8;--accent-hover:#1765cc;--accent-text:#fff;--divider-bg:#e6e6e6;--divider-hover-bg:#c8c8c8;--menu-bg:#fff;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.18);--row-border:#f0f0f0;--string:#c41a16;--number:#1a1aa6;--keyword:#881391;--null:#80868b;--warn-bg:#fffbe5;--warn-border:#fff5c2;--warn-text:#5c3c00;--error-bg:#fff0f0;--error-border:#ffd6d6;--error-text:#dc362e;--info-text:#1a73e8}:root[data-theme=dark]{color-scheme:dark;--bg:#242424;--text:#e3e3e3;--muted-text:#9aa0a6;--toolbar-bg:#2b2b2b;--toolbar-border:#474747;--toolbar-text:#e3e3e3;--panel-header-bg:#2f2f2f;--button-hover:rgb(255 255 255 / 0.1);--accent:#8ab4f8;--accent-hover:#aecbfa;--accent-text:#202124;--divider-bg:#3a3a3a;--divider-hover-bg:#5a5a5a;--menu-bg:#2d2e30;--menu-shadow:0 4px 16px rgb(0 0 0 / 0.5);--row-border:#3a3a3a;--string:#f28b54;--number:#9980ff;--keyword:#5db0d7;--null:#8e8e8e;--warn-bg:#332b00;--warn-border:#665500;--warn-text:#ffd17a;--error-bg:#290000;--error-border:#5c0000;--error-text:#ff8080;--info-text:#8ab4f8}body,html{height:100%;margin:0;overflow:hidden}body{background-color:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}[hidden]{display:none!important}button{color:inherit;font:inherit}.svg-defs{height:0;position:absolute;width:0}svg{fill:none;flex-shrink:0;height:18px;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2;width:18px}.spacer{flex-grow:1}.logo{align-items:center;color:var(--toolbar-text);display:inline-flex;font-weight:700;gap:5px;letter-spacing:-.01em;line-height:1}.logo-mark{height:22px;stroke:none;width:22px}.logo-text{font-size:14px;white-space:nowrap}#toolbar .logo-mark{height:24px;width:24px}#toolbar .logo-text{font-size:16px}.logo-your{font-weight:400;opacity:.8}.logo-large{gap:12px}.logo-large>.logo-mark{filter:drop-shadow(0 6px 12px rgb(0 0 0 / .18));height:56px;width:56px}.logo-large>.logo-text{font-size:36px}.logo-button{align-items:center;background:0 0;border:0;border-radius:4px;cursor:pointer;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;padding:0 6px 0 4px}@media (max-width:440px){#toolbar .logo-text{display:none}.logo-button{padding:0 4px}}.logo-button:hover{background-color:var(--button-hover)}.logo-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}#splash{align-items:center;pointer-events:none;background-color:var(--bg);display:flex;inset:0;justify-content:center;position:fixed;transition:opacity .35s ease,visibility .35s;z-index:1000}#splash.hidden{opacity:0;pointer-events:none;visibility:hidden}.splash-content{align-items:center;animation:splash-in .4s ease-out both;display:flex;flex-direction:column;gap:24px;padding:16px}.splash-progress{background-color:var(--toolbar-border);border-radius:3px;height:3px;overflow:hidden;width:140px}.splash-progress>div{animation:splash-progress 1.1s ease-in-out infinite;background-color:var(--accent);border-radius:inherit;height:100%;width:40%}@keyframes splash-in{from{opacity:0;transform:translateY(6px)}}@keyframes splash-progress{from{transform:translateX(-100%)}to{transform:translateX(250%)}}.splash-message{color:var(--muted-text);font-size:13px;max-width:280px;text-align:center}.splash-slow{animation:show-after-delay 0s 10s both}@keyframes show-after-delay{from{visibility:hidden}to{visibility:visible}}#splash.failed .splash-progress,#splash.failed .splash-slow,.splash-error{display:none}#splash.failed .splash-error{color:var(--error-text);display:block}#app{display:flex;flex-direction:column;inset:0;position:fixed}.is-toolbar-bottom #toolbar{border-bottom:0;border-top:1px solid var(--toolbar-border);order:1}#toolbar{align-items:center;background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);color:var(--toolbar-text);display:flex;flex-shrink:0;gap:2px;height:40px;padding:0 6px}.icon-button{align-items:center;background:0 0;border:0;border-radius:4px;cursor:pointer;display:inline-flex;flex-shrink:0;height:30px;justify-content:center;padding:0;position:relative;width:30px}.icon-button:hover,.icon-button[aria-expanded=true],.icon-button[aria-pressed=true]{background-color:var(--button-hover)}.icon-button[aria-pressed=true]{color:var(--accent)}#tabs button:focus-visible,.icon-button:focus-visible,.menu>:focus-visible,.panel-title:focus-visible,.run-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.run-button{align-items:center;margin-left:4px;background-color:var(--accent);border:0;border-radius:4px;color:var(--accent-text);cursor:pointer;display:inline-flex;flex-shrink:0;font-weight:600;gap:4px;height:30px;padding:0 12px 0 8px;position:relative}.run-button:hover{background-color:var(--accent-hover)}.run-button.is-stale::after{background-color:#f9ab00;border:2px solid var(--toolbar-bg);border-radius:50%;content:'';height:8px;position:absolute;right:-4px;top:-4px;width:8px}.title{font-weight:600;margin-left:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{background-color:var(--muted-text);border-radius:8px;color:var(--bg);font-size:10px;font-weight:700;line-height:14px;min-width:14px;padding:0 3px;position:absolute;right:-2px;top:-1px;box-sizing:border-box}.badge.has-errors{background-color:var(--error-text)}#tabs{background-color:var(--toolbar-bg);border-bottom:1px solid var(--toolbar-border);display:none;flex-shrink:0;overflow-x:auto}.layout-tabs #tabs{display:flex}#tabs button{background:0 0;border:0;border-bottom:2px solid transparent;color:var(--muted-text);cursor:pointer;flex:1 1 0;font-weight:600;padding:7px 12px 5px}#tabs button:hover{color:var(--toolbar-text)}#tabs button[aria-selected=true]{border-bottom-color:var(--accent);color:var(--toolbar-text)}#main{display:flex;flex-grow:1;min-height:0}.layout-tabs #main,.layout-top #main{flex-direction:column}.layout-left #main{flex-direction:row}.layout-right #main{flex-direction:row-reverse}#console,#editors,#output,#result,.panel{display:flex;flex:1 1 0;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.layout-top #editors{flex-direction:row}#result iframe{background-color:#fff;border:0;display:block;flex-grow:1;width:100%}.panel-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px}.panel-header .icon-button{color:var(--muted-text);height:26px;width:26px}.panel-header .icon-button:hover{color:var(--toolbar-text)}.panel-header svg{height:16px;width:16px}.panel-title{align-items:center;background:0 0;border:0;border-radius:4px;color:var(--toolbar-text);cursor:pointer;display:flex;flex-grow:1;font-size:12px;font-weight:700;gap:2px;height:26px;letter-spacing:.04em;min-width:0;padding:0 4px}.panel-title svg{color:var(--muted-text);transform:rotate(90deg);transition:transform .15s}.panel.is-collapsed .panel-title svg{transform:none}.editor{flex-grow:1;min-height:0}.panel.is-collapsed{flex:0 0 auto!important}.panel.is-collapsed .editor,.panel.is-collapsed :is(.panel-menu-button,.panel-status){display:none}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-header{border-bottom:0;flex-direction:column;height:100%;padding:2px 0}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title{flex-direction:column;flex-grow:0;height:auto;padding:4px 0;width:26px}:is(.layout-top:not(.are-editors-collapsed),.layout-left.are-editors-collapsed,.layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title span{writing-mode:vertical-lr}.are-editors-collapsed:is(.layout-left,.layout-right) #editors{flex-direction:row}.are-editors-collapsed:not(.layout-tabs) #editors{flex:0 0 auto!important}.are-editors-collapsed:not(.layout-tabs) #main-divider{display:none}.layout-top.are-editors-collapsed .panel.is-collapsed{flex:1 1 0!important}.divider{background-color:var(--divider-bg);cursor:row-resize;flex:0 0 4px;position:relative;touch-action:none}.divider.is-dragging,.divider:hover{background-color:var(--divider-hover-bg)}.divider::before{content:'';inset:-4px 0;position:absolute;z-index:2}.layout-left #main-divider,.layout-right #main-divider,.layout-top #editors>.divider{cursor:col-resize}.layout-left #main-divider::before,.layout-right #main-divider::before,.layout-top #editors>.divider::before{inset:0 -4px}.divider:has(+ .is-collapsed),.is-collapsed+.divider{cursor:default}.divider:has(+ .is-collapsed):hover,.is-collapsed+.divider:hover{background-color:var(--divider-bg)}.is-dragging-divider iframe{pointer-events:none}.is-dragging-divider,.is-dragging-divider *{-webkit-user-select:none;user-select:none}.layout-tabs #editors>.divider,.layout-tabs #main-divider,.layout-tabs .panel-title svg{display:none}.layout-tabs .panel-title{cursor:default}.layout-tabs #editors,.layout-tabs #output,.layout-tabs .panel{flex:1 1 0!important}.layout-tabs .panel:not(.is-active-tab),.layout-tabs:not([data-tab=result]) #output,.layout-tabs[data-tab=result] #editors{display:none}.layout-tabs .panel.is-collapsed .editor{display:block}.layout-tabs .panel.is-collapsed .panel-menu-button{display:inline-flex}.layout-tabs .panel.is-collapsed .panel-status{display:inline}#app:not(.is-console-shown) #console,#app:not(.is-console-shown) #console-divider{display:none}#console{background-color:var(--bg);flex-grow:0.8}.console-header{align-items:center;background-color:var(--panel-header-bg);border-bottom:1px solid var(--toolbar-border);display:flex;flex-shrink:0;height:30px;padding:0 2px 0 8px}.console-header .icon-button{color:var(--muted-text);height:26px;width:26px}.console-header svg{height:16px;width:16px}.console-title{font-size:12px;font-weight:700;letter-spacing:.04em}#console-entries{flex-grow:1;font-family:var(--code-font);font-size:calc(12px * var(--text-scale, 1));line-height:calc(16px * var(--text-scale, 1));min-height:0;overflow:auto}.entry{border-bottom:1px solid var(--row-border);display:flex;gap:8px;padding:3px 8px 3px 20px;position:relative}.entry-text{flex-grow:1;min-width:0;white-space:pre-wrap;word-break:break-word}.entry.level-warn{background-color:var(--warn-bg);border-bottom-color:var(--warn-border);color:var(--warn-text)}.entry.level-error{background-color:var(--error-bg);border-bottom-color:var(--error-border);color:var(--error-text)}.entry.level-info{color:var(--info-text)}.entry.level-debug{color:var(--muted-text)}.entry.level-command::before,.entry.level-result::before{color:var(--muted-text);left:6px;position:absolute}.entry.level-command::before{content:'\\203A'}.entry.level-result::before{content:'\\2190'}.entry .kind-bigint,.entry .kind-boolean,.entry .kind-number{color:var(--number)}.entry .kind-null,.entry .kind-undefined{color:var(--null)}.entry .kind-symbol,.entry.level-result .kind-string{color:var(--string)}.entry .kind-function{color:var(--keyword)}.entry{flex-wrap:wrap}.entry-trees{flex-basis:100%}.entry-trees:empty{display:none}.expander{border-radius:2px;cursor:pointer}.expander::before{color:var(--muted-text);content:'\\25B8';display:inline-block;font-size:10px;margin-right:3px;transition:transform .1s;width:8px}.expander[aria-expanded=true]::before{transform:rotate(90deg)}.expander:hover{background-color:var(--button-hover)}.expander:focus-visible{outline:1px solid var(--accent)}.tree{color:var(--text);padding-left:12px}.tree-children{padding-left:12px}.tree-row{white-space:pre-wrap;word-break:break-word}.tree-key{color:var(--keyword)}.entry .kind-getter,.entry .kind-index{color:var(--muted-text)}.entry .tree .kind-string{color:var(--string)}.console-table-wrapper{margin:2px 0;max-height:320px;overflow:auto}.console-table{border-collapse:collapse;font-size:12px}.console-table td,.console-table th{border:1px solid var(--toolbar-border);max-width:300px;overflow:hidden;padding:2px 8px;text-align:left;text-overflow:ellipsis;white-space:nowrap}.console-table th{background-color:var(--panel-header-bg);font-weight:600;position:sticky;top:0}.console-table .kind-string{color:var(--string)}.entry-location{background:0 0;border:0;color:var(--muted-text);cursor:pointer;flex-shrink:0;font-family:var(--code-font);font-size:11px;padding:0;text-decoration:underline}.entry-location:hover{color:inherit}.console-input{align-items:flex-start;border-top:1px solid var(--toolbar-border);display:flex;flex-shrink:0;padding:3px 8px 3px 4px}.console-input svg{color:var(--accent);height:14px;margin-top:2px;width:14px}#console-input{background:0 0;border:0;color:inherit;flex-grow:1;font-family:var(--code-font);font-size:calc(12px * var(--text-scale, 1));line-height:calc(18px * var(--text-scale, 1));margin-left:2px;max-height:120px;outline:0;padding:0;resize:none}.menu{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:6px;box-shadow:var(--menu-shadow);display:flex;flex-direction:column;max-width:calc(100vw - 16px);min-width:200px;padding:4px;position:fixed;z-index:10}.menu>a,.menu>button{background:0 0;border:0;border-radius:4px;color:var(--text);cursor:pointer;padding:6px 10px 6px 28px;position:relative;text-align:left;text-decoration:none}.menu>a:hover,.menu>button:hover{background-color:var(--button-hover)}.menu [aria-checked=true]::before{color:var(--accent);content:'\\2713';left:10px;position:absolute}.menu>a{color:var(--muted-text);font-size:12px}.menu-separator{border-top:1px solid var(--toolbar-border);margin:4px 0}kbd{font-family:var(--code-font);font-size:11px}dialog{background-color:var(--menu-bg);border:1px solid var(--toolbar-border);border-radius:8px;box-shadow:var(--menu-shadow);box-sizing:border-box;color:var(--text);flex-direction:column;max-height:calc(100% - 16px);max-width:calc(100% - 16px);padding:0;width:560px}dialog[open]{display:flex}dialog::backdrop{background-color:rgb(0 0 0 / .3)}.dialog-footer,.dialog-header{align-items:center;display:flex;flex-shrink:0;gap:8px;padding:8px 8px 8px 16px}.dialog-header{border-bottom:1px solid var(--toolbar-border)}.dialog-header h2{flex-grow:1;font-size:15px;margin:0}.dialog-footer{border-top:1px solid var(--toolbar-border);justify-content:flex-end}.dialog-body{min-height:0;overflow:auto;padding:12px 16px}.dialog-body h3{font-size:12px;letter-spacing:.04em;margin:16px 0 6px;text-transform:uppercase}.dialog-note{color:var(--muted-text);font-size:12px;margin:16px 0 0}.text-button{background:0 0;border:1px solid var(--toolbar-border);border-radius:4px;cursor:pointer;flex-shrink:0;height:30px;padding:0 12px}.text-button:hover{background-color:var(--button-hover)}.text-button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}dialog input{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;box-sizing:border-box;color:inherit;font:inherit;height:32px;min-width:0;padding:0 8px}dialog input:focus{border-color:var(--accent);outline:1px solid var(--accent)}#library-search-input{width:100%}.library-status{color:var(--muted-text);font-size:12px;padding:6px 2px 0}.library-status:empty{display:none}.library-results{display:flex;flex-direction:column;margin-top:6px;max-height:260px;overflow:auto}.library-result{border-bottom:1px solid var(--row-border);padding:6px 2px}.library-result-main{align-items:flex-start;display:flex;gap:8px}.library-result-text{flex-grow:1;min-width:0}.library-name{font-weight:600}.library-version{color:var(--muted-text);font-size:12px;margin-left:6px}.library-description{color:var(--muted-text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-result .text-button{font-size:12px;height:26px;padding:0 8px}.library-files{margin:6px 0 0;padding-left:12px}.library-files select{background-color:var(--bg);border:1px solid var(--toolbar-border);border-radius:4px;color:inherit;font:inherit;font-size:12px;height:26px;margin-bottom:4px}.library-file-list{display:flex;flex-direction:column;max-height:160px;overflow:auto}.library-file-list button{background:0 0;border:0;border-radius:4px;cursor:pointer;font-family:var(--code-font);font-size:12px;padding:3px 6px;text-align:left}.library-file-list button:hover{background-color:var(--button-hover)}.library-url{display:flex;gap:6px;margin-top:12px}.library-url input{flex-grow:1}.library-list{border:1px solid var(--row-border);border-radius:4px;list-style:none;margin:0;padding:0}.library-list:empty::before{color:var(--muted-text);content:attr(data-empty);display:block;font-size:12px;padding:6px 8px}.library-list li{align-items:center;border-bottom:1px solid var(--row-border);display:flex;gap:2px;padding:2px 2px 2px 8px}.library-list li:last-child{border-bottom:0}.library-url-text{flex-grow:1;font-family:var(--code-font);font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.library-list .icon-button{color:var(--muted-text);height:26px;width:26px}.library-list .icon-button:disabled{cursor:default;opacity:.35}.library-list svg{height:16px;width:16px}dialog.is-read-only :is(.library-search,.library-url,.library-list .icon-button,#libraries-run-button){display:none}.load-error-dialog{width:480px}.load-error-body{display:flex;gap:14px;padding:20px 20px 8px}.load-error-icon{align-items:center;background-color:var(--error-bg);border-radius:50%;color:var(--error-text);display:flex;flex-shrink:0;height:40px;justify-content:center;width:40px}.load-error-icon svg{height:22px;width:22px}.load-error-text{min-width:0}.load-error-text h2{font-size:15px;margin:2px 0 6px}.load-error-text p{color:var(--muted-text);line-height:1.45;margin:0 0 12px}.load-error-list{display:flex;flex-direction:column;gap:6px;list-style:none;margin:0;padding:0}.load-error-list li{align-items:baseline;background-color:var(--panel-header-bg);border:1px solid var(--row-border);border-radius:6px;display:flex;gap:8px;padding:8px 10px}.load-error-language{border:1px solid var(--toolbar-border);border-radius:4px;flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:.04em;padding:1px 6px}.load-error-message{font-size:12px;line-height:1.45;min-width:0;overflow-wrap:anywhere}.load-error-dialog .dialog-footer{border-top:0;padding:12px 16px 16px}.load-error-dialog .run-button{padding:0 18px}#result{position:relative}.safe-mode-notice{align-items:center;background-color:var(--bg);display:flex;inset:0;justify-content:center;overflow:auto;padding:16px;position:absolute}.safe-mode-card{align-items:center;display:flex;flex-direction:column;gap:10px;max-width:360px;text-align:center}.safe-mode-card h2{font-size:15px;margin:4px 0 0}.safe-mode-card p{color:var(--muted-text);line-height:1.45;margin:0 0 6px}.about-dialog{width:620px}.about-title{align-items:center;display:flex;gap:12px}.about-title .logo-mark{filter:drop-shadow(0 4px 8px rgb(0 0 0 / .18));height:40px;width:40px}.about-name{font-size:17px;font-weight:700}.about-version{color:var(--muted-text);font-size:12px}.about-description{line-height:1.5;margin:12px 0}.about-links{display:flex;flex-wrap:wrap;gap:6px 16px}.about-links a{color:var(--accent);font-weight:600;text-decoration:none}.about-links a:hover{text-decoration:underline}.about-body h3{color:var(--muted-text);font-size:11px;letter-spacing:.05em;margin:18px 0 6px;text-transform:uppercase}.about-details{display:grid;gap:4px 16px;grid-template-columns:max-content 1fr;margin:0}.about-details dt{color:var(--muted-text)}.about-details dd{margin:0}.about-details kbd{background-color:var(--toolbar-bg);border:1px solid var(--toolbar-border);border-bottom-width:2px;border-radius:4px;font-family:inherit;font-size:11px;padding:0 4px}.about-footer{border-top:1px solid var(--toolbar-border);color:var(--muted-text);font-size:12px;margin-top:18px;padding-top:12px}@media (max-width:480px){.about-details{grid-template-columns:1fr}.about-details dd{margin-bottom:6px}}.about-tabs{display:flex;flex-grow:1;gap:4px;margin:-8px 0 -9px -8px}.about-tabs button{background:0 0;border:0;border-bottom:2px solid transparent;color:var(--muted-text);cursor:pointer;font-weight:600;padding:12px 8px 10px}.about-tabs button:hover{color:var(--text)}.about-tabs button[aria-selected=true]{border-bottom-color:var(--accent);color:var(--text)}.about-tabs button:focus-visible,.segmented>button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.about-dialog.is-embed{height:700px}.embed-body{display:flex;flex-direction:column;flex-grow:1;gap:12px}.embed-body[hidden]{display:none}.embed-options{align-items:center;display:flex;gap:10px}.embed-label{color:var(--muted-text)}.segmented{border:1px solid var(--toolbar-border);border-radius:6px;display:inline-flex;overflow:hidden}.segmented>button{background:0 0;border:0;cursor:pointer;font-size:12px;padding:5px 12px}.segmented>button+button{border-left:1px solid var(--toolbar-border)}.segmented>button:hover{background-color:var(--button-hover)}.segmented>button[aria-checked=true]{background-color:var(--accent);color:var(--accent-text)}.embed-section{display:flex;flex:1 1 0;flex-direction:column;gap:6px;min-height:150px}.embed-section-header{align-items:flex-end;display:flex;gap:12px;justify-content:space-between}.embed-section h3{font-size:13px;margin:0}.embed-hint{color:var(--muted-text);font-size:12px;margin-top:2px}.embed-hint code{font-family:var(--code-font);font-size:11px}.embed-preview{border:1px solid var(--toolbar-border);border-radius:6px;flex-grow:1;min-height:0}.panel-status{color:var(--accent);font-size:12px;font-weight:600;margin-right:4px;white-space:nowrap}.menu-row{align-items:center;display:flex;gap:2px;padding:2px 4px 2px 28px}.menu-row-label{color:var(--text);flex-grow:1;margin-right:8px}.menu-step{background:0 0;border:1px solid var(--toolbar-border);border-radius:4px;color:var(--text);cursor:pointer;font-size:12px;font-weight:600;min-width:32px;padding:3px 6px}.menu-step:hover:not(:disabled){background-color:var(--button-hover)}.menu-step:disabled{cursor:default;opacity:.4}.menu-percent{font-weight:400;min-width:48px}.menu-step:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}.menu-shortcut{color:var(--muted-text);float:right;font-size:11px;margin-left:24px}.popped-out-notice{align-items:center;color:var(--muted-text);display:none;flex-direction:column;flex-grow:1;gap:10px;justify-content:center;min-height:0;overflow:hidden;padding:12px;text-align:center}.panel.is-popped-out .popped-out-notice{display:flex}.panel.is-popped-out .editor{display:none}.popped-out-buttons{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.panel.is-collapsed .popped-out-notice{display:none}";
   /**
    * The viewer IFRAME's HTML code (what goes in its body).
    * @type {string}
    */
-  const VIEWER_HTML = "<svg class=\"svg-defs\" aria-hidden=\"true\"><defs><symbol id=\"icon-run\" viewBox=\"0 0 24 24\"><path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-format\" viewBox=\"0 0 24 24\"><path d=\"M4 6h16M8 10h12M8 14h12M4 18h16\"/></symbol><symbol id=\"icon-chevron\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-console\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M7 9l3 3-3 3M13 15h4\"/></symbol><symbol id=\"icon-layout\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 11h18M9 4v7M15 4v7\"/></symbol><symbol id=\"icon-open\" viewBox=\"0 0 24 24\"><path d=\"M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5\"/></symbol><symbol id=\"icon-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5\"/></symbol><symbol id=\"icon-exit-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5\"/></symbol><symbol id=\"icon-more\" viewBox=\"0 0 24 24\"><circle cx=\"5\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"19\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-clear\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M6.5 17.5l11-11\"/></symbol><symbol id=\"icon-close\" viewBox=\"0 0 24 24\"><path d=\"M6 6l12 12M18 6L6 18\"/></symbol><symbol id=\"icon-prompt\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-libraries\" viewBox=\"0 0 24 24\"><path d=\"M12 3l8 4.5v9L12 21l-8-4.5v-9z\"/><path d=\"M4 7.5l8 4.5 8-4.5M12 12v9\"/></symbol><symbol id=\"icon-up\" viewBox=\"0 0 24 24\"><path d=\"M6 15l6-6 6 6\"/></symbol><symbol id=\"icon-down\" viewBox=\"0 0 24 24\"><path d=\"M6 9l6 6 6-6\"/></symbol><symbol id=\"icon-plus\" viewBox=\"0 0 24 24\"><path d=\"M12 5v14M5 12h14\"/></symbol><symbol id=\"icon-alert\" viewBox=\"0 0 24 24\"><path d=\"M10.3 4.1L2.6 17.5A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3L13.7 4.1a2 2 0 0 0-3.4 0z\"/><path d=\"M12 9.5v4M12 17h.01\"/></symbol><symbol id=\"logo-mark\" viewBox=\"0 0 32 32\"><path d=\"M6 1.5h14.5L29 10v18.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-25a2 2 0 0 1 2-2z\" fill=\"#22a35a\" stroke=\"none\"/><path d=\"M20.5 1.5V8a2 2 0 0 0 2 2H29z\" fill=\"#167a41\" stroke=\"none\"/><rect x=\"8\" y=\"7\" width=\"9\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><rect x=\"8\" y=\"12\" width=\"6\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><text x=\"25.5\" y=\"27\" text-anchor=\"end\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"11.5\" font-weight=\"800\" letter-spacing=\"-0.3\" fill=\"#fff\" stroke=\"none\">JS</text></symbol></defs></svg><div id=\"splash\" aria-label=\"Loading\"><div class=\"splash-content\"><span class=\"logo logo-large\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg><span class=\"logo-text\"><span class=\"logo-your\">Your</span>JS Page</span></span><div class=\"splash-progress\"><div></div></div><div class=\"splash-message splash-slow\">Still loading&hellip;</div><div class=\"splash-message splash-error\">YourJS Page couldn&rsquo;t load its code editor. Please check your connection and reload the page.</div></div></div><div id=\"app\" hidden><header id=\"toolbar\"><a id=\"logo-link\" class=\"logo-link\" target=\"_blank\" rel=\"noopener\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg></a><button id=\"run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button><div id=\"title\" class=\"title\"></div><div class=\"spacer\"></div><button id=\"console-button\" class=\"icon-button\" type=\"button\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-console\"/></svg> <span id=\"console-badge\" class=\"badge\" hidden></span></button> <button id=\"libraries-button\" class=\"icon-button\" type=\"button\" title=\"Libraries\" aria-haspopup=\"dialog\"><svg aria-hidden=\"true\"><use href=\"#icon-libraries\"/></svg> <span id=\"libraries-badge\" class=\"badge\" hidden></span></button> <button id=\"layout-button\" class=\"icon-button\" type=\"button\" title=\"Change view\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-layout\"/></svg></button> <button id=\"open-button\" class=\"icon-button\" type=\"button\" title=\"Open the result in a new tab\"><svg aria-hidden=\"true\"><use href=\"#icon-open\"/></svg></button> <button id=\"fullscreen-button\" class=\"icon-button\" type=\"button\" title=\"Full screen\"><svg aria-hidden=\"true\"><use href=\"#icon-fullscreen\"/></svg></button> <button id=\"more-button\" class=\"icon-button\" type=\"button\" title=\"More\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more\"/></svg></button></header><nav id=\"tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" data-tab=\"html\">HTML</button> <button type=\"button\" role=\"tab\" data-tab=\"css\">CSS</button> <button type=\"button\" role=\"tab\" data-tab=\"js\">JS</button> <button type=\"button\" role=\"tab\" data-tab=\"result\">Result</button></nav><main id=\"main\"><section id=\"editors\"><div class=\"panel\" data-lang=\"html\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>HTML</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"css\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>CSS</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"js\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>JS</span></button> <button class=\"icon-button format-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-format\"/></svg></button></div><div class=\"editor\"></div></div></section><div id=\"main-divider\" class=\"divider\" role=\"separator\"></div><section id=\"output\"><div id=\"result\"><div id=\"safe-mode-notice\" class=\"safe-mode-notice\" hidden><div class=\"safe-mode-card\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><h2>The code wasn&rsquo;t run</h2><p>The last time this page was opened its code didn&rsquo;t finish running (it may have frozen the page), so it wasn&rsquo;t run again.</p><button id=\"safe-mode-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run anyway</span></button></div></div></div><div id=\"console-divider\" class=\"divider\" role=\"separator\"></div><div id=\"console\"><div class=\"console-header\"><span class=\"console-title\">Console</span><div class=\"spacer\"></div><button id=\"clear-console-button\" class=\"icon-button\" type=\"button\" title=\"Clear the console\"><svg aria-hidden=\"true\"><use href=\"#icon-clear\"/></svg></button> <button id=\"close-console-button\" class=\"icon-button\" type=\"button\" title=\"Close the console\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div id=\"console-entries\" role=\"log\"></div><div class=\"console-input\"><svg aria-hidden=\"true\"><use href=\"#icon-prompt\"/></svg> <textarea id=\"console-input\" rows=\"1\" spellcheck=\"false\" autocomplete=\"off\" aria-label=\"Run JavaScript in the result\" placeholder=\"Run JavaScript in the result\"></textarea></div></div></section></main><div id=\"layout-menu\" class=\"menu\" role=\"menu\" hidden><button type=\"button\" role=\"menuitemradio\" data-layout=\"top\">Editors on top</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"left\">Editors on the left</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"right\">Editors on the right</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"tabs\">Tabs</button></div><div id=\"more-menu\" class=\"menu\" role=\"menu\" hidden><button id=\"download-html-button\" type=\"button\" role=\"menuitem\">Download as an HTML file</button> <button id=\"download-zip-button\" type=\"button\" role=\"menuitem\">Download as a ZIP file</button> <button id=\"open-file-button\" type=\"button\" role=\"menuitem\">Open a file&hellip;</button><div class=\"menu-separator\" role=\"separator\"></div><button id=\"reset-button\" type=\"button\" role=\"menuitem\">Reset the code</button><div class=\"menu-separator\" role=\"separator\"></div><div class=\"menu-info\"><div class=\"shortcut\"><span>Run</span><kbd id=\"run-shortcut\"></kbd></div><div class=\"shortcut\"><span>Format</span><kbd>Shift+Alt+F</kbd></div></div><div class=\"menu-separator\" role=\"separator\"></div><a id=\"about-link\" role=\"menuitem\" target=\"_blank\" rel=\"noopener\"></a></div><input id=\"file-input\" type=\"file\" accept=\".html,.htm,.zip,text/html,application/zip\" tabindex=\"-1\" aria-hidden=\"true\" hidden><dialog id=\"load-error-dialog\" class=\"load-error-dialog\" aria-labelledby=\"load-error-title\" aria-describedby=\"load-error-description\"><div class=\"dialog-body load-error-body\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><div class=\"load-error-text\"><h2 id=\"load-error-title\">Some of the code couldn&rsquo;t be loaded</h2><p id=\"load-error-description\">The editors for this code explain what went wrong. The rest of the code was loaded and run.</p><ul id=\"load-error-list\" class=\"load-error-list\"></ul></div></div><div class=\"dialog-footer\"><button class=\"run-button dialog-close\" type=\"button\">OK</button></div></dialog><dialog id=\"libraries-dialog\" aria-labelledby=\"libraries-title\"><div class=\"dialog-header\"><h2 id=\"libraries-title\">Libraries</h2><button class=\"icon-button dialog-close\" type=\"button\" title=\"Close\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div class=\"dialog-body\"><div id=\"library-search\" class=\"library-search\"><input id=\"library-search-input\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Search cdnjs (eg. jquery, bootstrap, animate.css)\" aria-label=\"Search cdnjs\"><div id=\"library-search-status\" class=\"library-status\" role=\"status\"></div><div id=\"library-results\" class=\"library-results\"></div></div><form id=\"library-url-form\" class=\"library-url\"><input id=\"library-url-input\" type=\"text\" inputmode=\"url\" autocomplete=\"off\" spellcheck=\"false\" required placeholder=\"Or add the URL of a library\" aria-label=\"The URL of a library\"> <button type=\"submit\" class=\"text-button\" data-type=\"css\">Add CSS</button> <button type=\"submit\" class=\"text-button\" data-type=\"js\">Add JS</button></form><h3>CSS</h3><ol id=\"css-libraries\" class=\"library-list\" data-empty=\"No CSS libraries\"></ol><h3>JavaScript</h3><ol id=\"js-libraries\" class=\"library-list\" data-empty=\"No JavaScript libraries\"></ol><p class=\"dialog-note\">Libraries are added to the result in this order (before your code) the next time the code runs.</p></div><div class=\"dialog-footer\"><button id=\"libraries-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button> <button class=\"text-button dialog-close\" type=\"button\">Done</button></div></dialog></div>";
+  const VIEWER_HTML = "<svg class=\"svg-defs\" aria-hidden=\"true\"><defs><symbol id=\"icon-run\" viewBox=\"0 0 24 24\"><path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-format\" viewBox=\"0 0 24 24\"><path d=\"M4 6h16M8 10h12M8 14h12M4 18h16\"/></symbol><symbol id=\"icon-chevron\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-console\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M7 9l3 3-3 3M13 15h4\"/></symbol><symbol id=\"icon-layout\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 11h18M9 4v7M15 4v7\"/></symbol><symbol id=\"icon-open\" viewBox=\"0 0 24 24\"><path d=\"M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5\"/></symbol><symbol id=\"icon-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5\"/></symbol><symbol id=\"icon-exit-fullscreen\" viewBox=\"0 0 24 24\"><path d=\"M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5\"/></symbol><symbol id=\"icon-more\" viewBox=\"0 0 24 24\"><circle cx=\"5\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"19\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-clear\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M6.5 17.5l11-11\"/></symbol><symbol id=\"icon-close\" viewBox=\"0 0 24 24\"><path d=\"M6 6l12 12M18 6L6 18\"/></symbol><symbol id=\"icon-prompt\" viewBox=\"0 0 24 24\"><path d=\"M9 6l6 6-6 6\"/></symbol><symbol id=\"icon-libraries\" viewBox=\"0 0 24 24\"><path d=\"M12 3l8 4.5v9L12 21l-8-4.5v-9z\"/><path d=\"M4 7.5l8 4.5 8-4.5M12 12v9\"/></symbol><symbol id=\"icon-up\" viewBox=\"0 0 24 24\"><path d=\"M6 15l6-6 6 6\"/></symbol><symbol id=\"icon-down\" viewBox=\"0 0 24 24\"><path d=\"M6 9l6 6 6-6\"/></symbol><symbol id=\"icon-more-vertical\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"5\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"19\" r=\"1.75\" fill=\"currentColor\" stroke=\"none\"/></symbol><symbol id=\"icon-plus\" viewBox=\"0 0 24 24\"><path d=\"M12 5v14M5 12h14\"/></symbol><symbol id=\"icon-alert\" viewBox=\"0 0 24 24\"><path d=\"M10.3 4.1L2.6 17.5A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3L13.7 4.1a2 2 0 0 0-3.4 0z\"/><path d=\"M12 9.5v4M12 17h.01\"/></symbol><symbol id=\"logo-mark\" viewBox=\"0 0 32 32\"><path d=\"M6 1.5h14.5L29 10v18.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-25a2 2 0 0 1 2-2z\" fill=\"#22a35a\" stroke=\"none\"/><path d=\"M20.5 1.5V8a2 2 0 0 0 2 2H29z\" fill=\"#167a41\" stroke=\"none\"/><rect x=\"8\" y=\"7\" width=\"9\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><rect x=\"8\" y=\"12\" width=\"6\" height=\"2.2\" rx=\"1.1\" fill=\"#fff\" opacity=\"0.4\" stroke=\"none\"/><text x=\"25.5\" y=\"27\" text-anchor=\"end\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"11.5\" font-weight=\"800\" letter-spacing=\"-0.3\" fill=\"#fff\" stroke=\"none\">JS</text></symbol></defs></svg><div id=\"splash\" aria-label=\"Loading\"><div class=\"splash-content\"><span class=\"logo logo-large\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg><span class=\"logo-text\"><span class=\"logo-your\">Your</span>JS Page</span></span><div class=\"splash-progress\"><div></div></div><div class=\"splash-message splash-slow\">Still loading&hellip;</div><div class=\"splash-message splash-error\">YourJS Page couldn&rsquo;t load its code editor. Please check your connection and reload the page.</div></div></div><div id=\"app\" hidden><header id=\"toolbar\"><button id=\"logo-button\" class=\"logo-button\" type=\"button\" aria-haspopup=\"dialog\"><span class=\"logo\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg><span class=\"logo-text\"><span class=\"logo-your\">Your</span>JS Page</span></span></button><div id=\"title\" class=\"title\"></div><div class=\"spacer\"></div><button id=\"console-button\" class=\"icon-button\" type=\"button\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-console\"/></svg> <span id=\"console-badge\" class=\"badge\" hidden></span></button> <button id=\"libraries-button\" class=\"icon-button\" type=\"button\" title=\"Libraries\" aria-haspopup=\"dialog\"><svg aria-hidden=\"true\"><use href=\"#icon-libraries\"/></svg> <span id=\"libraries-badge\" class=\"badge\" hidden></span></button> <button id=\"layout-button\" class=\"icon-button\" type=\"button\" title=\"Change view\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-layout\"/></svg></button> <button id=\"open-button\" class=\"icon-button\" type=\"button\" title=\"Open the result in a new tab\"><svg aria-hidden=\"true\"><use href=\"#icon-open\"/></svg></button> <button id=\"fullscreen-button\" class=\"icon-button\" type=\"button\" title=\"Full screen\"><svg aria-hidden=\"true\"><use href=\"#icon-fullscreen\"/></svg></button> <button id=\"more-button\" class=\"icon-button\" type=\"button\" title=\"More\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more\"/></svg></button> <button id=\"run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button></header><nav id=\"tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" data-tab=\"html\">HTML</button> <button type=\"button\" role=\"tab\" data-tab=\"css\">CSS</button> <button type=\"button\" role=\"tab\" data-tab=\"js\">JS</button> <button type=\"button\" role=\"tab\" data-tab=\"result\">Result</button></nav><main id=\"main\"><section id=\"editors\"><div class=\"panel\" data-lang=\"html\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>HTML</span></button> <span class=\"panel-status\" role=\"status\"></span> <button class=\"icon-button panel-menu-button\" type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more-vertical\"/></svg></button></div><div class=\"editor\"></div><div class=\"popped-out-notice\"><div>The <span class=\"popped-out-name\"></span> is in its own window.</div><div class=\"popped-out-buttons\"><button class=\"text-button popped-out-show-button\" type=\"button\">Show the window</button> <button class=\"text-button popped-out-bring-back-button\" type=\"button\">Bring it back</button></div></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"css\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>CSS</span></button> <span class=\"panel-status\" role=\"status\"></span> <button class=\"icon-button panel-menu-button\" type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more-vertical\"/></svg></button></div><div class=\"editor\"></div><div class=\"popped-out-notice\"><div>The <span class=\"popped-out-name\"></span> is in its own window.</div><div class=\"popped-out-buttons\"><button class=\"text-button popped-out-show-button\" type=\"button\">Show the window</button> <button class=\"text-button popped-out-bring-back-button\" type=\"button\">Bring it back</button></div></div></div><div class=\"divider\" role=\"separator\"></div><div class=\"panel\" data-lang=\"js\"><div class=\"panel-header\"><button class=\"panel-title\" type=\"button\" aria-expanded=\"true\"><svg aria-hidden=\"true\"><use href=\"#icon-chevron\"/></svg> <span>JS</span></button> <span class=\"panel-status\" role=\"status\"></span> <button class=\"icon-button panel-menu-button\" type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-more-vertical\"/></svg></button></div><div class=\"editor\"></div><div class=\"popped-out-notice\"><div>The <span class=\"popped-out-name\"></span> is in its own window.</div><div class=\"popped-out-buttons\"><button class=\"text-button popped-out-show-button\" type=\"button\">Show the window</button> <button class=\"text-button popped-out-bring-back-button\" type=\"button\">Bring it back</button></div></div></div></section><div id=\"main-divider\" class=\"divider\" role=\"separator\"></div><section id=\"output\"><div id=\"result\"><div id=\"safe-mode-notice\" class=\"safe-mode-notice\" hidden><div class=\"safe-mode-card\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><h2>The code wasn&rsquo;t run</h2><p>The last time this page was opened its code didn&rsquo;t finish running (it may have frozen the page), so it wasn&rsquo;t run again.</p><button id=\"safe-mode-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run anyway</span></button></div></div></div><div id=\"console-divider\" class=\"divider\" role=\"separator\"></div><div id=\"console\"><div class=\"console-header\"><span class=\"console-title\">Console</span><div class=\"spacer\"></div><button id=\"clear-console-button\" class=\"icon-button\" type=\"button\" title=\"Clear the console\"><svg aria-hidden=\"true\"><use href=\"#icon-clear\"/></svg></button> <button id=\"close-console-button\" class=\"icon-button\" type=\"button\" title=\"Close the console\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div id=\"console-entries\" role=\"log\"></div><div class=\"console-input\"><svg aria-hidden=\"true\"><use href=\"#icon-prompt\"/></svg> <textarea id=\"console-input\" rows=\"1\" spellcheck=\"false\" autocomplete=\"off\" aria-label=\"Run JavaScript in the result\" placeholder=\"Run JavaScript in the result\"></textarea></div></div></section></main><div id=\"layout-menu\" class=\"menu\" role=\"menu\" hidden><button type=\"button\" role=\"menuitemradio\" data-layout=\"top\">Editors on top</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"left\">Editors on the left</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"right\">Editors on the right</button> <button type=\"button\" role=\"menuitemradio\" data-layout=\"tabs\">Tabs</button></div><div id=\"more-menu\" class=\"menu\" role=\"menu\" hidden><button id=\"download-html-button\" type=\"button\" role=\"menuitem\">Download as an HTML file</button> <button id=\"download-zip-button\" type=\"button\" role=\"menuitem\">Download as a ZIP file</button> <button id=\"open-file-button\" type=\"button\" role=\"menuitem\">Open a file&hellip;</button><div class=\"menu-separator\" role=\"separator\"></div><button id=\"reset-button\" type=\"button\" role=\"menuitem\">Reset the code</button><div class=\"menu-separator\" role=\"separator\"></div><div class=\"menu-row\" role=\"group\" aria-label=\"Text size\"><span class=\"menu-row-label\">Text size</span> <button id=\"text-smaller-button\" class=\"menu-step\" type=\"button\" role=\"menuitem\" title=\"Smaller text\" aria-label=\"Smaller text\">A&minus;</button> <button id=\"text-reset-button\" class=\"menu-step menu-percent\" type=\"button\" role=\"menuitem\" title=\"Reset the text size\">100%</button> <button id=\"text-bigger-button\" class=\"menu-step\" type=\"button\" role=\"menuitem\" title=\"Bigger text\" aria-label=\"Bigger text\">A+</button></div><div class=\"menu-separator\" role=\"separator\"></div><button id=\"about-button\" type=\"button\" role=\"menuitem\">About YourJS Page</button></div><div id=\"panel-menu\" class=\"menu\" role=\"menu\" hidden><button type=\"button\" role=\"menuitem\" data-panel-action=\"format\">Format <span class=\"menu-shortcut\">Shift+Alt+F</span></button> <button type=\"button\" role=\"menuitem\" data-panel-action=\"copy\">Copy</button> <button type=\"button\" role=\"menuitem\" data-panel-action=\"save\">Save</button> <button type=\"button\" role=\"menuitem\" data-panel-action=\"load\">Load a file&hellip;</button><div class=\"menu-separator\" role=\"separator\"></div><button type=\"button\" role=\"menuitem\" data-panel-action=\"popOut\">Pop out into a window</button></div><input id=\"panel-file-input\" type=\"file\" tabindex=\"-1\" aria-hidden=\"true\" hidden><dialog id=\"about-dialog\" class=\"about-dialog\" aria-labelledby=\"about-name\"><div class=\"dialog-header\"><div class=\"about-tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" data-about-tab=\"about\" aria-selected=\"true\">About</button> <button type=\"button\" role=\"tab\" data-about-tab=\"embed\" aria-selected=\"false\">Embed</button></div><button class=\"icon-button dialog-close\" type=\"button\" title=\"Close\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div class=\"dialog-body about-body\" data-about-panel=\"about\"><div class=\"about-title\"><svg class=\"logo-mark\" aria-hidden=\"true\"><use href=\"#logo-mark\"/></svg><div><div id=\"about-name\" class=\"about-name\">YourJS Page</div><div id=\"about-version\" class=\"about-version\"></div></div></div><p class=\"about-description\">An HTML, CSS and JavaScript playground that can be embedded in any web page with a single script tag.</p><div class=\"about-links\"><a id=\"about-website-link\" target=\"_blank\" rel=\"noopener\">Website</a> <a id=\"about-github-link\" target=\"_blank\" rel=\"noopener\">GitHub</a> <a id=\"about-docs-link\" target=\"_blank\" rel=\"noopener\">Documentation</a> <a id=\"about-issues-link\" target=\"_blank\" rel=\"noopener\">Report an issue</a></div><h3>This page</h3><dl id=\"about-details\" class=\"about-details\"></dl><h3>Keyboard shortcuts</h3><dl id=\"about-shortcuts\" class=\"about-details\"></dl><div id=\"about-footer\" class=\"about-footer\"></div></div><div class=\"dialog-body embed-body\" data-about-panel=\"embed\" hidden><div class=\"embed-options\"><span class=\"embed-label\">Code</span><div class=\"segmented\" role=\"radiogroup\" aria-label=\"Code\"><button type=\"button\" role=\"radio\" data-embed-code=\"current\" aria-checked=\"true\">Current code</button> <button type=\"button\" role=\"radio\" data-embed-code=\"original\" aria-checked=\"false\">Original code</button></div></div><section class=\"embed-section\"><div class=\"embed-section-header\"><div><h3>HTML</h3><div class=\"embed-hint\">Paste it where the page should go. The code is in the hidden <code>&lt;pre&gt;</code> elements.</div></div><button class=\"text-button embed-copy-button\" type=\"button\" data-embed-copy=\"html\">Copy</button></div><div id=\"embed-html-preview\" class=\"embed-preview\"></div></section><section class=\"embed-section\"><div class=\"embed-section-header\"><div><h3>JavaScript API</h3><div class=\"embed-hint\">Uses <code>YourJSPage.create()</code> so the page can be controlled from JavaScript.</div></div><button class=\"text-button embed-copy-button\" type=\"button\" data-embed-copy=\"api\">Copy</button></div><div id=\"embed-api-preview\" class=\"embed-preview\"></div></section></div></dialog><input id=\"file-input\" type=\"file\" accept=\".html,.htm,.zip,text/html,application/zip\" tabindex=\"-1\" aria-hidden=\"true\" hidden><dialog id=\"load-error-dialog\" class=\"load-error-dialog\" aria-labelledby=\"load-error-title\" aria-describedby=\"load-error-description\"><div class=\"dialog-body load-error-body\"><div class=\"load-error-icon\"><svg aria-hidden=\"true\"><use href=\"#icon-alert\"/></svg></div><div class=\"load-error-text\"><h2 id=\"load-error-title\">Some of the code couldn&rsquo;t be loaded</h2><p id=\"load-error-description\">The editors for this code explain what went wrong. The rest of the code was loaded and run.</p><ul id=\"load-error-list\" class=\"load-error-list\"></ul></div></div><div class=\"dialog-footer\"><button class=\"run-button dialog-close\" type=\"button\">OK</button></div></dialog><dialog id=\"libraries-dialog\" aria-labelledby=\"libraries-title\"><div class=\"dialog-header\"><h2 id=\"libraries-title\">Libraries</h2><button class=\"icon-button dialog-close\" type=\"button\" title=\"Close\"><svg aria-hidden=\"true\"><use href=\"#icon-close\"/></svg></button></div><div class=\"dialog-body\"><div id=\"library-search\" class=\"library-search\"><input id=\"library-search-input\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Search cdnjs (eg. jquery, bootstrap, animate.css)\" aria-label=\"Search cdnjs\"><div id=\"library-search-status\" class=\"library-status\" role=\"status\"></div><div id=\"library-results\" class=\"library-results\"></div></div><form id=\"library-url-form\" class=\"library-url\"><input id=\"library-url-input\" type=\"text\" inputmode=\"url\" autocomplete=\"off\" spellcheck=\"false\" required placeholder=\"Or add the URL of a library\" aria-label=\"The URL of a library\"> <button type=\"submit\" class=\"text-button\" data-type=\"css\">Add CSS</button> <button type=\"submit\" class=\"text-button\" data-type=\"js\">Add JS</button></form><h3>CSS</h3><ol id=\"css-libraries\" class=\"library-list\" data-empty=\"No CSS libraries\"></ol><h3>JavaScript</h3><ol id=\"js-libraries\" class=\"library-list\" data-empty=\"No JavaScript libraries\"></ol><p class=\"dialog-note\">Libraries are added to the result in this order (before your code) the next time the code runs.</p></div><div class=\"dialog-footer\"><button id=\"libraries-run-button\" class=\"run-button\" type=\"button\"><svg aria-hidden=\"true\"><use href=\"#icon-run\"/></svg> <span>Run</span></button> <button class=\"text-button dialog-close\" type=\"button\">Done</button></div></dialog></div>";
   /**
    * Information about this package (eg. its version).
    * @type {{name: string, version: string, homepage: string, repoUrl: string, bugsUrl: string}}
@@ -65,6 +65,18 @@
     const CDNJS_FILES_URL = 'https://cdnjs.cloudflare.com/ajax/libs/';
     /** How long to wait after typing stops before searching (in milliseconds). */
     const SEARCH_DELAY = 250;
+    /** The names of the files that each editor's code is saved as. */
+    const FILE_NAMES = {html: 'index.html', css: 'style.css', js: 'script.js'};
+    /** The files that can be loaded into each editor. */
+    const FILE_TYPES = {html: '.html,.htm,text/html', css: '.css,text/css', js: '.js,.mjs,text/javascript'};
+    /** The text sizes that the "..." menu goes through (as fractions of 100%). */
+    const TEXT_SCALES = [0.7, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+    /** Where the text size is remembered (for every page in this browser). */
+    const TEXT_SCALE_KEY = 'yourjs-page:text-scale';
+    /** The editors' font size (in pixels) at 100%. */
+    const EDITOR_FONT_SIZE = 13;
+    /** The shortest time (in milliseconds) that the loading screen is shown. */
+    const SPLASH_MIN_TIME = 1000;
     /** The biggest file that can be opened (in bytes). */
     const MAX_OPEN_FILE_SIZE = 20 * 1024 * 1024;
     
@@ -466,7 +478,7 @@
        *   What the viewer can ask the page to do.
        */
       init(config, host) {
-        const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, pageUrl, pageIndex, packageInfo} = config;
+        const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, aceUrl, pageUrl, pageIndex, packageInfo, libraryVersions, embedSettings} = config;
         const app = $('#app');
         const splash = $('#splash');
     
@@ -503,6 +515,8 @@
         let layout = 'top';
         let isLayoutAuto = !LAYOUTS.includes(options.layout);
         let activeTab = TABS.includes(options.tab) ? options.tab : 'result';
+        const isToolbarBottom = options.menu !== 'top';
+        app.classList.toggle('is-toolbar-bottom', isToolbarBottom);
         let isConsoleShown = false;
         let unseenCount = 0;
         let unseenErrorCount = 0;
@@ -520,9 +534,54 @@
         function applyTheme() {
           document.documentElement.dataset.theme = getTheme();
           for (const key of LANGUAGE_KEYS) editors[key]?.setTheme(getAceTheme());
+          for (const popOut of popOuts.values()) {
+            popOut.window.document.documentElement.dataset.theme = getTheme();
+            popOut.editor?.setTheme(getAceTheme());
+          }
         }
         // Without a theme the system's color scheme is followed.
         if (!options.theme) darkQuery.addEventListener('change', applyTheme);
+        //#endregion
+    
+        //#region Text size
+        /** The size of the text in the editors and the console (1 is 100%). */
+        let textScale = (() => {
+          try {
+            const scale = +localStorage.getItem(TEXT_SCALE_KEY);
+            return TEXT_SCALES.includes(scale) ? scale : 1;
+          }
+          catch (e) {
+            return 1;
+          }
+        })();
+    
+        /**
+         * Changes the size of the text in the editors and the console.
+         * @param {number} scale
+         */
+        function setTextScale(scale) {
+          textScale = scale;
+          for (const key of LANGUAGE_KEYS) editors[key].setFontSize(EDITOR_FONT_SIZE * scale);
+          for (const popOut of popOuts.values()) popOut.editor?.setFontSize(EDITOR_FONT_SIZE * scale);
+          app.style.setProperty('--text-scale', `${scale}`);
+          $('#text-reset-button').textContent = `${Math.round(scale * 100)}%`;
+          $('#text-smaller-button').disabled = scale <= TEXT_SCALES[0];
+          $('#text-bigger-button').disabled = scale >= TEXT_SCALES.at(-1);
+          try {
+            if (scale === 1) localStorage.removeItem(TEXT_SCALE_KEY);
+            else localStorage.setItem(TEXT_SCALE_KEY, `${scale}`);
+          }
+          catch (e) {}
+        }
+    
+        /**
+         * Makes the text one size smaller or bigger.
+         * @param {-1|1} offset
+         */
+        function changeTextScale(offset) {
+          const index = TEXT_SCALES.indexOf(textScale) + offset;
+          if (index >= 0 && index < TEXT_SCALES.length) setTextScale(TEXT_SCALES[index]);
+        }
         //#endregion
     
         //#region Editors
@@ -541,6 +600,7 @@
             readOnly: options.readOnly,
           });
           editor.setKeyboardHandler('ace/keyboard/vscode');
+          editor.setFontSize(EDITOR_FONT_SIZE * textScale);
           // -1 puts the cursor at the start instead of selecting everything.
           editor.setValue(config.code[key], -1);
           // Keeps undo from removing the starting code.
@@ -554,6 +614,8 @@
           // newer CSS (eg. place-items).
           if (key !== 'js') editor.session.setUseWorker(false);
           editor.on('change', scheduleRunButtonUpdate);
+          // Changes made here (eg. by Reset) are made in its window too.
+          editor.session.on('change', delta => syncToPopOut(key, delta));
           // Ace only notices when the window is resized.
           new ResizeObserver(() => editor.resize()).observe(editor.container);
           editors[key] = editor;
@@ -564,10 +626,12 @@
             if (layout !== 'tabs') setCollapsed(key, !panel.classList.contains('is-collapsed'));
           });
     
-          const formatButton = $('.format-button', panel);
-          formatButton.title = `Format the ${LANGUAGE_NAMES[key]} (${FORMAT_SHORTCUT})`;
-          formatButton.hidden = options.readOnly;
-          formatButton.addEventListener('click', () => format(key));
+          const menuButton = $('.panel-menu-button', panel);
+          menuButton.title = `More for the ${LANGUAGE_NAMES[key]} (eg. format, copy or save it)`;
+          menuButton.addEventListener('click', () => {
+            if (openMenuInfo?.button === menuButton) closeMenu();
+            else openPanelMenu(key, menuButton);
+          });
         }
     
         /**
@@ -1252,7 +1316,12 @@
           button.setAttribute('aria-expanded', 'true');
           const buttonRect = button.getBoundingClientRect();
           const menuWidth = menu.offsetWidth;
-          menu.style.top = `${buttonRect.bottom + 4}px`;
+          // Menus open downwards unless there isn't room (eg. from a toolbar at
+          // the bottom).
+          const menuHeight = menu.offsetHeight;
+          menu.style.top = buttonRect.bottom + 4 + menuHeight > innerHeight - 8 && buttonRect.top - 4 - menuHeight >= 8
+            ? `${buttonRect.top - 4 - menuHeight}px`
+            : `${buttonRect.bottom + 4}px`;
           menu.style.left = `${Math.max(8, Math.min(buttonRect.right - menuWidth, innerWidth - menuWidth - 8))}px`;
           ($('[aria-checked="true"]', menu) ?? $('button, a', menu))?.focus();
         }
@@ -1293,11 +1362,488 @@
             run(true);
           }
         });
-        $('#run-shortcut').textContent = RUN_SHORTCUT;
-        const aboutLink = $('#about-link');
-        aboutLink.href = packageInfo.homepage;
-        aboutLink.textContent = `YourJS Page v${packageInfo.version}`;
-        aboutLink.addEventListener('click', () => closeMenu());
+        //#endregion
+    
+        //#region The editors' menus
+        const panelMenu = $('#panel-menu');
+        const panelFileInput = $('#panel-file-input');
+        /** The editor that the menu (or the file being loaded) is for. */
+        let panelMenuKey = 'html';
+    
+        /**
+         * Opens the menu of an editor.
+         * @param {string} key
+         * @param {HTMLElement} button
+         */
+        function openPanelMenu(key, button) {
+          panelMenuKey = key;
+          $('[data-panel-action="save"]', panelMenu).textContent = `Save as ${FILE_NAMES[key]}`;
+          $('[data-panel-action="popOut"]', panelMenu).textContent = popOuts.has(key) ? 'Bring back into the page' : 'Pop out into a window';
+          // Read-only code can only be copied and saved.
+          for (const action of ['format', 'load']) $(`[data-panel-action="${action}"]`, panelMenu).hidden = options.readOnly;
+          openMenu(button, panelMenu);
+        }
+    
+        /**
+         * Briefly shows what happened (eg. "Copied!") in an editor's title bar.
+         * @param {string} key
+         * @param {string} text
+         */
+        function showPanelStatus(key, text) {
+          const status = $(`.panel[data-lang="${key}"] .panel-status`);
+          status.textContent = text;
+          clearTimeout(status.timer);
+          status.timer = setTimeout(() => status.textContent = '', 1600);
+        }
+    
+        const panelActions = {
+          format: key => format(key),
+          async copy(key) {
+            await copyText(editors[key].getValue());
+            showPanelStatus(key, 'Copied!');
+          },
+          save(key) {
+            download(new Blob([editors[key].getValue()], {type: 'text/plain'}), FILE_NAMES[key]);
+          },
+          load(key) {
+            panelFileInput.accept = FILE_TYPES[key];
+            panelFileInput.value = '';
+            panelFileInput.click();
+          },
+          popOut(key) {
+            if (popOuts.has(key)) bringBack(key);
+            else popOut(key);
+          },
+        };
+    
+        for (const item of $$('[data-panel-action]', panelMenu)) {
+          item.addEventListener('click', () => {
+            closeMenu();
+            panelActions[item.dataset.panelAction](panelMenuKey);
+          });
+        }
+    
+        panelFileInput.addEventListener('change', async () => {
+          const file = panelFileInput.files[0];
+          if (!file) return;
+          if (file.size > MAX_OPEN_FILE_SIZE) {
+            alert(`${file.name} is too big to load.`);
+            return;
+          }
+          const editor = editors[panelMenuKey];
+          // Setting the document's value (instead of the session's) can be
+          // undone.
+          editor.session.doc.setValue(await file.text());
+          editor.clearSelection();
+          updateRunButton();
+          showPanelStatus(panelMenuKey, `Loaded ${file.name}`);
+          editor.focus();
+        });
+        //#endregion
+    
+        //#region Popping editors out into their own windows
+        /**
+         * The editors that are in their own windows (by their keys).
+         * @type {Map<string, {window: Window, editor: AceAjax.Editor?, isSyncing: boolean, timer: number}>}
+         */
+        const popOuts = new Map();
+    
+        /**
+         * Makes a change (from an editor in the page) in the editor's window.
+         * @param {string} key
+         * @param {Object} delta
+         */
+        function syncToPopOut(key, delta) {
+          const popOut = popOuts.get(key);
+          if (!popOut?.editor || popOut.isSyncing) return;
+          popOut.isSyncing = true;
+          try {
+            popOut.editor.session.doc.applyDelta(delta);
+          }
+          finally {
+            popOut.isSyncing = false;
+          }
+        }
+    
+        /**
+         * Opens an editor in its own window.  The editor in the page and the one
+         * in the window are kept the same and closing the window brings the
+         * editor back.
+         * @param {string} key
+         */
+        function popOut(key) {
+          const name = LANGUAGE_NAMES[key];
+          const popup = open('', `yourjs-page-${pageIndex}-${key}`, 'popup,width=760,height=560');
+          if (!popup) {
+            showPanelStatus(key, 'The window was blocked');
+            return;
+          }
+          const popupDocument = popup.document;
+          popupDocument.open();
+          popupDocument.write([
+            '<!DOCTYPE html>',
+            `<html lang="en" data-theme="${getTheme()}">`,
+            '<head>',
+            '<meta charset="utf-8">',
+            `<title>${escapeHtml(`${name} \u2013 ${options.title || 'YourJS Page'}`)}</title>`,
+            // The window looks like the page.
+            `<style>${escapeStyle($('#viewer-style').textContent)}</style>`,
+            '<style>body{display:flex;flex-direction:column}#popout-editor{flex-grow:1;min-height:0}#toolbar{border-bottom:1px solid var(--toolbar-border)}</style>',
+            '</head>',
+            '<body>',
+            '</body>',
+            '</html>',
+          ].join(''));
+          popupDocument.close();
+          const bringBackButton = createElement('button', {type: 'button', className: 'text-button', textContent: 'Bring back into the page'});
+          const runButton = createElement('button', {type: 'button', className: 'run-button', title: `Run (${RUN_SHORTCUT})`});
+          runButton.innerHTML = '<svg aria-hidden="true"><use href="#icon-run"/></svg><span>Run</span>';
+          popupDocument.body.append(
+            // The icons that the buttons use.
+            document.querySelector('.svg-defs').cloneNode(true),
+            createElement('header', {id: 'toolbar'}, [
+              createElement('div', {className: 'title', textContent: name}),
+              createElement('div', {className: 'spacer'}),
+              bringBackButton,
+              runButton,
+            ]),
+            createElement('div', {id: 'popout-editor'}),
+          );
+          bringBackButton.addEventListener('click', () => bringBack(key));
+          runButton.addEventListener('click', () => run(true));
+    
+          const state = {window: popup, editor: null, isSyncing: false, timer: 0};
+          popOuts.set(key, state);
+          const panel = $(`.panel[data-lang="${key}"]`);
+          panel.classList.add('is-popped-out');
+          $('.popped-out-name', panel).textContent = name;
+    
+          // The same keyboard shortcuts work in the window.
+          popup.addEventListener('keydown', event => {
+            const isCommandKey = IS_MAC ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+            if (isCommandKey && event.key === 'Enter' && !event.shiftKey && !event.altKey) {
+              event.preventDefault();
+              event.stopPropagation();
+              run(true);
+            }
+            else if (event.shiftKey && event.altKey && !event.ctrlKey && !event.metaKey && event.code === 'KeyF') {
+              event.preventDefault();
+              event.stopPropagation();
+              format(key);
+            }
+          }, true);
+          // Closing the window brings the editor back.
+          popup.addEventListener('pagehide', () => bringBack(key));
+          state.timer = setInterval(() => {
+            if (popup.closed) bringBack(key);
+          }, 500);
+    
+          // The window gets its own copy of Ace (which loads from the CDN).
+          const script = popupDocument.createElement('script');
+          script.src = aceUrl;
+          script.onload = () => {
+            if (popOuts.get(key) !== state) return;
+            const editor = popup.ace.edit(popupDocument.getElementById('popout-editor'), {
+              mode: ACE_MODES[key],
+              theme: getAceTheme(),
+              fontSize: EDITOR_FONT_SIZE * textScale,
+              tabSize: 2,
+              useSoftTabs: true,
+              showPrintMargin: false,
+              wrap: options.wordWrap,
+              readOnly: options.readOnly,
+              useWorker: false,
+            });
+            editor.setKeyboardHandler('ace/keyboard/vscode');
+            editor.setValue(editors[key].getValue(), -1);
+            editor.session.getUndoManager().reset();
+            // Changes made in the window are made in the page too.
+            editor.session.on('change', delta => {
+              if (state.isSyncing) return;
+              state.isSyncing = true;
+              try {
+                editors[key].session.doc.applyDelta(delta);
+              }
+              finally {
+                state.isSyncing = false;
+              }
+            });
+            state.editor = editor;
+            editor.focus();
+          };
+          script.onerror = () => {
+            popupDocument.getElementById('popout-editor').textContent = 'The code editor (Ace) could not be loaded.';
+          };
+          popupDocument.head.append(script);
+          popup.focus();
+        }
+    
+        /**
+         * Puts an editor that is in its own window back into the page (and
+         * closes the window).
+         * @param {string} key
+         */
+        function bringBack(key) {
+          const state = popOuts.get(key);
+          if (!state) return;
+          popOuts.delete(key);
+          clearInterval(state.timer);
+          if (!state.window.closed) state.window.close();
+          const panel = $(`.panel[data-lang="${key}"]`);
+          panel.classList.remove('is-popped-out');
+          if (layout === 'tabs') setTab(key);
+          else setCollapsed(key, false);
+          editors[key].resize();
+          editors[key].focus();
+        }
+    
+        for (const panel of $$('.panel')) {
+          const key = panel.dataset.lang;
+          $('.popped-out-show-button', panel).addEventListener('click', () => popOuts.get(key)?.window.focus());
+          $('.popped-out-bring-back-button', panel).addEventListener('click', () => bringBack(key));
+        }
+        // The windows can't work without this page.
+        addEventListener('pagehide', () => {
+          for (const key of [...popOuts.keys()]) bringBack(key);
+        });
+        //#endregion
+    
+        $('#text-smaller-button').addEventListener('click', () => changeTextScale(-1));
+        $('#text-bigger-button').addEventListener('click', () => changeTextScale(1));
+        $('#text-reset-button').addEventListener('click', () => setTextScale(1));
+        setTextScale(textScale);
+    
+        //#region About
+        const aboutDialog = $('#about-dialog');
+        $('#about-version').textContent = `Version ${packageInfo.version}`;
+        $('#about-website-link').href = packageInfo.homepage;
+        $('#about-github-link').href = packageInfo.repoUrl;
+        $('#about-docs-link').href = `${packageInfo.repoUrl}#readme`;
+        $('#about-issues-link').href = packageInfo.bugsUrl;
+        $('#about-footer').textContent = `MIT License \u00a9 2026-present Chris West \u00b7 Built with Ace ${libraryVersions['ace-builds']}, js-beautify ${libraryVersions['js-beautify']} and Acorn ${libraryVersions.acorn}`;
+    
+        /**
+         * Fills a list of terms and their descriptions.
+         * @param {HTMLElement} list
+         * @param {[(string|Node)[], string][]} items
+         */
+        function fillDetails(list, items) {
+          list.replaceChildren(...items.flatMap(([terms, description]) => [
+            createElement('dt', {}, terms),
+            createElement('dd', {textContent: description}),
+          ]));
+        }
+    
+        /**
+         * Keys to press together (eg. ["Ctrl", "Enter"]).
+         * @param {string[]} keys
+         * @returns {(string|Node)[]}
+         */
+        const keys = (...names) => names.flatMap((name, index) => [
+          ...index ? [' + '] : [],
+          createElement('kbd', {textContent: name}),
+        ]);
+    
+        /** Shows the About window (with what is true right now). */
+        function openAbout() {
+          closeMenu();
+          const layoutNames = {
+            top: 'Editors on top of the result',
+            left: 'Editors on the left of the result',
+            right: 'Editors on the right of the result',
+            tabs: 'Tabs that show one thing at a time',
+          };
+          const libraryCount = libraries.css.length + libraries.js.length;
+          fillDetails($('#about-details'), [
+            [['Layout'], `${layoutNames[layout]}${isLayoutAuto ? ' (chosen for the width of the page)' : ''}`],
+            [['Theme'], `${getTheme() === 'dark' ? 'Dark' : 'Light'}${options.theme ? '' : ' (following the system)'}`],
+            [['Menu'], isToolbarBottom ? 'At the bottom' : 'At the top'],
+            [['Editing'], options.readOnly ? 'Read only (the code can still be run)' : 'Allowed'],
+            [['Libraries'], libraryCount
+              ? `${libraries.css.length} CSS and ${libraries.js.length} JavaScript`
+              : 'None'],
+            [['The result'], 'Runs in a sandbox so its code can\u2019t reach this page'],
+            [['Loops'], options.loopTimeout > 0
+              ? `Stopped if the code runs them for more than ${options.loopTimeout / 1000} seconds without a break`
+              : 'Never stopped'],
+          ]);
+          const commandKey = IS_MAC ? '\u2318' : 'Ctrl';
+          fillDetails($('#about-shortcuts'), [
+            [keys(commandKey, 'Enter'), 'Run the code (in the editors or the result)'],
+            ...options.readOnly ? [] : [[keys('Shift', IS_MAC ? '\u2325' : 'Alt', 'F'), 'Format the code in the editor']],
+            [keys('Enter'), 'Run the code typed into the console'],
+            [keys('Shift', 'Enter'), 'Start a new line in the console'],
+            [[...keys('\u2191'), ' / ', ...keys('\u2193')], 'Go through the code typed into the console'],
+            [keys('Esc'), 'Close this window, a menu or full screen'],
+          ]);
+          setAboutTab('about');
+          // Copies get new IDs each time (so that more than one can be on a page).
+          embedId = `yourjs-page-${Math.random().toString(36).slice(2, 7)}`;
+          aboutDialog.showModal();
+          $('.dialog-close', aboutDialog).focus();
+        }
+    
+        /**
+         * Shows a tab of the About window.
+         * @param {"about"|"embed"} tab
+         */
+        function setAboutTab(tab) {
+          for (const button of $$('[data-about-tab]', aboutDialog)) {
+            button.setAttribute('aria-selected', `${button.dataset.aboutTab === tab}`);
+          }
+          for (const panel of $$('[data-about-panel]', aboutDialog)) panel.hidden = panel.dataset.aboutPanel !== tab;
+          aboutDialog.classList.toggle('is-embed', tab === 'embed');
+          if (tab === 'embed') renderEmbed();
+        }
+        for (const button of $$('[data-about-tab]', aboutDialog)) {
+          button.addEventListener('click', () => setAboutTab(button.dataset.aboutTab));
+        }
+    
+        //#region Embedding
+        /** The script that copies of this page load (this major version from the CDN). */
+        const SCRIPT_URL = `https://cdn.jsdelivr.net/npm/${packageInfo.name}@${packageInfo.version.split('.')[0]}/dist/${packageInfo.name}.min.js`;
+        /** The ID that the elements of copies start with. */
+        let embedId = 'yourjs-page';
+        /** Which code copies start with:  "current" or "original". */
+        let embedCodeChoice = 'current';
+        /** @type {{[key: string]: AceAjax.Editor}} */
+        const embedPreviews = {};
+        /** The snippets that are shown (and copied). */
+        const embedSnippets = {html: '', api: ''};
+    
+        const escapeAttribute = text => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const escapeText = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+        /**
+         * Makes the HTML for a copy of this page:  the script (with this page's
+         * settings) and the code in hidden <pre> elements.
+         * @param {ReturnType<getCode>} code
+         * @returns {string}
+         */
+        function buildEmbedHtml(code) {
+          const attributes = [`src="${SCRIPT_URL}"`];
+          for (const [name, value] of Object.entries(embedSettings)) {
+            attributes.push(`data-${name.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)}="${escapeAttribute(value)}"`);
+          }
+          if (code.cssUrls.length) attributes.push(`data-css-urls="${escapeAttribute(code.cssUrls.join(' '))}"`);
+          if (code.jsUrls.length) attributes.push(`data-js-urls="${escapeAttribute(code.jsUrls.join(' '))}"`);
+          for (const key of LANGUAGE_KEYS) attributes.push(`data-${key}-selector="#${embedId}-${key}"`);
+          return [
+            // Without a height the page fills its container.
+            embedSettings.height ? '<div>' : '<div style="height: 500px;">',
+            `  <script ${attributes.join('\n          ')}><\/script>`,
+            '</div>',
+            // (The browser removes the new line at the start of a <pre>.)
+            ...LANGUAGE_KEYS.map(key => `<pre id="${embedId}-${key}" hidden>\n${escapeText(code[key])}</pre>`),
+            '',
+          ].join('\n');
+        }
+    
+        /**
+         * Makes the HTML for a copy of this page made with YourJSPage.create().
+         * @param {ReturnType<getCode>} code
+         * @returns {string}
+         */
+        function buildEmbedApi(code) {
+          // A template literal (that can't end the <script> early).
+          const toLiteral = text => '`' + text
+            .replace(/\\/g, '\\\\')
+            .replace(/`/g, '\\`')
+            .replace(/\$\{/g, '\\${')
+            .replace(/<\/(script)/gi, '<\\/$1') + '`';
+          // "true" becomes true and numbers that are lengths become numbers.
+          const toValue = (name, value) => /^(true|false)$/.test(value) ? value
+            : /^(height|loopTimeout)$/.test(name) && /^\d+(\.\d+)?$/.test(value) ? value
+            : JSON.stringify(value);
+          const options = [
+            `target: '#${embedId}',`,
+            ...LANGUAGE_KEYS.map(key => `${key}: ${toLiteral(code[key])},`),
+            ...code.cssUrls.length ? [`cssUrls: ${JSON.stringify(code.cssUrls)},`] : [],
+            ...code.jsUrls.length ? [`jsUrls: ${JSON.stringify(code.jsUrls)},`] : [],
+            ...Object.entries(embedSettings).map(([name, value]) => `${name}: ${toValue(name, value)},`),
+          ];
+          return [
+            embedSettings.height ? `<div id="${embedId}"></div>` : `<div id="${embedId}" style="height: 500px;"></div>`,
+            `<script src="${SCRIPT_URL}"><\/script>`,
+            '<script>',
+            '  YourJSPage.create({',
+            // (Only the first line of each option is indented so that the code
+            // in the template literals stays exactly the same.)
+            ...options.map(option => `    ${option}`),
+            '  });',
+            '<\/script>',
+            '',
+          ].join('\n');
+        }
+    
+        /** Shows the snippets for the chosen code. */
+        function renderEmbed() {
+          const code = embedCodeChoice === 'original'
+            ? {...originalCode, cssUrls: [...originalCode.cssUrls], jsUrls: [...originalCode.jsUrls]}
+            : getCode();
+          embedSnippets.html = buildEmbedHtml(code);
+          embedSnippets.api = buildEmbedApi(code);
+          for (const key of ['html', 'api']) {
+            embedPreviews[key] ??= ace.edit($(`#embed-${key}-preview`), {
+              mode: 'ace/mode/html',
+              theme: getAceTheme(),
+              fontSize: 12,
+              readOnly: true,
+              showPrintMargin: false,
+              highlightActiveLine: false,
+              useWorker: false,
+            });
+            embedPreviews[key].setTheme(getAceTheme());
+            embedPreviews[key].setValue(embedSnippets[key], -1);
+          }
+          for (const button of $$('[data-embed-code]', aboutDialog)) {
+            button.setAttribute('aria-checked', `${button.dataset.embedCode === embedCodeChoice}`);
+          }
+        }
+    
+        for (const button of $$('[data-embed-code]', aboutDialog)) {
+          button.addEventListener('click', () => {
+            embedCodeChoice = button.dataset.embedCode;
+            renderEmbed();
+          });
+        }
+    
+        /**
+         * Copies text to the clipboard.
+         * @param {string} text
+         */
+        async function copyText(text) {
+          try {
+            await navigator.clipboard.writeText(text);
+          }
+          catch (e) {
+            // Falls back to the older way of copying text.
+            const textarea = createElement('textarea', {value: text});
+            document.body.append(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            textarea.remove();
+          }
+        }
+    
+        for (const button of $$('[data-embed-copy]', aboutDialog)) {
+          button.addEventListener('click', async () => {
+            await copyText(embedSnippets[button.dataset.embedCopy]);
+            button.textContent = 'Copied!';
+            setTimeout(() => button.textContent = 'Copy', 1500);
+          });
+        }
+        //#endregion
+    
+        $('#about-button').addEventListener('click', openAbout);
+        const logoButton = $('#logo-button');
+        logoButton.title = `About YourJS Page (version ${packageInfo.version})`;
+        logoButton.addEventListener('click', openAbout);
+        $('.dialog-close', aboutDialog).addEventListener('click', () => aboutDialog.close());
+        // Clicking outside of the window closes it.
+        aboutDialog.addEventListener('click', event => {
+          if (event.target === aboutDialog) aboutDialog.close();
+        });
         //#endregion
     
         //#region Libraries
@@ -1798,12 +2344,10 @@
         updateConsoleBadge();
         setConsoleShown(options.showConsole, false);
     
-        const logoLink = $('#logo-link');
-        logoLink.href = packageInfo.homepage;
-        logoLink.title = `YourJS Page v${packageInfo.version}`;
-    
         app.hidden = false;
-        splash.classList.add('hidden');
+        // The loading screen is shown for at least a moment (from when this page
+        // started loading) so that it doesn't just flash.
+        setTimeout(() => splash.classList.add('hidden'), Math.max(0, SPLASH_MIN_TIME - performance.now()));
         // A viewer that starts again (eg. because its IFRAME moved) is in a page
         // that didn't freeze.
         if (!config.isRestart && didOriginalCodeNotFinish()) {
@@ -2836,6 +3380,9 @@
    *   Puts the page's element into the document.
    * @returns {import('./yourjs-page').YourJSPageInstance}
    */
+  /** The settings that copies of a page keep (see "Embed" in the viewer). */
+  const EMBED_SETTING_NAMES = ['layout', 'tab', 'menu', 'theme', 'title', 'height', 'editors', 'wordWrap', 'readOnly', 'showConsole', 'librarySearch', 'loopTimeout', 'loading'];
+
   /** How many pages have been made in this document. */
   let pageCount = 0;
 
@@ -2972,6 +3519,9 @@
               readOnly: dataset.readOnly === 'true',
               showConsole: dataset.showConsole === 'true',
               librarySearch: dataset.librarySearch !== 'false',
+              // Where the menu (the toolbar) is:  at the bottom unless "top"
+              // is given.
+              menu: dataset.menu === 'top' ? 'top' : 'bottom',
               // How long loops can keep the page busy (0 turns this off).
               loopTimeout: /^\d+$/.test(dataset.loopTimeout ?? '') ? +dataset.loopTimeout : 2000,
               // Which editors are shown (all of them unless the attribute is
@@ -2989,6 +3539,8 @@
               .sort((a, b) => LANGUAGES.findIndex(({key}) => key === a.key) - LANGUAGES.findIndex(({key}) => key === b.key)),
             runtimeCode,
             parserUrl: libraryUrl('acorn', 'dist/acorn.js'),
+            // For editors that are popped out into their own windows.
+            aceUrl: libraryUrl('ace-builds', 'src-min-noconflict/ace.js'),
             // Used to know when the page's own code froze the last time.
             pageUrl: location.href.replace(/#.*/, ''),
             // Which page this is in the document (so that pages with the
@@ -3000,6 +3552,11 @@
               libraryUrl('js-beautify', 'js/lib/beautify-html.js'),
             ],
             packageInfo: PACKAGE_INFO,
+            libraryVersions: LIBRARY_VERSIONS,
+            // The settings for copies of this page (see "Embed" in the
+            // viewer's About window) which get their code another way and
+            // load the libraries from the CDN.
+            embedSettings: Object.fromEntries(Object.entries(dataset).filter(([name]) => EMBED_SETTING_NAMES.includes(name))),
           }, hostApi);
         });
 
@@ -3008,7 +3565,7 @@
           `<html lang="en" data-theme="${initialTheme}">`,
           '<head>',
           '<meta charset="utf-8">',
-          `<style>${VIEWER_CSS}</style>`,
+          `<style id="viewer-style">${VIEWER_CSS}</style>`,
           '</head>',
           '<body>',
           VIEWER_HTML,
@@ -3128,7 +3685,7 @@
    * The options of YourJSPage.create() which are the same as the data
    * attributes of a script tag.
    */
-  const PAGE_OPTION_NAMES = ['editors', 'height', 'layout', 'librariesUrl', 'librarySearch', 'loading', 'loopTimeout', 'readOnly', 'showConsole', 'tab', 'theme', 'title', 'wordWrap'];
+  const PAGE_OPTION_NAMES = ['editors', 'height', 'layout', 'librariesUrl', 'librarySearch', 'loading', 'loopTimeout', 'readOnly', 'showConsole', 'menu', 'tab', 'theme', 'title', 'wordWrap'];
 
   /**
    * The JavaScript API for creating pages (available as window.YourJSPage).

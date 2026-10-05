@@ -42,6 +42,18 @@ const CDNJS_API_URL = 'https://api.cdnjs.com/libraries';
 const CDNJS_FILES_URL = 'https://cdnjs.cloudflare.com/ajax/libs/';
 /** How long to wait after typing stops before searching (in milliseconds). */
 const SEARCH_DELAY = 250;
+/** The names of the files that each editor's code is saved as. */
+const FILE_NAMES = {html: 'index.html', css: 'style.css', js: 'script.js'};
+/** The files that can be loaded into each editor. */
+const FILE_TYPES = {html: '.html,.htm,text/html', css: '.css,text/css', js: '.js,.mjs,text/javascript'};
+/** The text sizes that the "..." menu goes through (as fractions of 100%). */
+const TEXT_SCALES = [0.7, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+/** Where the text size is remembered (for every page in this browser). */
+const TEXT_SCALE_KEY = 'yourjs-page:text-scale';
+/** The editors' font size (in pixels) at 100%. */
+const EDITOR_FONT_SIZE = 13;
+/** The shortest time (in milliseconds) that the loading screen is shown. */
+const SPLASH_MIN_TIME = 1000;
 /** The biggest file that can be opened (in bytes). */
 const MAX_OPEN_FILE_SIZE = 20 * 1024 * 1024;
 
@@ -443,7 +455,7 @@ window.yourjsPageViewer = {
    *   What the viewer can ask the page to do.
    */
   init(config, host) {
-    const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, pageUrl, pageIndex, packageInfo} = config;
+    const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, aceUrl, pageUrl, pageIndex, packageInfo, libraryVersions, embedSettings} = config;
     const app = $('#app');
     const splash = $('#splash');
 
@@ -480,6 +492,8 @@ window.yourjsPageViewer = {
     let layout = 'top';
     let isLayoutAuto = !LAYOUTS.includes(options.layout);
     let activeTab = TABS.includes(options.tab) ? options.tab : 'result';
+    const isToolbarBottom = options.menu !== 'top';
+    app.classList.toggle('is-toolbar-bottom', isToolbarBottom);
     let isConsoleShown = false;
     let unseenCount = 0;
     let unseenErrorCount = 0;
@@ -497,9 +511,54 @@ window.yourjsPageViewer = {
     function applyTheme() {
       document.documentElement.dataset.theme = getTheme();
       for (const key of LANGUAGE_KEYS) editors[key]?.setTheme(getAceTheme());
+      for (const popOut of popOuts.values()) {
+        popOut.window.document.documentElement.dataset.theme = getTheme();
+        popOut.editor?.setTheme(getAceTheme());
+      }
     }
     // Without a theme the system's color scheme is followed.
     if (!options.theme) darkQuery.addEventListener('change', applyTheme);
+    //#endregion
+
+    //#region Text size
+    /** The size of the text in the editors and the console (1 is 100%). */
+    let textScale = (() => {
+      try {
+        const scale = +localStorage.getItem(TEXT_SCALE_KEY);
+        return TEXT_SCALES.includes(scale) ? scale : 1;
+      }
+      catch (e) {
+        return 1;
+      }
+    })();
+
+    /**
+     * Changes the size of the text in the editors and the console.
+     * @param {number} scale
+     */
+    function setTextScale(scale) {
+      textScale = scale;
+      for (const key of LANGUAGE_KEYS) editors[key].setFontSize(EDITOR_FONT_SIZE * scale);
+      for (const popOut of popOuts.values()) popOut.editor?.setFontSize(EDITOR_FONT_SIZE * scale);
+      app.style.setProperty('--text-scale', `${scale}`);
+      $('#text-reset-button').textContent = `${Math.round(scale * 100)}%`;
+      $('#text-smaller-button').disabled = scale <= TEXT_SCALES[0];
+      $('#text-bigger-button').disabled = scale >= TEXT_SCALES.at(-1);
+      try {
+        if (scale === 1) localStorage.removeItem(TEXT_SCALE_KEY);
+        else localStorage.setItem(TEXT_SCALE_KEY, `${scale}`);
+      }
+      catch (e) {}
+    }
+
+    /**
+     * Makes the text one size smaller or bigger.
+     * @param {-1|1} offset
+     */
+    function changeTextScale(offset) {
+      const index = TEXT_SCALES.indexOf(textScale) + offset;
+      if (index >= 0 && index < TEXT_SCALES.length) setTextScale(TEXT_SCALES[index]);
+    }
     //#endregion
 
     //#region Editors
@@ -518,6 +577,7 @@ window.yourjsPageViewer = {
         readOnly: options.readOnly,
       });
       editor.setKeyboardHandler('ace/keyboard/vscode');
+      editor.setFontSize(EDITOR_FONT_SIZE * textScale);
       // -1 puts the cursor at the start instead of selecting everything.
       editor.setValue(config.code[key], -1);
       // Keeps undo from removing the starting code.
@@ -531,6 +591,8 @@ window.yourjsPageViewer = {
       // newer CSS (eg. place-items).
       if (key !== 'js') editor.session.setUseWorker(false);
       editor.on('change', scheduleRunButtonUpdate);
+      // Changes made here (eg. by Reset) are made in its window too.
+      editor.session.on('change', delta => syncToPopOut(key, delta));
       // Ace only notices when the window is resized.
       new ResizeObserver(() => editor.resize()).observe(editor.container);
       editors[key] = editor;
@@ -541,10 +603,12 @@ window.yourjsPageViewer = {
         if (layout !== 'tabs') setCollapsed(key, !panel.classList.contains('is-collapsed'));
       });
 
-      const formatButton = $('.format-button', panel);
-      formatButton.title = `Format the ${LANGUAGE_NAMES[key]} (${FORMAT_SHORTCUT})`;
-      formatButton.hidden = options.readOnly;
-      formatButton.addEventListener('click', () => format(key));
+      const menuButton = $('.panel-menu-button', panel);
+      menuButton.title = `More for the ${LANGUAGE_NAMES[key]} (eg. format, copy or save it)`;
+      menuButton.addEventListener('click', () => {
+        if (openMenuInfo?.button === menuButton) closeMenu();
+        else openPanelMenu(key, menuButton);
+      });
     }
 
     /**
@@ -1229,7 +1293,12 @@ window.yourjsPageViewer = {
       button.setAttribute('aria-expanded', 'true');
       const buttonRect = button.getBoundingClientRect();
       const menuWidth = menu.offsetWidth;
-      menu.style.top = `${buttonRect.bottom + 4}px`;
+      // Menus open downwards unless there isn't room (eg. from a toolbar at
+      // the bottom).
+      const menuHeight = menu.offsetHeight;
+      menu.style.top = buttonRect.bottom + 4 + menuHeight > innerHeight - 8 && buttonRect.top - 4 - menuHeight >= 8
+        ? `${buttonRect.top - 4 - menuHeight}px`
+        : `${buttonRect.bottom + 4}px`;
       menu.style.left = `${Math.max(8, Math.min(buttonRect.right - menuWidth, innerWidth - menuWidth - 8))}px`;
       ($('[aria-checked="true"]', menu) ?? $('button, a', menu))?.focus();
     }
@@ -1270,11 +1339,488 @@ window.yourjsPageViewer = {
         run(true);
       }
     });
-    $('#run-shortcut').textContent = RUN_SHORTCUT;
-    const aboutLink = $('#about-link');
-    aboutLink.href = packageInfo.homepage;
-    aboutLink.textContent = `YourJS Page v${packageInfo.version}`;
-    aboutLink.addEventListener('click', () => closeMenu());
+    //#endregion
+
+    //#region The editors' menus
+    const panelMenu = $('#panel-menu');
+    const panelFileInput = $('#panel-file-input');
+    /** The editor that the menu (or the file being loaded) is for. */
+    let panelMenuKey = 'html';
+
+    /**
+     * Opens the menu of an editor.
+     * @param {string} key
+     * @param {HTMLElement} button
+     */
+    function openPanelMenu(key, button) {
+      panelMenuKey = key;
+      $('[data-panel-action="save"]', panelMenu).textContent = `Save as ${FILE_NAMES[key]}`;
+      $('[data-panel-action="popOut"]', panelMenu).textContent = popOuts.has(key) ? 'Bring back into the page' : 'Pop out into a window';
+      // Read-only code can only be copied and saved.
+      for (const action of ['format', 'load']) $(`[data-panel-action="${action}"]`, panelMenu).hidden = options.readOnly;
+      openMenu(button, panelMenu);
+    }
+
+    /**
+     * Briefly shows what happened (eg. "Copied!") in an editor's title bar.
+     * @param {string} key
+     * @param {string} text
+     */
+    function showPanelStatus(key, text) {
+      const status = $(`.panel[data-lang="${key}"] .panel-status`);
+      status.textContent = text;
+      clearTimeout(status.timer);
+      status.timer = setTimeout(() => status.textContent = '', 1600);
+    }
+
+    const panelActions = {
+      format: key => format(key),
+      async copy(key) {
+        await copyText(editors[key].getValue());
+        showPanelStatus(key, 'Copied!');
+      },
+      save(key) {
+        download(new Blob([editors[key].getValue()], {type: 'text/plain'}), FILE_NAMES[key]);
+      },
+      load(key) {
+        panelFileInput.accept = FILE_TYPES[key];
+        panelFileInput.value = '';
+        panelFileInput.click();
+      },
+      popOut(key) {
+        if (popOuts.has(key)) bringBack(key);
+        else popOut(key);
+      },
+    };
+
+    for (const item of $$('[data-panel-action]', panelMenu)) {
+      item.addEventListener('click', () => {
+        closeMenu();
+        panelActions[item.dataset.panelAction](panelMenuKey);
+      });
+    }
+
+    panelFileInput.addEventListener('change', async () => {
+      const file = panelFileInput.files[0];
+      if (!file) return;
+      if (file.size > MAX_OPEN_FILE_SIZE) {
+        alert(`${file.name} is too big to load.`);
+        return;
+      }
+      const editor = editors[panelMenuKey];
+      // Setting the document's value (instead of the session's) can be
+      // undone.
+      editor.session.doc.setValue(await file.text());
+      editor.clearSelection();
+      updateRunButton();
+      showPanelStatus(panelMenuKey, `Loaded ${file.name}`);
+      editor.focus();
+    });
+    //#endregion
+
+    //#region Popping editors out into their own windows
+    /**
+     * The editors that are in their own windows (by their keys).
+     * @type {Map<string, {window: Window, editor: AceAjax.Editor?, isSyncing: boolean, timer: number}>}
+     */
+    const popOuts = new Map();
+
+    /**
+     * Makes a change (from an editor in the page) in the editor's window.
+     * @param {string} key
+     * @param {Object} delta
+     */
+    function syncToPopOut(key, delta) {
+      const popOut = popOuts.get(key);
+      if (!popOut?.editor || popOut.isSyncing) return;
+      popOut.isSyncing = true;
+      try {
+        popOut.editor.session.doc.applyDelta(delta);
+      }
+      finally {
+        popOut.isSyncing = false;
+      }
+    }
+
+    /**
+     * Opens an editor in its own window.  The editor in the page and the one
+     * in the window are kept the same and closing the window brings the
+     * editor back.
+     * @param {string} key
+     */
+    function popOut(key) {
+      const name = LANGUAGE_NAMES[key];
+      const popup = open('', `yourjs-page-${pageIndex}-${key}`, 'popup,width=760,height=560');
+      if (!popup) {
+        showPanelStatus(key, 'The window was blocked');
+        return;
+      }
+      const popupDocument = popup.document;
+      popupDocument.open();
+      popupDocument.write([
+        '<!DOCTYPE html>',
+        `<html lang="en" data-theme="${getTheme()}">`,
+        '<head>',
+        '<meta charset="utf-8">',
+        `<title>${escapeHtml(`${name} – ${options.title || 'YourJS Page'}`)}</title>`,
+        // The window looks like the page.
+        `<style>${escapeStyle($('#viewer-style').textContent)}</style>`,
+        '<style>body{display:flex;flex-direction:column}#popout-editor{flex-grow:1;min-height:0}#toolbar{border-bottom:1px solid var(--toolbar-border)}</style>',
+        '</head>',
+        '<body>',
+        '</body>',
+        '</html>',
+      ].join(''));
+      popupDocument.close();
+      const bringBackButton = createElement('button', {type: 'button', className: 'text-button', textContent: 'Bring back into the page'});
+      const runButton = createElement('button', {type: 'button', className: 'run-button', title: `Run (${RUN_SHORTCUT})`});
+      runButton.innerHTML = '<svg aria-hidden="true"><use href="#icon-run"/></svg><span>Run</span>';
+      popupDocument.body.append(
+        // The icons that the buttons use.
+        document.querySelector('.svg-defs').cloneNode(true),
+        createElement('header', {id: 'toolbar'}, [
+          createElement('div', {className: 'title', textContent: name}),
+          createElement('div', {className: 'spacer'}),
+          bringBackButton,
+          runButton,
+        ]),
+        createElement('div', {id: 'popout-editor'}),
+      );
+      bringBackButton.addEventListener('click', () => bringBack(key));
+      runButton.addEventListener('click', () => run(true));
+
+      const state = {window: popup, editor: null, isSyncing: false, timer: 0};
+      popOuts.set(key, state);
+      const panel = $(`.panel[data-lang="${key}"]`);
+      panel.classList.add('is-popped-out');
+      $('.popped-out-name', panel).textContent = name;
+
+      // The same keyboard shortcuts work in the window.
+      popup.addEventListener('keydown', event => {
+        const isCommandKey = IS_MAC ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+        if (isCommandKey && event.key === 'Enter' && !event.shiftKey && !event.altKey) {
+          event.preventDefault();
+          event.stopPropagation();
+          run(true);
+        }
+        else if (event.shiftKey && event.altKey && !event.ctrlKey && !event.metaKey && event.code === 'KeyF') {
+          event.preventDefault();
+          event.stopPropagation();
+          format(key);
+        }
+      }, true);
+      // Closing the window brings the editor back.
+      popup.addEventListener('pagehide', () => bringBack(key));
+      state.timer = setInterval(() => {
+        if (popup.closed) bringBack(key);
+      }, 500);
+
+      // The window gets its own copy of Ace (which loads from the CDN).
+      const script = popupDocument.createElement('script');
+      script.src = aceUrl;
+      script.onload = () => {
+        if (popOuts.get(key) !== state) return;
+        const editor = popup.ace.edit(popupDocument.getElementById('popout-editor'), {
+          mode: ACE_MODES[key],
+          theme: getAceTheme(),
+          fontSize: EDITOR_FONT_SIZE * textScale,
+          tabSize: 2,
+          useSoftTabs: true,
+          showPrintMargin: false,
+          wrap: options.wordWrap,
+          readOnly: options.readOnly,
+          useWorker: false,
+        });
+        editor.setKeyboardHandler('ace/keyboard/vscode');
+        editor.setValue(editors[key].getValue(), -1);
+        editor.session.getUndoManager().reset();
+        // Changes made in the window are made in the page too.
+        editor.session.on('change', delta => {
+          if (state.isSyncing) return;
+          state.isSyncing = true;
+          try {
+            editors[key].session.doc.applyDelta(delta);
+          }
+          finally {
+            state.isSyncing = false;
+          }
+        });
+        state.editor = editor;
+        editor.focus();
+      };
+      script.onerror = () => {
+        popupDocument.getElementById('popout-editor').textContent = 'The code editor (Ace) could not be loaded.';
+      };
+      popupDocument.head.append(script);
+      popup.focus();
+    }
+
+    /**
+     * Puts an editor that is in its own window back into the page (and
+     * closes the window).
+     * @param {string} key
+     */
+    function bringBack(key) {
+      const state = popOuts.get(key);
+      if (!state) return;
+      popOuts.delete(key);
+      clearInterval(state.timer);
+      if (!state.window.closed) state.window.close();
+      const panel = $(`.panel[data-lang="${key}"]`);
+      panel.classList.remove('is-popped-out');
+      if (layout === 'tabs') setTab(key);
+      else setCollapsed(key, false);
+      editors[key].resize();
+      editors[key].focus();
+    }
+
+    for (const panel of $$('.panel')) {
+      const key = panel.dataset.lang;
+      $('.popped-out-show-button', panel).addEventListener('click', () => popOuts.get(key)?.window.focus());
+      $('.popped-out-bring-back-button', panel).addEventListener('click', () => bringBack(key));
+    }
+    // The windows can't work without this page.
+    addEventListener('pagehide', () => {
+      for (const key of [...popOuts.keys()]) bringBack(key);
+    });
+    //#endregion
+
+    $('#text-smaller-button').addEventListener('click', () => changeTextScale(-1));
+    $('#text-bigger-button').addEventListener('click', () => changeTextScale(1));
+    $('#text-reset-button').addEventListener('click', () => setTextScale(1));
+    setTextScale(textScale);
+
+    //#region About
+    const aboutDialog = $('#about-dialog');
+    $('#about-version').textContent = `Version ${packageInfo.version}`;
+    $('#about-website-link').href = packageInfo.homepage;
+    $('#about-github-link').href = packageInfo.repoUrl;
+    $('#about-docs-link').href = `${packageInfo.repoUrl}#readme`;
+    $('#about-issues-link').href = packageInfo.bugsUrl;
+    $('#about-footer').textContent = `MIT License \u00a9 2026-present Chris West \u00b7 Built with Ace ${libraryVersions['ace-builds']}, js-beautify ${libraryVersions['js-beautify']} and Acorn ${libraryVersions.acorn}`;
+
+    /**
+     * Fills a list of terms and their descriptions.
+     * @param {HTMLElement} list
+     * @param {[(string|Node)[], string][]} items
+     */
+    function fillDetails(list, items) {
+      list.replaceChildren(...items.flatMap(([terms, description]) => [
+        createElement('dt', {}, terms),
+        createElement('dd', {textContent: description}),
+      ]));
+    }
+
+    /**
+     * Keys to press together (eg. ["Ctrl", "Enter"]).
+     * @param {string[]} keys
+     * @returns {(string|Node)[]}
+     */
+    const keys = (...names) => names.flatMap((name, index) => [
+      ...index ? [' + '] : [],
+      createElement('kbd', {textContent: name}),
+    ]);
+
+    /** Shows the About window (with what is true right now). */
+    function openAbout() {
+      closeMenu();
+      const layoutNames = {
+        top: 'Editors on top of the result',
+        left: 'Editors on the left of the result',
+        right: 'Editors on the right of the result',
+        tabs: 'Tabs that show one thing at a time',
+      };
+      const libraryCount = libraries.css.length + libraries.js.length;
+      fillDetails($('#about-details'), [
+        [['Layout'], `${layoutNames[layout]}${isLayoutAuto ? ' (chosen for the width of the page)' : ''}`],
+        [['Theme'], `${getTheme() === 'dark' ? 'Dark' : 'Light'}${options.theme ? '' : ' (following the system)'}`],
+        [['Menu'], isToolbarBottom ? 'At the bottom' : 'At the top'],
+        [['Editing'], options.readOnly ? 'Read only (the code can still be run)' : 'Allowed'],
+        [['Libraries'], libraryCount
+          ? `${libraries.css.length} CSS and ${libraries.js.length} JavaScript`
+          : 'None'],
+        [['The result'], 'Runs in a sandbox so its code can\u2019t reach this page'],
+        [['Loops'], options.loopTimeout > 0
+          ? `Stopped if the code runs them for more than ${options.loopTimeout / 1000} seconds without a break`
+          : 'Never stopped'],
+      ]);
+      const commandKey = IS_MAC ? '\u2318' : 'Ctrl';
+      fillDetails($('#about-shortcuts'), [
+        [keys(commandKey, 'Enter'), 'Run the code (in the editors or the result)'],
+        ...options.readOnly ? [] : [[keys('Shift', IS_MAC ? '\u2325' : 'Alt', 'F'), 'Format the code in the editor']],
+        [keys('Enter'), 'Run the code typed into the console'],
+        [keys('Shift', 'Enter'), 'Start a new line in the console'],
+        [[...keys('\u2191'), ' / ', ...keys('\u2193')], 'Go through the code typed into the console'],
+        [keys('Esc'), 'Close this window, a menu or full screen'],
+      ]);
+      setAboutTab('about');
+      // Copies get new IDs each time (so that more than one can be on a page).
+      embedId = `yourjs-page-${Math.random().toString(36).slice(2, 7)}`;
+      aboutDialog.showModal();
+      $('.dialog-close', aboutDialog).focus();
+    }
+
+    /**
+     * Shows a tab of the About window.
+     * @param {"about"|"embed"} tab
+     */
+    function setAboutTab(tab) {
+      for (const button of $$('[data-about-tab]', aboutDialog)) {
+        button.setAttribute('aria-selected', `${button.dataset.aboutTab === tab}`);
+      }
+      for (const panel of $$('[data-about-panel]', aboutDialog)) panel.hidden = panel.dataset.aboutPanel !== tab;
+      aboutDialog.classList.toggle('is-embed', tab === 'embed');
+      if (tab === 'embed') renderEmbed();
+    }
+    for (const button of $$('[data-about-tab]', aboutDialog)) {
+      button.addEventListener('click', () => setAboutTab(button.dataset.aboutTab));
+    }
+
+    //#region Embedding
+    /** The script that copies of this page load (this major version from the CDN). */
+    const SCRIPT_URL = `https://cdn.jsdelivr.net/npm/${packageInfo.name}@${packageInfo.version.split('.')[0]}/dist/${packageInfo.name}.min.js`;
+    /** The ID that the elements of copies start with. */
+    let embedId = 'yourjs-page';
+    /** Which code copies start with:  "current" or "original". */
+    let embedCodeChoice = 'current';
+    /** @type {{[key: string]: AceAjax.Editor}} */
+    const embedPreviews = {};
+    /** The snippets that are shown (and copied). */
+    const embedSnippets = {html: '', api: ''};
+
+    const escapeAttribute = text => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    const escapeText = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    /**
+     * Makes the HTML for a copy of this page:  the script (with this page's
+     * settings) and the code in hidden <pre> elements.
+     * @param {ReturnType<getCode>} code
+     * @returns {string}
+     */
+    function buildEmbedHtml(code) {
+      const attributes = [`src="${SCRIPT_URL}"`];
+      for (const [name, value] of Object.entries(embedSettings)) {
+        attributes.push(`data-${name.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)}="${escapeAttribute(value)}"`);
+      }
+      if (code.cssUrls.length) attributes.push(`data-css-urls="${escapeAttribute(code.cssUrls.join(' '))}"`);
+      if (code.jsUrls.length) attributes.push(`data-js-urls="${escapeAttribute(code.jsUrls.join(' '))}"`);
+      for (const key of LANGUAGE_KEYS) attributes.push(`data-${key}-selector="#${embedId}-${key}"`);
+      return [
+        // Without a height the page fills its container.
+        embedSettings.height ? '<div>' : '<div style="height: 500px;">',
+        `  <script ${attributes.join('\n          ')}><\/script>`,
+        '</div>',
+        // (The browser removes the new line at the start of a <pre>.)
+        ...LANGUAGE_KEYS.map(key => `<pre id="${embedId}-${key}" hidden>\n${escapeText(code[key])}</pre>`),
+        '',
+      ].join('\n');
+    }
+
+    /**
+     * Makes the HTML for a copy of this page made with YourJSPage.create().
+     * @param {ReturnType<getCode>} code
+     * @returns {string}
+     */
+    function buildEmbedApi(code) {
+      // A template literal (that can't end the <script> early).
+      const toLiteral = text => '`' + text
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\$\{/g, '\\${')
+        .replace(/<\/(script)/gi, '<\\/$1') + '`';
+      // "true" becomes true and numbers that are lengths become numbers.
+      const toValue = (name, value) => /^(true|false)$/.test(value) ? value
+        : /^(height|loopTimeout)$/.test(name) && /^\d+(\.\d+)?$/.test(value) ? value
+        : JSON.stringify(value);
+      const options = [
+        `target: '#${embedId}',`,
+        ...LANGUAGE_KEYS.map(key => `${key}: ${toLiteral(code[key])},`),
+        ...code.cssUrls.length ? [`cssUrls: ${JSON.stringify(code.cssUrls)},`] : [],
+        ...code.jsUrls.length ? [`jsUrls: ${JSON.stringify(code.jsUrls)},`] : [],
+        ...Object.entries(embedSettings).map(([name, value]) => `${name}: ${toValue(name, value)},`),
+      ];
+      return [
+        embedSettings.height ? `<div id="${embedId}"></div>` : `<div id="${embedId}" style="height: 500px;"></div>`,
+        `<script src="${SCRIPT_URL}"><\/script>`,
+        '<script>',
+        '  YourJSPage.create({',
+        // (Only the first line of each option is indented so that the code
+        // in the template literals stays exactly the same.)
+        ...options.map(option => `    ${option}`),
+        '  });',
+        '<\/script>',
+        '',
+      ].join('\n');
+    }
+
+    /** Shows the snippets for the chosen code. */
+    function renderEmbed() {
+      const code = embedCodeChoice === 'original'
+        ? {...originalCode, cssUrls: [...originalCode.cssUrls], jsUrls: [...originalCode.jsUrls]}
+        : getCode();
+      embedSnippets.html = buildEmbedHtml(code);
+      embedSnippets.api = buildEmbedApi(code);
+      for (const key of ['html', 'api']) {
+        embedPreviews[key] ??= ace.edit($(`#embed-${key}-preview`), {
+          mode: 'ace/mode/html',
+          theme: getAceTheme(),
+          fontSize: 12,
+          readOnly: true,
+          showPrintMargin: false,
+          highlightActiveLine: false,
+          useWorker: false,
+        });
+        embedPreviews[key].setTheme(getAceTheme());
+        embedPreviews[key].setValue(embedSnippets[key], -1);
+      }
+      for (const button of $$('[data-embed-code]', aboutDialog)) {
+        button.setAttribute('aria-checked', `${button.dataset.embedCode === embedCodeChoice}`);
+      }
+    }
+
+    for (const button of $$('[data-embed-code]', aboutDialog)) {
+      button.addEventListener('click', () => {
+        embedCodeChoice = button.dataset.embedCode;
+        renderEmbed();
+      });
+    }
+
+    /**
+     * Copies text to the clipboard.
+     * @param {string} text
+     */
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      }
+      catch (e) {
+        // Falls back to the older way of copying text.
+        const textarea = createElement('textarea', {value: text});
+        document.body.append(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+    }
+
+    for (const button of $$('[data-embed-copy]', aboutDialog)) {
+      button.addEventListener('click', async () => {
+        await copyText(embedSnippets[button.dataset.embedCopy]);
+        button.textContent = 'Copied!';
+        setTimeout(() => button.textContent = 'Copy', 1500);
+      });
+    }
+    //#endregion
+
+    $('#about-button').addEventListener('click', openAbout);
+    const logoButton = $('#logo-button');
+    logoButton.title = `About YourJS Page (version ${packageInfo.version})`;
+    logoButton.addEventListener('click', openAbout);
+    $('.dialog-close', aboutDialog).addEventListener('click', () => aboutDialog.close());
+    // Clicking outside of the window closes it.
+    aboutDialog.addEventListener('click', event => {
+      if (event.target === aboutDialog) aboutDialog.close();
+    });
     //#endregion
 
     //#region Libraries
@@ -1775,12 +2321,10 @@ window.yourjsPageViewer = {
     updateConsoleBadge();
     setConsoleShown(options.showConsole, false);
 
-    const logoLink = $('#logo-link');
-    logoLink.href = packageInfo.homepage;
-    logoLink.title = `YourJS Page v${packageInfo.version}`;
-
     app.hidden = false;
-    splash.classList.add('hidden');
+    // The loading screen is shown for at least a moment (from when this page
+    // started loading) so that it doesn't just flash.
+    setTimeout(() => splash.classList.add('hidden'), Math.max(0, SPLASH_MIN_TIME - performance.now()));
     // A viewer that starts again (eg. because its IFRAME moved) is in a page
     // that didn't freeze.
     if (!config.isRestart && didOriginalCodeNotFinish()) {

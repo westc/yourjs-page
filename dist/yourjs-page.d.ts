@@ -26,6 +26,11 @@ export interface YourJSPageSettings {
    */
   layout?: 'top' | 'left' | 'right' | 'tabs';
   /**
+   * Where the menu (the toolbar with the Run button) goes:  `"bottom"` (the
+   * default, like YourJS Box) or `"top"`.
+   */
+  menu?: 'bottom' | 'top';
+  /**
    * Which tab is shown first in the tabs layout.  Defaults to `"result"`.
    */
   tab?: 'html' | 'css' | 'js' | 'result';
