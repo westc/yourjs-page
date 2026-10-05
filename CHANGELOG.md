@@ -6,6 +6,8 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-05
+
 ### Added
 
 - A CodePen-like playground that replaces its script tag, with HTML, CSS and
@@ -57,4 +59,5 @@ project uses [Semantic Versioning](https://semver.org/).
   object with `getCode()`, `setCode()`, `run()` and `destroy()`, along with
   TypeScript types (`dist/yourjs-page.d.ts`).
 
-[Unreleased]: https://github.com/westc/yourjs-page/commits/main
+[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/westc/yourjs-page/releases/tag/v1.0.0

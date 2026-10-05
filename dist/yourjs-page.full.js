@@ -1,4 +1,4 @@
-/*! yourjs-page v0.0.0 | (c) 2026-present Chris West | MIT License | https://github.com/westc/yourjs-page */
+/*! yourjs-page v1.0.0 | (c) 2026-present Chris West | MIT License | https://github.com/westc/yourjs-page */
 (() => {
   /**
    * The viewer IFRAME's CSS code.
@@ -14,7 +14,7 @@
    * Information about this package (eg. its version).
    * @type {{name: string, version: string, homepage: string, repoUrl: string, bugsUrl: string}}
    */
-  const PACKAGE_INFO = {"name":"yourjs-page","version":"0.0.0","homepage":"https://westc.github.io/yourjs-page/","repoUrl":"https://github.com/westc/yourjs-page","bugsUrl":"https://github.com/westc/yourjs-page/issues"};
+  const PACKAGE_INFO = {"name":"yourjs-page","version":"1.0.0","homepage":"https://westc.github.io/yourjs-page/","repoUrl":"https://github.com/westc/yourjs-page","bugsUrl":"https://github.com/westc/yourjs-page/issues"};
 
   /**
    * The code that runs in the viewer IFRAME.  It is turned into a string so
