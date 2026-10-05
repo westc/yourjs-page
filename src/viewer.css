@@ -458,22 +458,38 @@ svg {
 .panel.is-collapsed .format-button {
   display: none;
 }
-/* Side by side editors collapse into thin vertical strips. */
-.layout-top .panel.is-collapsed .panel-header {
+/* Side by side editors collapse into thin vertical strips.  So do the
+   editors on the left or right when they are all collapsed. */
+:is(.layout-top:not(.are-editors-collapsed), .layout-left.are-editors-collapsed, .layout-right.are-editors-collapsed) .panel.is-collapsed .panel-header {
   border-bottom: 0;
   flex-direction: column;
   height: 100%;
   padding: 2px 0;
 }
-.layout-top .panel.is-collapsed .panel-title {
+:is(.layout-top:not(.are-editors-collapsed), .layout-left.are-editors-collapsed, .layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title {
   flex-direction: column;
   flex-grow: 0;
   height: auto;
   padding: 4px 0;
   width: 26px;
 }
-.layout-top .panel.is-collapsed .panel-title span {
+:is(.layout-top:not(.are-editors-collapsed), .layout-left.are-editors-collapsed, .layout-right.are-editors-collapsed) .panel.is-collapsed .panel-title span {
   writing-mode: vertical-lr;
+}
+.are-editors-collapsed:is(.layout-left, .layout-right) #editors {
+  flex-direction: row;
+}
+
+/* When every editor is collapsed the editors only take up the room needed
+   for their titles (a bar on top or a thin column on the side). */
+.are-editors-collapsed:not(.layout-tabs) #editors {
+  flex: 0 0 auto !important;
+}
+.are-editors-collapsed:not(.layout-tabs) #main-divider {
+  display: none;
+}
+.layout-top.are-editors-collapsed .panel.is-collapsed {
+  flex: 1 1 0 !important;
 }
 
 /* The dividers that can be dragged to resize things */
@@ -549,15 +565,6 @@ svg {
 }
 .layout-tabs .panel.is-collapsed .format-button {
   display: inline-flex;
-}
-
-/* Pages without editors only show the result. */
-.has-no-editors :is(#editors, #main-divider, #tabs) {
-  display: none !important;
-}
-.has-no-editors #output {
-  display: flex !important;
-  flex: 1 1 0 !important;
 }
 
 /* The console */

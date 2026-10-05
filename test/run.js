@@ -7,7 +7,7 @@
  * Set TEST_BROWSER to "webkit" (Safari's engine) or "firefox" to use
  * Playwright's builds of those browsers instead (install them once with
  * `npx playwright-core install webkit firefox`).  `npm run test:all` runs the
- * tests in all three.
+ * tests in all three at the same time (see scripts/test-all.js).
  *
  * Run only some of the tests by passing part of their names:
  *   node test/run.js console layout
@@ -880,27 +880,44 @@ test('data-theme, data-title and data-word-wrap', async t => {
   assert.equal(await (await t.result()).evaluate(() => document.title), 'Demo');
 });
 
-test('data-editors chooses the editors that are shown', async t => {
-  await t.openPage({ html: '<p id="p">Hi</p>', css: 'p { color: rgb(1, 2, 3); }', js: 'console.log(getComputedStyle(document.getElementById("p")).color)' }, { editors: 'html js', tab: 'css' });
-  assert.deepEqual(await t.inViewer(() => [
-    Array.from(document.querySelectorAll('.panel'), panel => panel.dataset.lang),
-    document.querySelectorAll('#editors > .divider').length,
-    Array.from(document.querySelectorAll('#tabs [data-tab]'), tab => tab.dataset.tab),
-  ]), [['html', 'js'], 1, ['html', 'js', 'result']]);
-  // The CSS that isn't shown still runs and the hidden tab can't be chosen.
+test('data-editors chooses the editors that start expanded', async t => {
+  await t.openPage({ html: '<p id="p">Hi</p>', css: 'p { color: rgb(1, 2, 3); }', js: 'console.log(getComputedStyle(document.getElementById("p")).color)' }, { editors: 'html js' });
+  const collapsed = () => t.inViewer(() => Array.from(document.querySelectorAll('.panel.is-collapsed'), panel => panel.dataset.lang));
+  assert.deepEqual(await collapsed(), ['css']);
+  // The collapsed CSS still runs and can be expanded.
   assert.deepEqual(await t.messages(1), ['log: rgb(1, 2, 3)']);
-  assert.equal(await t.inViewer(() => document.querySelector('#app').dataset.tab), 'result');
+  await t.click('.panel[data-lang="css"] .panel-title');
+  assert.deepEqual(await collapsed(), []);
 });
 
-test('data-editors="" only shows the result', async t => {
-  await t.openPage({ html: '<p id="p">Only the result</p>' }, { editors: '' });
-  assert.deepEqual(await t.inViewer(() => [
-    document.querySelector('#editors').offsetHeight,
-    document.querySelector('#tabs').offsetHeight,
-    document.querySelector('#layout-button').hidden,
-    document.querySelector('#result').offsetHeight > 400,
-  ]), [0, 0, true, true]);
-  assert.equal(await (await t.result()).textContent('#p'), 'Only the result');
+test('data-editors="" starts with every editor collapsed', async t => {
+  for (const layout of ['top', 'left']) {
+    await t.openPage({ html: '<p id="p">Mostly the result</p>' }, { editors: '', layout });
+    // The editors only take up the room needed for their titles.
+    assert.deepEqual(await t.inViewer(isTop => {
+      const editors = document.querySelector('#editors').getBoundingClientRect();
+      return [
+        document.querySelectorAll('.panel.is-collapsed').length,
+        (isTop ? editors.height : editors.width) < 100,
+        document.querySelector('#result').offsetHeight > 400,
+      ];
+    }, layout === 'top'), [3, true, true]);
+    assert.equal(await (await t.result()).textContent('#p'), 'Mostly the result');
+    // Expanding an editor gives the editors room again.
+    await t.click('.panel[data-lang="js"] .panel-title');
+    assert.equal(await t.inViewer(() => document.querySelector('.panel[data-lang="js"] .editor').offsetHeight > 100), true);
+  }
+});
+
+test('pages with the same code don\'t affect each other', async t => {
+  await t.open(`<!DOCTYPE html><html><body>
+    <template id="js">console.log("ran")</template>
+    <div style="height:400px"><script src="SRC" data-js-selector="#js" data-loading="eager"></script></div>
+    <div id="second" style="height:400px"><script src="SRC" data-js-selector="#js" data-loading="eager"></script></div>
+  </body></html>`);
+  await t.useViewer('#second iframe');
+  assert.equal(await t.inViewer(() => document.querySelector('#safe-mode-notice').hidden), true);
+  assert.deepEqual(await t.messages(1), ['log: ran']);
 });
 
 // ---------------------------------------------------------------------------
@@ -967,7 +984,8 @@ test('code that never finished isn\'t run again automatically', async t => {
   // A page whose code never finishes (here because of a library that never
   // loads) that is never left normally is like a page that froze.
   await t.openPage({ js: 'console.log("started");' }, { jsUrls: `${t.cdn}never.js` });
-  await t.page.waitForTimeout(300);
+  // (Code that only just started is probably running in another tab.)
+  await t.page.waitForTimeout(3500);
   const url = t.page.url();
   t.page = await t.context.newPage();
   await t.page.goto(url, { waitUntil: 'domcontentloaded' });

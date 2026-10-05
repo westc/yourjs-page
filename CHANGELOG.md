@@ -6,6 +6,18 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- `data-editors` chooses which editors start expanded instead of which are
+  shown.  The others start collapsed and can always be expanded, and
+  `data-editors=""` starts with every editor collapsed (a bar of titles above
+  the result or a thin column beside it).
+
+### Fixed
+
+- Pages with the same code in one document (or the same page opened in two
+  tabs at once) could each think the other's code froze and not run.
+
 ## [1.0.0] - 2026-10-05
 
 ### Added

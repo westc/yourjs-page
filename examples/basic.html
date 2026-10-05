@@ -5,10 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="../logo.svg" type="image/svg+xml">
   <title>YourJS Page - Basic Example</title>
+  <!-- Prism highlights the HTML shown at the bottom of the page. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism.min.css" media="(prefers-color-scheme: light)">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css" media="(prefers-color-scheme: dark)">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js" data-manual></script>
   <style>
     body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 1100px; padding: 16px; }
     #yourjs-page-wrapper { height: 600px; }
     details { margin-top: 16px; }
+    summary { cursor: pointer; }
+    #markup { border-radius: 6px; font-size: 13px; }
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: dark; }
+    }
   </style>
 </head>
 <body>
@@ -16,11 +25,20 @@
   <p>The code below the page is loaded into it using the <code>data-*-selector</code> attributes.</p>
 
   <div id="yourjs-page-wrapper">
-    <script src="../dist/yourjs-page.min.js" data-html-selector="pre#html-code > code" data-css-selector="pre#css-code > code" data-js-selector="pre#javascript-code > code"></script>
+    <script src="../dist/yourjs-page.min.js"
+            data-html-selector="pre#html-code > code"
+            data-css-selector="pre#css-code > code"
+            data-js-selector="pre#javascript-code > code"></script>
   </div>
 
   <details>
-    <summary>The code that the page started with</summary>
+    <summary>The HTML in this page that makes the page above</summary>
+    <pre id="markup" class="language-markup"><code class="language-markup"></code></pre>
+  </details>
+
+  <!-- The code that the page starts with (read by the data-*-selector
+       attributes above). -->
+  <div hidden>
 <pre id="html-code"><code>&lt;h1&gt;Hello, &lt;span id="name"&gt;world&lt;/span&gt;!&lt;/h1&gt;
 &lt;button id="button"&gt;Click me&lt;/button&gt;
 </code></pre>
@@ -40,6 +58,35 @@ document.getElementById('button').addEventListener('click', () =&gt; {
 });
 console.log('Ready!');
 </code></pre>
-  </details>
+  </div>
+
+  <script>
+    // Shows the HTML of the page and the code blocks as they are written in
+    // this file.  (The script tag is replaced by the page so the file itself is
+    // read.)
+    (async () => {
+      const ids = ['yourjs-page-wrapper', 'html-code', 'css-code', 'javascript-code'];
+      let parts;
+      try {
+        const source = await (await fetch(location.href)).text();
+        parts = ids.map(id => {
+          const start = source.indexOf(` id="${id}"`);
+          const tagStart = source.lastIndexOf('<', start);
+          const tagName = /^<(\w+)/.exec(source.slice(tagStart))[1];
+          const end = source.indexOf(`</${tagName}>`, start) + tagName.length + 3;
+          // The indentation of the first line is removed from every line.
+          const indent = /[ \t]*$/.exec(source.slice(source.lastIndexOf('\n', tagStart) + 1, tagStart))[0];
+          return source.slice(tagStart, end).split('\n').map(line => line.startsWith(indent) ? line.slice(indent.length) : line).join('\n');
+        });
+      }
+      catch (e) {
+        // Eg. the file was opened directly (not from a server).
+        parts = ids.slice(1).map(id => document.getElementById(id).outerHTML);
+      }
+      const code = document.querySelector('#markup > code');
+      code.textContent = parts.join('\n\n');
+      Prism.highlightElement(code);
+    })();
+  </script>
 </body>
 </html>

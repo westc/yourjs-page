@@ -51,7 +51,7 @@
     },
     {
       "label": "Test (all browsers)",
-      "detail": "Builds and runs the tests in Chrome, WebKit (Safari) and Firefox.",
+      "detail": "Builds and runs the tests in Chrome, WebKit (Safari) and Firefox at the same time.",
       "type": "npm",
       "script": "test:all",
       "group": "test",

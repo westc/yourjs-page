@@ -17,6 +17,11 @@ const MIN_PANE_SIZE = 30;
  * milliseconds) before it doesn't need to be run in safe mode the next time.
  */
 const SAFE_MODE_DELAY = 1000;
+/**
+ * How long ago (in milliseconds) code that didn't finish needs to have started
+ * to be treated as having frozen the page (instead of running in another tab).
+ */
+const SAFE_MODE_MIN_AGE = 3000;
 /** The longest data URL that the result is loaded from (see createResultFrame()). */
 const MAX_DATA_URL_LENGTH = 1900000;
 /** Older console messages are removed once there are more than this. */
@@ -438,7 +443,7 @@ window.yourjsPageViewer = {
    *   What the viewer can ask the page to do.
    */
   init(config, host) {
-    const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, pageUrl, packageInfo} = config;
+    const {options, loadErrors, runtimeCode, formatterUrls, parserUrl, pageUrl, pageIndex, packageInfo} = config;
     const app = $('#app');
     const splash = $('#splash');
 
@@ -474,11 +479,7 @@ window.yourjsPageViewer = {
 
     let layout = 'top';
     let isLayoutAuto = !LAYOUTS.includes(options.layout);
-    // The editors that are shown (the others still have code that runs).
-    const shownKeys = LANGUAGE_KEYS.filter(key => !options.editors || options.editors.includes(key));
-    let activeTab = TABS.includes(options.tab) && (options.tab === 'result' || shownKeys.includes(options.tab))
-      ? options.tab
-      : 'result';
+    let activeTab = TABS.includes(options.tab) ? options.tab : 'result';
     let isConsoleShown = false;
     let unseenCount = 0;
     let unseenErrorCount = 0;
@@ -546,28 +547,23 @@ window.yourjsPageViewer = {
       formatButton.addEventListener('click', () => format(key));
     }
 
-    // Removes the editors that aren't shown (along with a divider next to
-    // each one) and their tabs.
-    for (const key of LANGUAGE_KEYS.filter(key => !shownKeys.includes(key))) {
-      const panel = $(`.panel[data-lang="${key}"]`);
-      const divider = panel.nextElementSibling ?? panel.previousElementSibling;
-      if (divider?.classList.contains('divider')) divider.remove();
-      panel.remove();
-      $(`#tabs [data-tab="${key}"]`).remove();
-    }
-    // Without editors only the result is shown.
-    app.classList.toggle('has-no-editors', !shownKeys.length);
-    $('#layout-button').hidden = !shownKeys.length;
-
     /**
      * @param {string} key
      * @param {boolean} isCollapsed
      */
     function setCollapsed(key, isCollapsed) {
       const panel = $(`.panel[data-lang="${key}"]`);
-      if (!panel) return;
       panel.classList.toggle('is-collapsed', isCollapsed);
       $('.panel-title', panel).setAttribute('aria-expanded', `${!isCollapsed}`);
+      // When every editor is collapsed the editors only take up the room
+      // needed for their titles.
+      app.classList.toggle('are-editors-collapsed', $$('.panel').every(panel => panel.classList.contains('is-collapsed')));
+    }
+
+    // The editors that data-editors doesn't list start collapsed (but can
+    // always be expanded).
+    if (options.editors) {
+      for (const key of LANGUAGE_KEYS) setCollapsed(key, !options.editors.includes(key));
     }
 
     /** @returns {{html: string, css: string, js: string, cssUrls: string[], jsUrls: string[]}} */
@@ -892,7 +888,7 @@ window.yourjsPageViewer = {
 
       // Where the error happened in the JavaScript (if it is shown).
       const line = Math.floor(location?.line);
-      if (line > 0 && shownKeys.includes('js')) {
+      if (line > 0) {
         const column = Math.max(1, Math.floor(location.column) || 1);
         const button = document.createElement('button');
         button.type = 'button';
@@ -1661,7 +1657,7 @@ window.yourjsPageViewer = {
     // If the code that the page starts with is run but never finishes (eg.
     // because it froze the page and the page had to be reloaded) it isn't run
     // automatically the next time.
-    const safeModeKey = `yourjs-page:running:${hashText(`${pageUrl}\n${originalCodeJson}`)}`;
+    const safeModeKey = `yourjs-page:running:${hashText(`${pageUrl}\n${pageIndex}\n${originalCodeJson}`)}`;
     // Storage can't be used in some pages (eg. sandboxed ones).
     const storage = (() => {
       try {
@@ -1687,7 +1683,9 @@ window.yourjsPageViewer = {
     /** @returns {boolean} */
     function didOriginalCodeNotFinish() {
       try {
-        return storage?.getItem(safeModeKey) != null;
+        // Code that only just started is probably running in another tab.
+        const startTime = storage?.getItem(safeModeKey);
+        return startTime != null && Date.now() - startTime > SAFE_MODE_MIN_AGE;
       }
       catch (e) {
         return false;

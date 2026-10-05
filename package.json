@@ -15,7 +15,7 @@
     "test": "npm run build && node test/run.js",
     "test:webkit": "npm run build && TEST_BROWSER=webkit node test/run.js",
     "test:firefox": "npm run build && TEST_BROWSER=firefox node test/run.js",
-    "test:all": "npm run build && node test/run.js && TEST_BROWSER=webkit node test/run.js && TEST_BROWSER=firefox node test/run.js",
+    "test:all": "npm run build && node scripts/test-all.js",
     "release": "node scripts/release.js",
     "record-demo": "node scripts/record-demo.js",
     "og-image": "node scripts/make-og-image.js",

@@ -52,9 +52,9 @@ export interface YourJSPageSettings {
    */
   loading?: 'lazy' | 'eager';
   /**
-   * The editors to show (eg. `["html", "js"]` or `"html js"`).  The code of
-   * the other editors still runs.  An empty list (or `""`) only shows the
-   * result.  Defaults to all of them.
+   * The editors that start expanded (eg. `["html", "js"]` or `"html js"`).
+   * The others start collapsed (and can be expanded).  An empty list (or
+   * `""`) starts with every editor collapsed.  Defaults to all of them.
    */
   editors?: ('html' | 'css' | 'js')[] | string;
   /**

@@ -242,7 +242,7 @@ of [`YourJSPage.create()`](#javascript-api).
 | `data-word-wrap` | `wordWrap` | `"false"` | `"true"` wraps long lines in the editors. |
 | `data-read-only` | `readOnly` | `"false"` | `"true"` stops the code from being edited (it can still be run). |
 | `data-show-console` | `showConsole` | `"false"` | `"true"` shows the console when the page loads. |
-| `data-editors` | `editors` | All of them | The editors to show, eg. `"html js"` (or `["html", "js"]` with the API).  The code of the other editors still runs.  `""` only shows the result. |
+| `data-editors` | `editors` | All of them | The editors that start expanded, eg. `"html js"` (or `["html", "js"]` with the API).  The others start collapsed and can be expanded by clicking their titles.  `""` starts with every editor collapsed so the result gets almost all of the room. |
 | `data-loop-timeout` | `loopTimeout` | `"2000"` | How long (in milliseconds) loops can keep the page busy before they are stopped.  `"0"` turns this off.  See "Loops That Never End" above. |
 | `data-loading` | `loading` | `"lazy"` | `"lazy"` waits to load the page until it is about to be scrolled into view (or, if it is hidden, shown).  `"eager"` loads it right away. |
 | `data-libraries-url` | `librariesUrl` | unpkg | Where to load Ace and js-beautify from.  See "Self-Hosting the Libraries" below. |
@@ -322,8 +322,9 @@ Node.js 20 or later (see `.nvmrc`).
   its libraries from CDNs.  Pass part of a test's name to run only matching
   tests (eg. `node test/run.js console`).
 - `npm run test:webkit` and `npm run test:firefox` run the tests in
-  Playwright's builds of Safari's engine and Firefox and `npm run test:all`
-  runs them in all three.  Install those browsers once with
+  Playwright's builds of Safari's engine and Firefox.  `npm run test:all`
+  runs them in all three browsers at the same time (showing each browser's
+  results as it finishes and then a summary).  Install those browsers once with
   `npx playwright-core install webkit firefox`.
 - `npm run record-demo` records `demo.gif` (shown at the top of this README)
   from the built files.  It needs [ffmpeg](https://ffmpeg.org/).
@@ -359,6 +360,9 @@ too long and run the JavaScript.
 
 Ideas for future versions:
 
+- **Copy and save each editor:** buttons next to each editor's format button
+  that copy its code or download it as a file (eg. `style.css`), also
+  available on read-only pages.
 - **Preprocessors:** TypeScript, JSX, SCSS and Markdown.
 - **Importing packages:** `import confetti from 'canvas-confetti'` loaded from
   esm.sh, like YourJS Box.

@@ -360,7 +360,11 @@
    *   Puts the page's element into the document.
    * @returns {import('./yourjs-page').YourJSPageInstance}
    */
+  /** How many pages have been made in this document. */
+  let pageCount = 0;
+
   function createPage({getCode, dataset, insert}) {
+    const pageIndex = pageCount++;
     const libraryUrl = getLibraryFileUrl.bind(null, dataset.librariesUrl || DEFAULT_LIBRARIES_URL);
 
     // The theme is determined up front so that the loading screen uses it.
@@ -511,6 +515,9 @@
             parserUrl: libraryUrl('acorn', 'dist/acorn.js'),
             // Used to know when the page's own code froze the last time.
             pageUrl: location.href.replace(/#.*/, ''),
+            // Which page this is in the document (so that pages with the
+            // same code are told apart).
+            pageIndex,
             formatterUrls: [
               libraryUrl('js-beautify', 'js/lib/beautify.js'),
               libraryUrl('js-beautify', 'js/lib/beautify-css.js'),
