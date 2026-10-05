@@ -6,6 +6,8 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-05
+
 ### Added
 
 - An About window (opened by clicking the logo or from the **&#8943;** menu)
@@ -101,6 +103,7 @@ project uses [Semantic Versioning](https://semver.org/).
   object with `getCode()`, `setCode()`, `run()` and `destroy()`, along with
   TypeScript types (`dist/yourjs-page.d.ts`).
 
-[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/westc/yourjs-page/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/westc/yourjs-page/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/westc/yourjs-page/releases/tag/v1.0.0
