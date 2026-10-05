@@ -6,6 +6,8 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-05
+
 ### Changed
 
 - `data-editors` chooses which editors start expanded instead of which are
@@ -71,5 +73,6 @@ project uses [Semantic Versioning](https://semver.org/).
   object with `getCode()`, `setCode()`, `run()` and `destroy()`, along with
   TypeScript types (`dist/yourjs-page.d.ts`).
 
-[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/westc/yourjs-page/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/westc/yourjs-page/releases/tag/v1.0.0
