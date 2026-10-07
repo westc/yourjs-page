@@ -1,6 +1,6 @@
 {
   "name": "yourjs-page",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A CodePen-like HTML, CSS and JavaScript playground that you can embed on any web page with one script tag.",
   "unpkg": "dist/yourjs-page.min.js",
   "jsdelivr": "dist/yourjs-page.min.js",

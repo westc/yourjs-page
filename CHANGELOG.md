@@ -6,6 +6,8 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-06
+
 ### Fixed
 
 - Pages made by different script tags in one document took over each other's
@@ -123,7 +125,8 @@ project uses [Semantic Versioning](https://semver.org/).
   object with `getCode()`, `setCode()`, `run()` and `destroy()`, along with
   TypeScript types (`dist/yourjs-page.d.ts`).
 
-[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/westc/yourjs-page/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/westc/yourjs-page/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/westc/yourjs-page/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/westc/yourjs-page/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/westc/yourjs-page/releases/tag/v1.0.0
