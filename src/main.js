@@ -346,6 +346,15 @@
     }
   }
 
+  /** The settings that copies of a page keep (see "Embed" in the viewer). */
+  const EMBED_SETTING_NAMES = ['layout', 'tab', 'menu', 'theme', 'title', 'height', 'editors', 'wordWrap', 'readOnly', 'showConsole', 'librarySearch', 'loopTimeout', 'loading'];
+
+  /**
+   * Where the number of pages made in this document is kept.  It is kept on
+   * the window because each script tag runs its own copy of this code.
+   */
+  const PAGE_COUNT_KEY = Symbol.for('yourjs-page:page-count');
+
   /**
    * Creates a page.
    * @param {Object} options
@@ -360,14 +369,8 @@
    *   Puts the page's element into the document.
    * @returns {import('./yourjs-page').YourJSPageInstance}
    */
-  /** The settings that copies of a page keep (see "Embed" in the viewer). */
-  const EMBED_SETTING_NAMES = ['layout', 'tab', 'menu', 'theme', 'title', 'height', 'editors', 'wordWrap', 'readOnly', 'showConsole', 'librarySearch', 'loopTimeout', 'loading'];
-
-  /** How many pages have been made in this document. */
-  let pageCount = 0;
-
   function createPage({getCode, dataset, insert}) {
-    const pageIndex = pageCount++;
+    const pageIndex = window[PAGE_COUNT_KEY] = (window[PAGE_COUNT_KEY] ?? -1) + 1;
     const libraryUrl = getLibraryFileUrl.bind(null, dataset.librariesUrl || DEFAULT_LIBRARIES_URL);
 
     // The theme is determined up front so that the loading screen uses it.

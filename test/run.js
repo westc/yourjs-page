@@ -665,6 +665,31 @@ test('logged values can be expanded', async t => {
   assert.deepEqual(await t.messages(1), ['log: {a: {b: [1, "two"]}, [Symbol(s)]: true} Point {x: 3} Map(1) {"k" => {v: 1}} Set(1) {"x"} <ul id="list"><li>One</li></ul> text 5']);
 });
 
+test('values with lots of children can be expanded', async t => {
+  await t.openPage({
+    js: 'console.log(Array.from({length: 6000}, (_, i) => ({i})));\nconsole.log(new Uint8Array(1e8));',
+  }, { showConsole: 'true' });
+  await t.messages(2);
+  /** Clicks a value and gets the rows that it shows (once they are shown). */
+  const expand = async (selector, rowsSelector) => {
+    await t.click(selector);
+    const handle = await t.viewer.waitForFunction(s => {
+      const rows = document.querySelectorAll(s);
+      return rows.length && Array.from(rows, row => row.textContent);
+    }, rowsSelector);
+    return handle.jsonValue();
+  };
+
+  // Only the first 200 are shown (of the 6000 items and "length") and each of
+  // them can be expanded too.
+  const rows = await expand('.entry:nth-child(1) .entry-text > .expander', '.entry:nth-child(1) .entry-trees > .tree > div > .tree-row');
+  assert.deepEqual([rows.length, rows[0], rows.at(-1)], [201, '0: {i: 0}', '… 5801 more']);
+  assert.deepEqual(await expand('.entry:nth-child(1) .tree-row .expander', '.entry:nth-child(1) .tree-children .tree-row'), ['i: 0']);
+  // Huge typed arrays don't freeze the result.
+  const bytes = await expand('.entry:nth-child(2) .entry-text > .expander', '.entry:nth-child(2) .tree-row');
+  assert.deepEqual([bytes.length, bytes[0], bytes.at(-1)], [201, '0: 0', '… 99999800 more']);
+});
+
 test('console.table() shows a table', async t => {
   await t.openPage({ js: 'console.table([{name: "Ann", age: 31}, {name: "Bob", city: "Oslo"}, 5]); console.table({a: {x: 1}}, ["x", "y"]); console.table("not a table");' }, { showConsole: 'true' });
   await t.messages(3);
@@ -911,6 +936,16 @@ test('editors can be popped out into their own windows', async t => {
   assert.equal(await isPoppedOut('js'), false);
   await popup2.waitForEvent('close', { timeout: 5000 }).catch(() => {});
   assert.equal(popup2.isClosed(), true);
+});
+
+test('an editor that started collapsed can be popped out in the tabs layout', async t => {
+  await t.openPage(SIMPLE_CODE, { editors: 'html js', layout: 'tabs', tab: 'css' });
+  await t.click('.panel[data-lang="css"] .panel-menu-button');
+  await Promise.all([t.page.waitForEvent('popup'), t.click('[data-panel-action="popOut"]')]);
+  assert.deepEqual(await t.inViewer(() => {
+    const panel = document.querySelector('.panel[data-lang="css"]');
+    return [panel.querySelector('.editor').offsetHeight, panel.querySelector('.popped-out-notice').innerText.includes('The CSS is in its own window.')];
+  }), [0, true]);
 });
 
 test('the text can be made bigger or smaller', async t => {
@@ -1161,6 +1196,25 @@ test('pages with the same code don\'t affect each other', async t => {
   assert.deepEqual(await t.messages(1), ['log: ran']);
 });
 
+test('pages made by different script tags pop out into their own windows', async t => {
+  await t.open(`<!DOCTYPE html><html><body>
+    <template id="a">// A</template>
+    <template id="b">// B</template>
+    <div id="first" style="height:400px"><script src="SRC" data-js-selector="#a" data-loading="eager"></script></div>
+    <div id="second" style="height:400px"><script src="SRC" data-js-selector="#b" data-loading="eager"></script></div>
+  </body></html>`);
+  const popups = [];
+  for (const selector of ['#first iframe', '#second iframe']) {
+    await t.useViewer(selector);
+    await t.click('.panel[data-lang="js"] .panel-menu-button');
+    const [popup] = await Promise.all([t.page.waitForEvent('popup'), t.click('[data-panel-action="popOut"]')]);
+    await popup.waitForFunction(() => window.ace && document.querySelector('#popout-editor.ace_editor'), null, { timeout: 20000 });
+    popups.push(popup);
+  }
+  assert.notEqual(popups[0], popups[1]);
+  assert.deepEqual(await Promise.all(popups.map(popup => popup.evaluate(() => ace.edit(document.querySelector('#popout-editor')).getValue()))), ['// A', '// B']);
+});
+
 // ---------------------------------------------------------------------------
 // Loop protection
 
@@ -1314,6 +1368,18 @@ test('libraries can be added by URL, reordered and removed', async t => {
   await t.click('#libraries-button');
   await t.click('#css-libraries li [title="Remove"]');
   assert.deepEqual(await list('css'), []);
+});
+
+test('pressing Enter adds a library by URL as CSS or JavaScript', async t => {
+  await t.openPage({ js: '' }, {});
+  await t.click('#libraries-button');
+  for (const url of [`${t.cdn}a.js`, `${t.cdn}lib.css`, 'https://fonts.googleapis.com/css2?family=Inter']) {
+    await t.viewer.fill('#library-url-input', url);
+    await t.viewer.press('#library-url-input', 'Enter');
+  }
+  const list = type => t.inViewer(k => Array.from(document.querySelectorAll(`#${k}-libraries li`), li => li.textContent), type);
+  assert.deepEqual(await list('js'), [`${t.cdn}a.js`]);
+  assert.deepEqual(await list('css'), [`${t.cdn}lib.css`, 'https://fonts.googleapis.com/css2?family=Inter']);
 });
 
 test('libraries can be found on cdnjs', async t => {
@@ -1841,6 +1907,19 @@ test('the playground updates the user\'s own gists using their file names', asyn
   assert.match(t.page.url(), /\?gist=feed2$/);
 });
 
+test('the playground finds the gist in a URL whose user name looks like an ID', async t => {
+  const api = fakeGitHubApi({ abc1: { owner: 'me', files: { 'index.html': '<p>Old</p>' } } });
+  const routes = [api.route, ...fakeGistRoutes({ abc1: api.gists.abc1.files })];
+  await openPlayground(t, `?gist=${encodeURIComponent('https://gist.github.com/cafe/abc1')}`, { routes });
+  await t.setEditorValue('html', '<p>New</p>');
+  await saveAsGist(t);
+  assert.deepEqual(api.requests.filter(request => request.method !== 'OPTIONS').map(request => `${request.method} ${request.path}`).sort(), [
+    'GET /gists/abc1',
+    'GET /user',
+    'PATCH /gists/abc1',
+  ]);
+});
+
 test('the playground explains when a gist can\'t be saved', async t => {
   const api = fakeGitHubApi({});
   await openPlayground(t, '', { routes: [api.route] });
@@ -1978,6 +2057,17 @@ test('YourJSPage.create() supports each placement', async t => {
     return results;
   });
   assert.deepEqual(layout, { append: '1:a', prepend: '0:a', before: '0:parent', after: '1:parent', fill: '0:a' });
+});
+
+// ---------------------------------------------------------------------------
+// Documentation
+
+test('the README installs every library that the page loads', async () => {
+  const source = fs.readFileSync(path.join(ROOT, 'src/main.js'), 'utf8');
+  const versions = /const LIBRARY_VERSIONS = (\{[^}]+\})/.exec(source)[1].replace(/\s*\/\/.*/g, '');
+  const libraries = Object.entries(Function(`return ${versions}`)()).map(([name, version]) => `${name}@${version}`);
+  const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  assert.deepEqual(/^npm install (ace-builds@.+)$/m.exec(readme)?.[1].split(' '), libraries);
 });
 
 // ---------------------------------------------------------------------------

@@ -6,6 +6,26 @@ project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Pages made by different script tags in one document took over each other's
+  popped-out editor windows (and shared whether their code had frozen).
+- Pressing <kbd>Enter</kbd> in the Libraries dialog's URL box always added
+  the URL as CSS.  Now a URL ending in `.css` (or Google Fonts' `/css2`) is
+  added as CSS and any other URL as JavaScript.
+- In the tabs layout, popping out an editor that started collapsed (see
+  `data-editors`) left it in the page instead of saying that it is in its own
+  window.
+- Expanding a logged value with more than a few thousand children (eg. a big
+  array) made its children impossible to expand, and expanding a huge typed
+  array could freeze the result.
+- The playground read the user's name as a gist's ID when the name looked
+  like one (eg. `https://gist.github.com/cafe/…`), so saving made a new gist
+  instead of updating the user's own.
+- The README's instructions for self-hosting the libraries left out Acorn,
+  and it now says that getting the list of a gist's files times out after 15
+  seconds.
+
 ## [1.1.0] - 2026-10-05
 
 ### Added

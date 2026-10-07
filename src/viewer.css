@@ -590,7 +590,7 @@ svg {
 .layout-tabs:not([data-tab="result"]) #output {
   display: none;
 }
-.layout-tabs .panel.is-collapsed .editor {
+.layout-tabs .panel.is-collapsed:not(.is-popped-out) .editor {
   display: block;
 }
 .layout-tabs .panel.is-collapsed .panel-menu-button {
@@ -1481,6 +1481,7 @@ dialog.is-read-only :is(.library-search, .library-url, .library-list .icon-butto
   gap: 6px;
   justify-content: center;
 }
-.panel.is-collapsed .popped-out-notice {
+/* (A collapsed editor is still shown in the tabs layout.) */
+#app:not(.layout-tabs) .panel.is-collapsed .popped-out-notice {
   display: none;
 }

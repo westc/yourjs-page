@@ -83,7 +83,7 @@ blocks that script should name each file.
 
 Files and gists are loaded when the page is about to be scrolled into view
 (see `data-loading`), and a dialog explains it if they take longer than 30
-seconds.  Each language uses the first of these that is given:  its selector,
+seconds (or 15 seconds to get the list of a gist's files).  Each language uses the first of these that is given:  its selector,
 its URL and then the gist.  If none is given or nothing matches the selector, the
 editor starts with a comment in that language saying so (eg.
 `/* No element matches the CSS selector:  #css-code */`).  If a URL or a gist
@@ -260,12 +260,15 @@ of [`YourJSPage.create()`](#javascript-api).
 | `data-editors` | `editors` | All of them | The editors that start expanded, eg. `"html js"` (or `["html", "js"]` with the API).  The others start collapsed and can be expanded by clicking their titles.  `""` starts with every editor collapsed so the result gets almost all of the room. |
 | `data-loop-timeout` | `loopTimeout` | `"2000"` | How long (in milliseconds) loops can keep the page busy before they are stopped.  `"0"` turns this off.  See "Loops That Never End" above. |
 | `data-loading` | `loading` | `"lazy"` | `"lazy"` waits to load the page until it is about to be scrolled into view (or, if it is hidden, shown).  `"eager"` loads it right away. |
-| `data-libraries-url` | `librariesUrl` | unpkg | Where to load Ace and js-beautify from.  See "Self-Hosting the Libraries" below. |
+| `data-libraries-url` | `librariesUrl` | unpkg | Where to load Ace, js-beautify and Acorn from.  See "Self-Hosting the Libraries" below. |
 
 ### Self-Hosting the Libraries
 
 The editors use [Ace](https://ace.c9.io/), which is loaded from unpkg.  Use
-`data-libraries-url` to load it (and js-beautify) from somewhere else.
+`data-libraries-url` to load it from somewhere else, along with
+[js-beautify](https://github.com/beautifier/js-beautify) (for formatting) and
+[Acorn](https://github.com/acornjs/acorn) (for stopping loops that never end),
+which are only loaded when they are needed.
 `{name}` and `{version}` are replaced with each library's name and version:
 
 | Where | `data-libraries-url` |
@@ -275,7 +278,7 @@ The editors use [Ace](https://ace.c9.io/), which is loaded from unpkg.  Use
 | Your own copy of `node_modules` | `/node_modules/{name}/` |
 
 ```sh
-npm install ace-builds@1.44.0 js-beautify@2.0.3
+npm install ace-builds@1.44.0 js-beautify@2.0.3 acorn@8.18.0
 ```
 
 ### JavaScript API

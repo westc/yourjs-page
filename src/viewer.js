@@ -2085,6 +2085,20 @@ window.yourjsPageViewer = {
       addLibrary(event.submitter?.dataset.type === 'css' ? 'css' : 'js', url);
       input.value = '';
     });
+    // Pressing Enter would always click the first button ("Add CSS") so the
+    // URL decides instead (eg. ".../style.css" or Google Fonts' ".../css2").
+    $('#library-url-input').addEventListener('keydown', event => {
+      if (event.key !== 'Enter' || event.isComposing) return;
+      event.preventDefault();
+      let isCss = false;
+      try {
+        isCss = /(\.css|\/css2?)$/i.test(new URL(event.target.value.trim(), document.baseURI).pathname);
+      }
+      catch (e) {
+        // The form says that the URL isn't valid.
+      }
+      event.target.form.requestSubmit($(`#library-url-form [data-type="${isCss ? 'css' : 'js'}"]`));
+    });
 
     librariesButton.addEventListener('click', () => {
       closeMenu();

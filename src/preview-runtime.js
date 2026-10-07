@@ -298,35 +298,45 @@ function isBuiltInPrototype(proto) {
 function getChildren(value) {
   const children = [];
   let total = 0;
-  const add = (key, part, separator) => {
+  // Only the children that are shown are turned into parts (so that their IDs
+  // aren't pushed out by the ones that aren't shown).
+  const add = (key, getPart, separator) => {
     total++;
-    if (children.length < MAX_CHILDREN) children.push({key, ...separator && {separator}, ...part});
+    if (children.length < MAX_CHILDREN) children.push({key, ...separator && {separator}, ...getPart()});
   };
   try {
     if (value instanceof Map) {
-      for (const [key, item] of value) add(preview(key, 1), toPart(item, 1), ' => ');
+      for (const [key, item] of value) add(preview(key, 1), () => toPart(item, 1), ' => ');
     }
     else if (value instanceof Set) {
       let index = 0;
-      for (const item of value) add(`${index++}`, toPart(item, 1));
+      for (const item of value) add(`${index++}`, () => toPart(item, 1));
     }
     else if (value instanceof Node) {
-      for (const child of value.childNodes) add('', toPart(child, 1), '');
+      for (const child of value.childNodes) add('', () => toPart(child, 1), '');
+    }
+    else if (ArrayBuffer.isView(value) && !(value instanceof DataView)) {
+      // Typed arrays can be huge so only the items that are shown are read.
+      const shownCount = Math.min(value.length, MAX_CHILDREN);
+      for (let index = 0; index < shownCount; index++) add(`${index}`, () => toPart(value[index], 1));
+      total += value.length - shownCount;
     }
     else {
       for (const key of Reflect.ownKeys(value)) {
         const name = 'symbol' === typeof key ? `[${key.toString()}]` : key;
-        const descriptor = Object.getOwnPropertyDescriptor(value, key);
-        add(name, descriptor && !('value' in descriptor)
-          ? {kind: 'getter', text: descriptor.get ? '(\u2026)' : 'undefined'}
-          : toPart(descriptor?.value, 1));
+        add(name, () => {
+          const descriptor = Object.getOwnPropertyDescriptor(value, key);
+          return descriptor && !('value' in descriptor)
+            ? {kind: 'getter', text: descriptor.get ? '(\u2026)' : 'undefined'}
+            : toPart(descriptor?.value, 1);
+        });
       }
       const proto = Object.getPrototypeOf(value);
-      if (proto && !isBuiltInPrototype(proto)) add('[[Prototype]]', toPart(proto, 1));
+      if (proto && !isBuiltInPrototype(proto)) add('[[Prototype]]', () => toPart(proto, 1));
     }
   }
   catch (e) {
-    add('', {kind: 'error', text: `${e}`}, '');
+    add('', () => ({kind: 'error', text: `${e}`}), '');
   }
   if (total > children.length) children.push({key: '', separator: '', kind: 'null', text: `\u2026 ${total - children.length} more`});
   return children;

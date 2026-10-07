@@ -587,8 +587,12 @@
       const gistSaveButton = document.getElementById('gist-save-button');
       document.getElementById('create-token-link').href = 'https://github.com/settings/tokens/new?scopes=gist&description=YourJS%20Page%20Playground';
 
-      /** The ID of the gist that the code is in (if any). */
-      const getCurrentGistId = () => /(?:^|\/)([\da-f]+)(?:[/?#.]|$)/i.exec(new URL(location.href).searchParams.get('gist') ?? '')?.[1] ?? null;
+      /**
+       * The ID of the gist that the code is in (if any).  This matches how
+       * yourjs-page.js reads a gist's URL (where the user's name, which can
+       * look like an ID, comes before the ID).
+       */
+      const getCurrentGistId = () => /^\s*(?:https?:\/\/gist\.github(?:usercontent)?\.com\/(?:[^/?#]+\/)?)?([\da-f]+)(?:[/?#.][^]*)?\s*$/i.exec(new URL(location.href).searchParams.get('gist') ?? '')?.[1] ?? null;
 
       /**
        * Calls GitHub's API.

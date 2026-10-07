@@ -74,9 +74,9 @@ export interface YourJSPageSettings {
    */
   librarySearch?: boolean | 'true' | 'false';
   /**
-   * Where Ace and js-beautify are loaded from.  `{name}` and `{version}` are
-   * replaced with each library's name and version.  Defaults to
-   * `"https://unpkg.com/{name}@{version}/"`.
+   * Where Ace, js-beautify and Acorn are loaded from.  `{name}` and
+   * `{version}` are replaced with each library's name and version.  Defaults
+   * to `"https://unpkg.com/{name}@{version}/"`.
    */
   librariesUrl?: string;
 }
